@@ -1,0 +1,271 @@
+{
+  "easy": [
+    {
+      "id": "E001",
+      "question": "Simplify: 2³ × 2²",
+      "options": ["2⁵", "2⁶", "4⁵", "4⁶"],
+      "correctIndex": 0,
+      "lawTested": "Product of Powers"
+    },
+    {
+      "id": "E002",
+      "question": "Simplify: 5⁴ × 5³",
+      "options": ["5⁷", "25⁷", "5¹²", "25¹²"],
+      "correctIndex": 0,
+      "lawTested": "Product of Powers"
+    },
+    {
+      "id": "E003",
+      "question": "Simplify: x⁶ ÷ x²",
+      "options": ["x³", "x⁴", "x⁸", "x¹²"],
+      "correctIndex": 1,
+      "lawTested": "Quotient of Powers"
+    },
+    {
+      "id": "E004",
+      "question": "Simplify: (3²)³",
+      "options": ["3⁵", "3⁶", "9⁶", "27⁶"],
+      "correctIndex": 1,
+      "lawTested": "Power of a Power"
+    },
+    {
+      "id": "E005",
+      "question": "What is 7⁰ equal to?",
+      "options": ["0", "1", "7", "Undefined"],
+      "correctIndex": 1,
+      "lawTested": "Zero Exponent Rule"
+    },
+    {
+      "id": "E006",
+      "question": "Simplify: 2⁻³",
+      "options": ["-6", "-8", "1/6", "1/8"],
+      "correctIndex": 3,
+      "lawTested": "Negative Exponent Rule"
+    },
+    {
+      "id": "E007",
+      "question": "Simplify: (2 × 3)²",
+      "options": ["2² × 3²", "5²", "6²", "12"],
+      "correctIndex": 0,
+      "lawTested": "Power of a Product"
+    },
+    {
+      "id": "E008",
+      "question": "Simplify: (4/2)³",
+      "options": ["4³/2³", "2³", "8", "Both A and C"],
+      "correctIndex": 3,
+      "lawTested": "Power of a Quotient"
+    },
+    {
+      "id": "E009",
+      "question": "What is 9¹?",
+      "options": ["1", "9", "81", "0"],
+      "correctIndex": 1,
+      "lawTested": "Identity Exponent Rule"
+    },
+    {
+      "id": "E010",
+      "question": "Simplify: 10² × 10³",
+      "options": ["10⁵", "10⁶", "100⁵", "1000"],
+      "correctIndex": 0,
+      "lawTested": "Product of Powers"
+    }
+  ],
+  "medium": [
+    {
+      "id": "M001",
+      "question": "Simplify: (x²y³)²",
+      "options": ["x⁴y⁶", "x⁴y⁵", "x²y⁶", "xy⁶"],
+      "correctIndex": 0,
+      "lawTested": "Power of a Product"
+    },
+    {
+      "id": "M002",
+      "question": "Simplify: (a³b²) × (a²b⁴)",
+      "options": ["a⁵b⁶", "a⁶b⁶", "a⁵b⁸", "a⁶b⁸"],
+      "correctIndex": 0,
+      "lawTested": "Product of Powers"
+    },
+    {
+      "id": "M003",
+      "question": "Simplify: (2x³)⁴",
+      "options": ["8x⁷", "16x⁷", "8x¹²", "16x¹²"],
+      "correctIndex": 3,
+      "lawTested": "Power of a Power"
+    },
+    {
+      "id": "M004",
+      "question": "Simplify: x⁸ ÷ x⁵",
+      "options": ["x³", "x⁴", "x¹³", "x⁴⁰"],
+      "correctIndex": 0,
+      "lawTested": "Quotient of Powers"
+    },
+    {
+      "id": "M005",
+      "question": "What is (5x)⁰?",
+      "options": ["0", "1", "5", "x"],
+      "correctIndex": 1,
+      "lawTested": "Zero Exponent Rule"
+    },
+    {
+      "id": "M006",
+      "question": "Simplify: 3⁻² × 3⁵",
+      "options": ["3³", "3⁷", "1/3³", "1/3⁷"],
+      "correctIndex": 0,
+      "lawTested": "Product of Powers"
+    },
+    {
+      "id": "M007",
+      "question": "Simplify: (a/b)⁴",
+      "options": ["a⁴/b", "a/b⁴", "a⁴/b⁴", "a⁴b⁴"],
+      "correctIndex": 2,
+      "lawTested": "Power of a Quotient"
+    },
+    {
+      "id": "M008",
+      "question": "Simplify: y⁻⁴",
+      "options": ["-4y", "1/y⁴", "-y⁴", "y/4"],
+      "correctIndex": 1,
+      "lawTested": "Negative Exponent Rule"
+    },
+    {
+      "id": "M009",
+      "question": "Simplify: (2³)²",
+      "options": ["2⁵", "2⁶", "4⁶", "8²"],
+      "correctIndex": 1,
+      "lawTested": "Power of a Power"
+    },
+    {
+      "id": "M010",
+      "question": "What is 15¹?",
+      "options": ["1", "0", "15", "151"],
+      "correctIndex": 2,
+      "lawTested": "Identity Exponent Rule"
+    }
+  ],
+  "hard": [
+    {
+      "id": "H001",
+      "question": "A scientist observes that bacteria doubles every hour. If there are 2³ bacteria initially, how many will there be after 4 hours? Express as a power of 2.",
+      "options": ["2⁷", "2⁸", "2¹²", "2⁶"],
+      "correctIndex": 0,
+      "lawTested": "Product of Powers"
+    },
+    {
+      "id": "H002",
+      "question": "A cube has a side length of x² cm. What is the volume of the cube? (Volume = side³)",
+      "options": ["x⁵", "x⁶", "3x²", "x⁸"],
+      "correctIndex": 1,
+      "lawTested": "Power of a Power"
+    },
+    {
+      "id": "H003",
+      "question": "Simplify: (3x²y³)² ÷ (xy)²",
+      "options": ["9x²y⁴", "9x⁴y⁶", "3x²y⁴", "9x⁴y⁴"],
+      "correctIndex": 0,
+      "lawTested": "Power of a Product"
+    },
+    {
+      "id": "H004",
+      "question": "A computer's processing power doubles every 2 years. If it starts at 2⁴ operations per second, what will it be after 6 years?",
+      "options": ["2⁷", "2⁸", "2¹⁰", "2¹²"],
+      "correctIndex": 0,
+      "lawTested": "Product of Powers"
+    },
+    {
+      "id": "H005",
+      "question": "Simplify: (a⁻²b³)⁻¹",
+      "options": ["a²/b³", "a²b³", "b³/a²", "a⁻²b⁻³"],
+      "correctIndex": 0,
+      "lawTested": "Negative Exponent Rule"
+    },
+    {
+      "id": "H006",
+      "question": "A square garden has an area of x⁴ m². What is the length of one side?",
+      "options": ["x", "x²", "x⁴", "2x²"],
+      "correctIndex": 1,
+      "lawTested": "Power of a Power"
+    },
+    {
+      "id": "H007",
+      "question": "Simplify: (2x²/y)³ × (y²/x)²",
+      "options": ["8x⁴y", "8x⁴/y", "4x⁴", "8x⁴"],
+      "correctIndex": 1,
+      "lawTested": "Power of a Quotient"
+    },
+    {
+      "id": "H008",
+      "question": "If 5ⁿ = 125, what is the value of 5ⁿ⁺²?",
+      "options": ["625", "3125", "15625", "5⁵"],
+      "correctIndex": 1,
+      "lawTested": "Product of Powers"
+    },
+    {
+      "id": "H009",
+      "question": "Simplify: (x⁴y⁻²z³)² ÷ (x²yz)²",
+      "options": ["x⁴z⁴/y⁶", "x⁴z⁴/y⁸", "x⁶z⁴/y⁸", "x⁴z²/y⁶"],
+      "correctIndex": 1,
+      "lawTested": "Quotient of Powers"
+    },
+    {
+      "id": "H010",
+      "question": "A radioactive substance decays by half every year. If you start with 2⁸ grams, how much remains after 3 years?",
+      "options": ["2⁵ grams", "2⁶ grams", "2⁴ grams", "2³ grams"],
+      "correctIndex": 0,
+      "lawTested": "Quotient of Powers"
+    }
+  ],
+  "preTest": {
+    "product": [
+      {
+        "id": "PT_P001",
+        "question": "Simplify: 3² × 3⁴",
+        "options": ["3⁶", "3⁸", "9⁶", "9⁸"],
+        "correctIndex": 0,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P002",
+        "question": "Simplify: a³ × a⁵",
+        "options": ["a⁸", "a¹⁵", "a²", "2a⁸"],
+        "correctIndex": 0,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P003",
+        "question": "Simplify: x × x⁴",
+        "options": ["x⁴", "x⁵", "x", "2x⁵"],
+        "correctIndex": 1,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P004",
+        "question": "Simplify: 7² × 7³",
+        "options": ["7⁵", "14⁵", "49⁵", "7⁶"],
+        "correctIndex": 0,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P005",
+        "question": "Simplify: y² × y² × y",
+        "options": ["y⁴", "y⁵", "3y⁵", "y⁶"],
+        "correctIndex": 1,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P006",
+        "question": "Simplify: 5 × 5²",
+        "options": ["5²", "5³", "10³", "25"],
+        "correctIndex": 1,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P007",
+        "question": "Simplify: m⁴ × m³",
+        "options": ["m⁷", "m¹²", "2m⁷", "m"],
+        "correctIndex": 0,
+        "lawTested": "Product of Powers"
+      }
+    ]
+  }
+}
