@@ -40,7 +40,7 @@ const LawLearn = () => {
   const handleComplete = () => {
     completeLaw(law.id);
     toast.success(`${law.name} lesson completed!`);
-    navigate('/laws');
+    navigate(`/pretest/${law.id}`);
   };
 
   return (
