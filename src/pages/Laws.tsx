@@ -5,12 +5,12 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { GemDisplay } from '@/components/GemDisplay';
 import { MathText } from '@/utils/mathRenderer';
-import { Lock, CheckCircle, Sparkles, ArrowRight } from 'lucide-react';
+import { Lock, CheckCircle, Sparkles, ArrowRight, Swords, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Laws = () => {
   const navigate = useNavigate();
-  const { laws } = useGameStore();
+  const { laws, quizLevels, unlockQuizLevels } = useGameStore();
   const allGemsEarned = laws.every((law) => law.gemEarned);
 
   const handleLawClick = (lawId: string, completed: boolean, gemEarned: boolean) => {
@@ -26,8 +26,8 @@ const Laws = () => {
     }
   };
 
-  const handleUnlockQuiz = () => {
-    navigate('/quiz-menu');
+  const handleUnlockQuizLevels = () => {
+    unlockQuizLevels();
   };
 
   return (
@@ -123,8 +123,8 @@ const Laws = () => {
           ))}
         </div>
 
-        {/* Unlock Quiz Button */}
-        {allGemsEarned && (
+        {/* Unlock Quiz Levels Button */}
+        {allGemsEarned && !quizLevels.some(l => l.unlocked) && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -139,13 +139,93 @@ const Laws = () => {
                 You've mastered all 8 Laws. Time to face the Nullers in combat!
               </p>
               <Button
-                onClick={handleUnlockQuiz}
+                onClick={handleUnlockQuizLevels}
                 size="lg"
                 className="glow text-lg font-orbitron gap-2"
               >
                 Unlock Quiz Battles
                 <ArrowRight className="w-5 h-5" />
               </Button>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Quiz Levels Section */}
+        {quizLevels.some(l => l.unlocked) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8"
+          >
+            <Card className="p-6 bg-card/80 backdrop-blur-sm border-2 border-primary/20">
+              <div className="flex items-center gap-3 mb-6">
+                <Swords className="w-6 h-6 text-primary" />
+                <h2 className="text-2xl font-orbitron font-bold text-foreground">
+                  Battle The Nullers
+                </h2>
+              </div>
+              <p className="text-muted-foreground mb-6">
+                Face The Nullers in three levels of increasing difficulty. Score 75% or higher to advance.
+              </p>
+
+              <div className="space-y-4">
+                {quizLevels.map((level) => (
+                  <Card
+                    key={level.id}
+                    className={`p-4 transition-all ${
+                      level.unlocked
+                        ? 'bg-background/50 border-primary/30'
+                        : 'bg-background/20 border-border/30 opacity-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                          level.completed
+                            ? 'bg-success/20 text-success'
+                            : level.unlocked
+                            ? 'bg-primary/20 text-primary'
+                            : 'bg-muted/20 text-muted-foreground'
+                        }`}>
+                          {level.completed ? (
+                            <Trophy className="w-6 h-6" />
+                          ) : (
+                            <Swords className="w-6 h-6" />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-foreground">{level.name} Level</h3>
+                          <div className="flex items-center gap-4 mt-1">
+                            {level.score !== null && (
+                              <span className="text-sm text-muted-foreground">
+                                Best Score: <span className="font-bold text-foreground">{level.score}%</span>
+                              </span>
+                            )}
+                            {level.attempts > 0 && (
+                              <span className="text-sm text-muted-foreground">
+                                Attempts: {level.attempts}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {level.completed && (
+                          <span className="text-success font-bold mr-2">✓ Defeated</span>
+                        )}
+                        <Button
+                          onClick={() => navigate(`/quiz/${level.id}`)}
+                          disabled={!level.unlocked}
+                          size="sm"
+                        >
+                          {level.completed ? 'Retry' : level.attempts > 0 ? 'Try Again' : 'Start Battle'}
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </Card>
           </motion.div>
         )}

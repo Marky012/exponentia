@@ -9,6 +9,8 @@ import Intro from "./pages/Intro";
 import Laws from "./pages/Laws";
 import LawLearn from "./pages/LawLearn";
 import PreTest from "./pages/PreTest";
+import Quiz from "./pages/Quiz";
+import QuizResult from "./pages/QuizResult";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +28,8 @@ const App = () => (
           <Route path="/laws" element={<Laws />} />
           <Route path="/law/:lawId" element={<LawLearn />} />
           <Route path="/pretest/:lawId" element={<PreTest />} />
+          <Route path="/quiz/:levelId" element={<Quiz />} />
+          <Route path="/quiz-result/:levelId" element={<QuizResult />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
