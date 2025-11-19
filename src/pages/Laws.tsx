@@ -95,19 +95,29 @@ const Laws = () => {
                 <p className="text-sm text-muted-foreground mb-3">{law.scene}</p>
 
                 {/* Action */}
-                <Button
-                  variant={law.gemEarned ? "outline" : "default"}
-                  size="sm"
-                  className="w-full"
-                >
-                  {law.gemEarned ? (
-                    "Review"
-                  ) : law.completed ? (
-                    "Take Pre-Test"
-                  ) : (
-                    "Start Learning"
-                  )}
-                </Button>
+                {law.gemEarned ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                  >
+                    Review
+                  </Button>
+                ) : law.completed ? (
+                  <Button
+                    size="sm"
+                    className="w-full"
+                  >
+                    Take Pre-Test
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    className="w-full"
+                  >
+                    Start Learning
+                  </Button>
+                )}
               </Card>
             </motion.div>
           ))}
