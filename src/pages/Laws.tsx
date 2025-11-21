@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { GemDisplay } from '@/components/GemDisplay';
 import { MathText } from '@/utils/mathRenderer';
-import { Lock, CheckCircle, Sparkles, ArrowRight, Swords, Trophy } from 'lucide-react';
+import { Lock, CheckCircle, Sparkles, ArrowRight, Swords, Trophy, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Laws = () => {
@@ -39,13 +39,25 @@ const Laws = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-4xl md:text-5xl font-orbitron font-black mb-3 text-glow">
-            The 8 Laws of Exponents
-          </h1>
-          <p className="text-muted-foreground text-lg mb-6">
-            Master each law to earn a Gem of Power
-          </p>
-          <GemDisplay className="justify-center" />
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex-1">
+              <h1 className="text-4xl md:text-5xl font-orbitron font-black mb-3 text-glow">
+                The 8 Laws of Exponents
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                Master each law to earn a Gem of Power
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/statistics')}
+              className="gap-2"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Statistics
+            </Button>
+          </div>
+          <GemDisplay className="justify-center mb-6" />
         </motion.div>
 
         {/* Laws Grid */}
