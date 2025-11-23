@@ -7,11 +7,17 @@ import { GemDisplay } from '@/components/GemDisplay';
 import { MathText } from '@/utils/mathRenderer';
 import { Lock, CheckCircle, Sparkles, ArrowRight, Swords, Trophy, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getExponentiaBackground, getBackgroundOverlay } from '@/utils/backgroundTransition';
 
 const Laws = () => {
   const navigate = useNavigate();
   const { laws, quizLevels, unlockQuizLevels } = useGameStore();
   const allGemsEarned = laws.every((law) => law.gemEarned);
+  
+  // Calculate gems collected for background transition
+  const gemsCollected = laws.filter((law) => law.gemEarned).length;
+  const backgroundImage = getExponentiaBackground(gemsCollected);
+  const overlayOpacity = getBackgroundOverlay(gemsCollected);
 
   const handleLawClick = (lawId: string, completed: boolean, gemEarned: boolean) => {
     if (gemEarned) {
@@ -31,7 +37,16 @@ const Laws = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <motion.div 
+      className="min-h-screen p-4 md:p-8 bg-cover bg-center bg-no-repeat transition-all duration-1000"
+      style={{ 
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, ${overlayOpacity}), rgba(0, 0, 0, ${overlayOpacity})), url(${backgroundImage})`
+      }}
+      animate={{ 
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, ${overlayOpacity}), rgba(0, 0, 0, ${overlayOpacity})), url(${backgroundImage})`
+      }}
+      transition={{ duration: 1.5 }}
+    >
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -242,7 +257,7 @@ const Laws = () => {
           </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
