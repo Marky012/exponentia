@@ -7,6 +7,8 @@ import { Progress } from '@/components/ui/progress';
 import { MathText } from '@/utils/mathRenderer';
 import questionsData from '@/data/questions.json';
 import { Shield, Swords, Skull } from 'lucide-react';
+import { HintHelper } from '@/components/HintHelper';
+import trainingArena from '@/assets/training-arena.png';
 
 interface Question {
   id: string;
@@ -26,6 +28,7 @@ export default function Quiz() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [answers, setAnswers] = useState<{ questionId: string; correct: boolean; lawTested: string }[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
 
   const currentLevel = quizLevels.find(l => l.id === levelId);
 
@@ -106,8 +109,24 @@ export default function Quiz() {
     hard: 'Chaos Nuller',
   };
 
+  const lawHints: Record<string, string> = {
+    'Product of Powers': 'When multiplying powers with the same base, add the exponents together.',
+    'Quotient of Powers': 'When dividing powers with the same base, subtract the exponents.',
+    'Power of a Power': 'When raising a power to another power, multiply the exponents.',
+    'Zero Exponent Rule': 'Any non-zero number raised to the power of zero equals 1.',
+    'Negative Exponent Rule': 'A negative exponent means take the reciprocal and make the exponent positive.',
+    'Power of a Product': 'When raising a product to a power, distribute the exponent to each factor.',
+    'Power of a Quotient': 'When raising a quotient to a power, distribute the exponent to both numerator and denominator.',
+    'Identity Exponent Rule': 'Any number raised to the power of 1 remains itself.',
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background/90 to-background">
+    <div 
+      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ 
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url(${trainingArena})`
+      }}
+    >
       {/* Header */}
       <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
@@ -218,6 +237,13 @@ export default function Quiz() {
             </div>
           )}
         </Card>
+
+        {/* Hint Helper */}
+        <HintHelper
+          hint={lawHints[currentQuestion.lawTested] || 'Remember the laws of exponents you learned!'}
+          onHintUsed={() => setHintUsed(true)}
+          hintAvailable={!hintUsed}
+        />
       </div>
     </div>
   );
