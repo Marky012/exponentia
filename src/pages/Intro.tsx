@@ -51,170 +51,178 @@ const Intro = () => {
 
   return (
     <motion.div 
-      className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat"
+      className="relative min-h-screen flex flex-col items-center justify-between p-4 bg-cover bg-center bg-no-repeat overflow-hidden"
       style={{ 
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${getBackgroundImage()})`
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${getBackgroundImage()})`
       }}
       animate={{ 
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${getBackgroundImage()})`
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${getBackgroundImage()})`
       }}
       transition={{ duration: 1.5 }}
     >
+      {/* Character Image - Centered */}
+      <div className="flex-1 flex items-center justify-center pt-8">
+        <div className="relative">
+          <AnimatePresence mode="wait">
+            <motion.img 
+              key={getCharacterImage()}
+              src={getCharacterImage()} 
+              alt="Elexia the Guardian" 
+              className="w-full max-w-md h-auto drop-shadow-2xl"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.5 }}
+            />
+          </AnimatePresence>
+          <motion.div
+            className="absolute -inset-4 bg-primary/20 rounded-full blur-3xl -z-10"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Subtitle-style Dialogue at Bottom */}
       <motion.div
-        className="w-full max-w-5xl"
+        className="w-full max-w-4xl mx-auto pb-8 space-y-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        transition={{ delay: 0.3 }}
       >
-        <Card className="p-8 bg-card/90 backdrop-blur-md border-2 border-primary/20">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Character Image Column */}
-            <div className="flex justify-center">
-              <div className="relative">
-                <AnimatePresence mode="wait">
-                  <motion.img 
-                    key={getCharacterImage()}
-                    src={getCharacterImage()} 
-                    alt="Elexia the Guardian" 
-                    className="w-full max-w-sm drop-shadow-2xl"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.5 }}
-                  />
-                </AnimatePresence>
-                <motion.div
-                  className="absolute -inset-4 bg-primary/20 rounded-full blur-3xl -z-10"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.5, 0.3],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Dialogue Column */}
+        {/* Character Name Tag */}
+        <AnimatePresence>
+          {storyStage >= 0 && (
             <motion.div
-              className="space-y-6"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
+              className="flex items-center justify-center gap-2 mb-2"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5 }}
             >
-              <h2 className="text-3xl font-orbitron font-bold text-primary flex items-center gap-2">
-                <Sparkles className="w-6 h-6" />
+              <Sparkles className="w-5 h-5 text-primary" />
+              <h2 className="text-xl md:text-2xl font-orbitron font-bold text-primary">
                 Elexia, Guardian of Exponentia
               </h2>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-              <div className="space-y-4 text-base text-foreground">
-                {/* Stage 0: Greeting */}
-                <AnimatePresence>
-                  {storyStage === 0 && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      Greetings, <span className="font-bold text-primary">{playerName}</span>...
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                {/* Stage 1: Introduction of the problem */}
-                <AnimatePresence>
-                  {storyStage >= 1 && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      I am Elexia, the last guardian of this fading realm. Our world once thrived
-                      on the power of exponential energy, but the <span className="text-enemy font-semibold">Nullers</span> have
-                      been draining our power, reducing everything to nothing.
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                {/* Stage 2: Crystal Core warning */}
-                <AnimatePresence>
-                  {storyStage >= 2 && (
-                    <motion.div 
-                      className="bg-muted/30 border border-destructive/30 rounded-lg p-4 my-4"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <p className="font-medium text-sm">
-                        The Crystal Core, source of all our energy, is failing. Without it,
-                        Exponentia will crumble into darkness.
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Stage 3: Hope and solution */}
-                <AnimatePresence>
-                  {storyStage >= 3 && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      But there is hope! The ancient <span className="text-gem font-bold">8 Laws of Exponents</span> hold
-                      the key to restoring our power. Master these laws, collect the 8 Gems of Power,
-                      and you can defeat the Nullers once and for all.
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                {/* Stage 4: Call to action */}
-                <AnimatePresence>
-                  {storyStage >= 4 && (
-                    <motion.p 
-                      className="text-primary font-semibold"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      Your journey begins at the Chamber of Sparks, where you'll learn to harness
-                      exponential compression. Are you ready, {playerName}?
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Action Buttons */}
+        {/* Dialogue Box */}
+        <div className="min-h-[120px] flex items-center justify-center">
+          <div className="w-full bg-black/60 backdrop-blur-sm rounded-lg p-6 border border-primary/20">
+            <div className="space-y-3 text-center">
+              {/* Stage 0: Greeting */}
               <AnimatePresence>
-                {storyStage >= 4 && (
-                  <motion.div 
-                    className="flex flex-col gap-3 pt-4"
+                {storyStage === 0 && (
+                  <motion.p
+                    className="text-lg md:text-xl text-foreground"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <Button
-                      onClick={handleContinue}
-                      size="lg"
-                      className="w-full text-lg font-orbitron glow"
-                    >
-                      Begin My Training
-                    </Button>
-                    
-                    <InstallButton className="w-full" />
-                  </motion.div>
+                    Greetings, <span className="font-bold text-primary">{playerName}</span>...
+                  </motion.p>
                 )}
               </AnimatePresence>
-            </motion.div>
+
+              {/* Stage 1: Introduction of the problem */}
+              <AnimatePresence>
+                {storyStage >= 1 && (
+                  <motion.p
+                    className="text-base md:text-lg text-foreground"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    I am Elexia, the last guardian of this fading realm. Our world once thrived
+                    on the power of exponential energy, but the <span className="text-enemy font-semibold">Nullers</span> have
+                    been draining our power, reducing everything to nothing.
+                  </motion.p>
+                )}
+              </AnimatePresence>
+
+              {/* Stage 2: Crystal Core warning */}
+              <AnimatePresence>
+                {storyStage >= 2 && (
+                  <motion.p 
+                    className="text-base md:text-lg text-foreground font-medium border-l-4 border-destructive pl-4"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    The Crystal Core, source of all our energy, is failing. Without it,
+                    Exponentia will crumble into darkness.
+                  </motion.p>
+                )}
+              </AnimatePresence>
+
+              {/* Stage 3: Hope and solution */}
+              <AnimatePresence>
+                {storyStage >= 3 && (
+                  <motion.p
+                    className="text-base md:text-lg text-foreground"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    But there is hope! The ancient <span className="text-gem font-bold">8 Laws of Exponents</span> hold
+                    the key to restoring our power. Master these laws, collect the 8 Gems of Power,
+                    and you can defeat the Nullers once and for all.
+                  </motion.p>
+                )}
+              </AnimatePresence>
+
+              {/* Stage 4: Call to action */}
+              <AnimatePresence>
+                {storyStage >= 4 && (
+                  <motion.p 
+                    className="text-base md:text-lg text-primary font-semibold"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    Your journey begins at the Chamber of Sparks, where you&apos;ll learn to harness
+                    exponential compression. Are you ready, {playerName}?
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
-        </Card>
+        </div>
+
+        {/* Action Buttons */}
+        <AnimatePresence>
+          {storyStage >= 4 && (
+            <motion.div 
+              className="flex flex-col gap-3 pt-2 max-w-md mx-auto"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Button
+                onClick={handleContinue}
+                size="lg"
+                className="w-full text-lg font-orbitron glow"
+              >
+                Begin My Training
+              </Button>
+              
+              <InstallButton className="w-full" />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </motion.div>
   );
