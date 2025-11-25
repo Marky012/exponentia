@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Sparkles } from 'lucide-react';
 import { InstallButton } from '@/components/InstallButton';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useTypewriter } from '@/hooks/use-typewriter';
 import elexiaIntro from '@/assets/elexia-intro.png';
 import elexiaWorried from '@/assets/elexia-worried.png';
 import elexiaHopeful from '@/assets/elexia-hopeful.png';
@@ -18,21 +19,28 @@ const Intro = () => {
   const { playerName, completeIntro } = useGameStore();
   const [storyStage, setStoryStage] = useState(0);
 
-  // Auto-progress through story stages
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setStoryStage(1), 3000),  // After 3s: show worried Elexia
-      setTimeout(() => setStoryStage(2), 8000),  // After 8s: show Nullers background
-      setTimeout(() => setStoryStage(3), 13000), // After 13s: show hopeful Elexia with dark background
-      setTimeout(() => setStoryStage(4), 18000), // After 18s: show final call to action
-    ];
+  // Dialogue texts
+  const dialogues = [
+    `Greetings, ${playerName}...`,
+    `I am Elexia, the last guardian of this fading realm. Our world once thrived on the power of exponential energy, but the Nullers have been draining our power, reducing everything to nothing.`,
+    `The Crystal Core, source of all our energy, is failing. Without it, Exponentia will crumble into darkness.`,
+    `But there is hope! The ancient 8 Laws of Exponents hold the key to restoring our power. Master these laws, collect the 8 Gems of Power, and you can defeat the Nullers once and for all.`,
+    `Your journey begins at the Chamber of Sparks, where you'll learn to harness exponential compression. Are you ready, ${playerName}?`
+  ];
 
-    return () => timers.forEach(timer => clearTimeout(timer));
-  }, []);
+  const { displayedText, isComplete } = useTypewriter(
+    dialogues[storyStage] || '',
+    30,
+    true
+  );
 
   const handleContinue = () => {
-    completeIntro();
-    navigate('/laws');
+    if (storyStage < dialogues.length - 1) {
+      setStoryStage(storyStage + 1);
+    } else {
+      completeIntro();
+      navigate('/laws');
+    }
   };
 
   // Determine which character image to show
@@ -117,114 +125,81 @@ const Intro = () => {
           </AnimatePresence>
 
           {/* Dialogue Box */}
-          <div className="min-h-[200px] md:min-h-[300px] flex items-center">
-            <div className="w-full bg-black/60 backdrop-blur-sm rounded-lg p-6 border border-primary/20">
-              <div className="space-y-3 text-left">
-                {/* Stage 0: Greeting */}
-                <AnimatePresence>
-                  {storyStage === 0 && (
-                    <motion.p
-                      className="text-lg md:text-xl text-foreground"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      Greetings, <span className="font-bold text-primary">{playerName}</span>...
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                {/* Stage 1: Introduction of the problem */}
-                <AnimatePresence>
-                  {storyStage >= 1 && (
-                    <motion.p
-                      className="text-base md:text-lg text-foreground"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      I am Elexia, the last guardian of this fading realm. Our world once thrived
-                      on the power of exponential energy, but the <span className="text-enemy font-semibold">Nullers</span> have
-                      been draining our power, reducing everything to nothing.
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                {/* Stage 2: Crystal Core warning */}
-                <AnimatePresence>
-                  {storyStage >= 2 && (
-                    <motion.p 
-                      className="text-base md:text-lg text-foreground font-medium border-l-4 border-destructive pl-4"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      The Crystal Core, source of all our energy, is failing. Without it,
-                      Exponentia will crumble into darkness.
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                {/* Stage 3: Hope and solution */}
-                <AnimatePresence>
-                  {storyStage >= 3 && (
-                    <motion.p
-                      className="text-base md:text-lg text-foreground"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      But there is hope! The ancient <span className="text-gem font-bold">8 Laws of Exponents</span> hold
-                      the key to restoring our power. Master these laws, collect the 8 Gems of Power,
-                      and you can defeat the Nullers once and for all.
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                {/* Stage 4: Call to action */}
-                <AnimatePresence>
-                  {storyStage >= 4 && (
-                    <motion.p 
-                      className="text-base md:text-lg text-primary font-semibold"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      Your journey begins at the Chamber of Sparks, where you&apos;ll learn to harness
-                      exponential compression. Are you ready, {playerName}?
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <AnimatePresence>
-            {storyStage >= 4 && (
-              <motion.div 
-                className="flex flex-col gap-3 pt-4"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Button
-                  onClick={handleContinue}
-                  size="lg"
-                  className="w-full text-lg font-orbitron glow"
+          <div className="min-h-[200px] md:min-h-[300px] flex flex-col justify-between">
+            <div className="w-full bg-black/60 backdrop-blur-sm rounded-lg p-6 border border-primary/20 flex-1 flex items-center">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={storyStage}
+                  className="space-y-3 text-left w-full"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  Begin My Training
-                </Button>
-                
+                  {storyStage === 0 && (
+                    <p className="text-lg md:text-xl text-foreground">
+                      {displayedText}
+                    </p>
+                  )}
+                  {storyStage === 1 && (
+                    <p className="text-base md:text-lg text-foreground">
+                      {displayedText.split('Nullers').map((part, i, arr) => (
+                        i < arr.length - 1 ? (
+                          <span key={i}>
+                            {part}
+                            <span className="text-enemy font-semibold">Nullers</span>
+                          </span>
+                        ) : part
+                      ))}
+                    </p>
+                  )}
+                  {storyStage === 2 && (
+                    <p className="text-base md:text-lg text-foreground font-medium border-l-4 border-destructive pl-4">
+                      {displayedText}
+                    </p>
+                  )}
+                  {storyStage === 3 && (
+                    <p className="text-base md:text-lg text-foreground">
+                      {displayedText.split('8 Laws of Exponents').map((part, i, arr) => (
+                        i < arr.length - 1 ? (
+                          <span key={i}>
+                            {part}
+                            <span className="text-gem font-bold">8 Laws of Exponents</span>
+                          </span>
+                        ) : part
+                      ))}
+                    </p>
+                  )}
+                  {storyStage === 4 && (
+                    <p className="text-base md:text-lg text-primary font-semibold">
+                      {displayedText}
+                    </p>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Continue Button */}
+            <motion.div 
+              className="flex flex-col gap-3 pt-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isComplete ? 1 : 0.5 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Button
+                onClick={handleContinue}
+                size="lg"
+                disabled={!isComplete}
+                className="w-full text-lg font-orbitron glow"
+              >
+                {storyStage === dialogues.length - 1 ? 'Begin My Training' : 'Continue'}
+              </Button>
+              
+              {storyStage === dialogues.length - 1 && (
                 <InstallButton className="w-full" />
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+            </motion.div>
+          </div>
         </motion.div>
       </div>
     </motion.div>
