@@ -12,7 +12,7 @@ const Index = () => {
     // Show boot screen animation
     const timer = setTimeout(() => {
       if (hasStarted) {
-        navigate('/game');
+        navigate('/laws');
       } else {
         navigate('/welcome');
       }
