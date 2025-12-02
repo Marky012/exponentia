@@ -7,6 +7,7 @@ import { Sparkles } from 'lucide-react';
 import { InstallButton } from '@/components/InstallButton';
 import { useState } from 'react';
 import { useTypewriter } from '@/hooks/use-typewriter';
+import { ArrowLeft } from 'lucide-react';
 import elexiaIntro from '@/assets/elexia-intro.png';
 import elexiaWorried from '@/assets/elexia-worried.png';
 import elexiaHopeful from '@/assets/elexia-hopeful.png';
@@ -40,6 +41,12 @@ const Intro = () => {
     } else {
       completeIntro();
       navigate('/laws');
+    }
+  };
+
+  const handleBack = () => {
+    if (storyStage > 0) {
+      setStoryStage(storyStage - 1);
     }
   };
 
@@ -179,21 +186,35 @@ const Intro = () => {
               </AnimatePresence>
             </div>
 
-            {/* Continue Button */}
+            {/* Navigation Buttons */}
             <motion.div 
               className="flex flex-col gap-3 pt-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: isComplete ? 1 : 0.5 }}
               transition={{ duration: 0.3 }}
             >
-              <Button
-                onClick={handleContinue}
-                size="lg"
-                disabled={!isComplete}
-                className="w-full text-lg font-orbitron glow"
-              >
-                {storyStage === dialogues.length - 1 ? 'Begin My Training' : 'Continue'}
-              </Button>
+              <div className="flex gap-3">
+                {storyStage > 0 && (
+                  <Button
+                    onClick={handleBack}
+                    size="lg"
+                    variant="outline"
+                    disabled={!isComplete}
+                    className="text-lg font-orbitron"
+                  >
+                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    Back
+                  </Button>
+                )}
+                <Button
+                  onClick={handleContinue}
+                  size="lg"
+                  disabled={!isComplete}
+                  className="flex-1 text-lg font-orbitron glow"
+                >
+                  {storyStage === dialogues.length - 1 ? 'Begin My Training' : 'Continue'}
+                </Button>
+              </div>
               
               {storyStage === dialogues.length - 1 && (
                 <InstallButton className="w-full" />

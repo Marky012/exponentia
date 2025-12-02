@@ -26,12 +26,12 @@
     --male-accent: 202 60% 55%;
     --male-glow: 202 60% 75%;
     
-    /* Female Theme Colors */
-    --female-primary: 280 80% 60%;
+    /* Female Theme Colors - Pink/Feminine */
+    --female-primary: 330 85% 60%;
     --female-primary-foreground: 0 0% 100%;
-    --female-secondary: 330 85% 55%;
-    --female-accent: 45 93% 60%;
-    --female-glow: 280 80% 70%;
+    --female-secondary: 340 80% 50%;
+    --female-accent: 320 75% 65%;
+    --female-glow: 330 90% 70%;
 
     /* Dynamic Theme (defaults to male) */
     --primary: var(--male-primary);
