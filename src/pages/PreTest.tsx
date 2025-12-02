@@ -33,16 +33,42 @@ const PreTest = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [testCompleted, setTestCompleted] = useState(false);
 
+  // Map law IDs to preTest JSON keys
+  const lawIdToPreTestKey: Record<string, string> = {
+    'product': 'product',
+    'quotient': 'quotient',
+    'power': 'power',
+    'zero': 'zero',
+    'negative': 'negative',
+    'product-power': 'productpower',
+    'quotient-power': 'quotientpower',
+    'identity': 'identity',
+  };
+
+  // Shuffle array function
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   useEffect(() => {
     if (!law || !lawId) {
       navigate('/laws');
       return;
     }
 
-    // Load questions for this law from preTest section
-    const preTestQuestions = (questionsData.preTest as Record<string, Question[]>)[lawId];
+    // Map lawId to the correct preTest key
+    const preTestKey = lawIdToPreTestKey[lawId];
+    const preTestQuestions = preTestKey ? (questionsData.preTest as Record<string, Question[]>)[preTestKey] : null;
+    
     if (preTestQuestions && preTestQuestions.length >= 5) {
-      setQuestions(preTestQuestions.slice(0, 5));
+      // Shuffle questions for randomization
+      const shuffled = shuffleArray(preTestQuestions).slice(0, 5);
+      setQuestions(shuffled);
     } else {
       toast.error('Pre-test questions not available for this law');
       navigate('/laws');
@@ -91,6 +117,15 @@ const PreTest = () => {
   };
 
   const handleRetry = () => {
+    // Map lawId to the correct preTest key and reshuffle
+    const preTestKey = lawIdToPreTestKey[lawId || ''];
+    const preTestQuestions = preTestKey ? (questionsData.preTest as Record<string, Question[]>)[preTestKey] : null;
+    
+    if (preTestQuestions && preTestQuestions.length >= 5) {
+      const shuffled = shuffleArray(preTestQuestions).slice(0, 5);
+      setQuestions(shuffled);
+    }
+    
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
     setCorrectAnswers(0);
