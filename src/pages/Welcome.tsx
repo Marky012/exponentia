@@ -113,8 +113,8 @@ const Welcome = () => {
                   onClick={() => setSelectedGender('female')}
                   className={`relative p-6 rounded-lg border-2 transition-all duration-300 ${
                     selectedGender === 'female'
-                      ? 'border-primary bg-primary/10 glow'
-                      : 'border-border hover:border-primary/50'
+                      ? 'border-pink-500 bg-pink-500/10 shadow-[0_0_16px_rgba(236,72,153,0.6)]'
+                      : 'border-border hover:border-pink-400/50'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -122,11 +122,11 @@ const Welcome = () => {
                   <div className="text-6xl mb-2">🔮</div>
                   <h3 className="font-orbitron font-bold text-lg">Mage</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Purple & Magenta Theme
+                    Pink & Magenta Theme
                   </p>
                   {selectedGender === 'female' && (
                     <motion.div
-                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center"
+                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center text-white"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                     >
