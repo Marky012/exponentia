@@ -1,40 +1,75 @@
 import katex from 'katex';
 
 /**
+ * Map Unicode superscript characters to regular digits
+ */
+const superscriptMap: Record<string, string> = {
+  '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+  '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9'
+};
+
+/**
+ * Map Unicode subscript characters to regular digits  
+ */
+const subscriptMap: Record<string, string> = {
+  '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4',
+  '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9'
+};
+
+/**
  * Converts common text representations of math to LaTeX
  */
 export function textToLatex(text: string): string {
   let latex = text;
   
-  // Map Unicode superscript digits to regular digits
-  const superscriptMap: Record<string, string> = {
-    '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
-    '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9'
-  };
-  
-  // Handle negative exponents with Unicode superscripts (e.g., x⁻³ → x^{-3})
-  latex = latex.replace(/([a-zA-Z0-9\)]+)⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
+  // Handle negative exponents with Unicode superscripts (e.g., x⁻³ → x^{-3}, x⁻¹² → x^{-12})
+  latex = latex.replace(/([a-zA-Z0-9\)\]]+)⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
     const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');
     return `${base}^{-${expDigits}}`;
   });
   
-  // Handle positive exponents with Unicode superscripts (e.g., x² → x^{2})
-  latex = latex.replace(/([a-zA-Z0-9\)]+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
+  // Handle positive exponents with Unicode superscripts (e.g., x² → x^{2}, x¹² → x^{12})
+  latex = latex.replace(/([a-zA-Z0-9\)\]]+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
     const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');
     return `${base}^{${expDigits}}`;
   });
   
-  // Convert caret superscripts (e.g., x^12 → x^{12})
-  latex = latex.replace(/([a-zA-Z0-9]+)\^([0-9]+)/g, '$1^{$2}');
-  latex = latex.replace(/([a-zA-Z0-9]+)\^-([0-9]+)/g, '$1^{-$2}');
+  // Handle subscripts with Unicode (e.g., x₁ → x_{1})
+  latex = latex.replace(/([a-zA-Z])([₀₁₂₃₄₅₆₇₈₉]+)/g, (match, base, sub) => {
+    const subDigits = sub.split('').map((c: string) => subscriptMap[c] || c).join('');
+    return `${base}_{${subDigits}}`;
+  });
   
-  // Convert subscripts
+  // Convert caret superscripts with negative (e.g., x^-12 → x^{-12})
+  latex = latex.replace(/([a-zA-Z0-9\)\]]+)\^-([0-9]+)/g, '$1^{-$2}');
+  
+  // Convert caret superscripts (e.g., x^12 → x^{12})
+  latex = latex.replace(/([a-zA-Z0-9\)\]]+)\^([0-9]+)/g, '$1^{$2}');
+  
+  // Convert underscore subscripts
   latex = latex.replace(/([a-zA-Z])_([0-9]+)/g, '$1_{$2}');
   
-  // Convert division - handle fractions like a/b
-  latex = latex.replace(/\//g, ' \\div ');
+  // Convert fractions like 1/x³ to proper LaTeX fractions
+  latex = latex.replace(/1\/([a-zA-Z])\^{([^}]+)}/g, '\\frac{1}{$1^{$2}}');
+  latex = latex.replace(/1\/([a-zA-Z0-9]+)/g, '\\frac{1}{$1}');
   
-  // Convert multiplication
+  // Convert division symbol and slash for display
+  latex = latex.replace(/÷/g, ' \\div ');
+  
+  // Handle fractions with parentheses like (a/b)
+  latex = latex.replace(/\(([^\/\)]+)\/([^\)]+)\)/g, '\\left(\\frac{$1}{$2}\\right)');
+  
+  // Convert standalone fractions a/b (not in parentheses, simple cases)
+  // Only convert if not already converted and looks like a simple fraction
+  latex = latex.replace(/([a-zA-Z0-9]+)\s*\/\s*([a-zA-Z0-9]+)(?!\^)/g, (match, num, den) => {
+    // Don't convert if it's already in a frac or if it's part of larger expression
+    if (latex.includes('\\frac')) {
+      return match;
+    }
+    return `\\frac{${num}}{${den}}`;
+  });
+  
+  // Convert multiplication symbol
   latex = latex.replace(/×/g, ' \\times ');
   
   return latex;
