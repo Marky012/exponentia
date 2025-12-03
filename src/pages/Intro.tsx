@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Sparkles } from 'lucide-react';
 import { InstallButton } from '@/components/InstallButton';
 import { useState } from 'react';
@@ -77,7 +76,7 @@ const Intro = () => {
     >
       {/* Main Content - Side by Side Layout */}
       <div className="flex-1 flex items-center justify-center w-full max-w-7xl mx-auto px-4 md:px-8 gap-8 md:gap-12 flex-col md:flex-row">
-        {/* Character Image - Left Side */}
+        {/* Character Image - Left Side - CONSISTENT SIZE */}
         <div className="relative w-full md:w-1/2 flex justify-center md:justify-end">
           <div className="relative">
             <AnimatePresence mode="wait">
@@ -85,7 +84,7 @@ const Intro = () => {
                 key={getCharacterImage()}
                 src={getCharacterImage()} 
                 alt="Elexia the Guardian" 
-                className="w-full max-w-sm md:max-w-md h-auto drop-shadow-2xl"
+                className="w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -154,7 +153,7 @@ const Intro = () => {
                         i < arr.length - 1 ? (
                           <span key={i}>
                             {part}
-                            <span className="text-enemy font-semibold">Nullers</span>
+                            <span className="text-red-500 font-semibold">Nullers</span>
                           </span>
                         ) : part
                       ))}
@@ -171,7 +170,7 @@ const Intro = () => {
                         i < arr.length - 1 ? (
                           <span key={i}>
                             {part}
-                            <span className="text-gem font-bold">8 Laws of Exponents</span>
+                            <span className="text-green-400 font-bold">8 Laws of Exponents</span>
                           </span>
                         ) : part
                       ))}

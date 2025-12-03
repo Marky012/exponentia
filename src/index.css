@@ -26,12 +26,16 @@
     --male-accent: 202 60% 55%;
     --male-glow: 202 60% 75%;
     
-    /* Female Theme Colors - Pink/Feminine */
-    --female-primary: 330 85% 60%;
+    /* Female Theme Colors - Pink Dominant */
+    --female-primary: 330 85% 65%;
     --female-primary-foreground: 0 0% 100%;
-    --female-secondary: 340 80% 50%;
-    --female-accent: 320 75% 65%;
-    --female-glow: 330 90% 70%;
+    --female-secondary: 335 75% 55%;
+    --female-accent: 320 80% 70%;
+    --female-glow: 330 90% 75%;
+    --female-background: 330 40% 8%;
+    --female-card: 330 50% 18%;
+    --female-border: 330 50% 30%;
+    --female-muted: 330 30% 25%;
 
     /* Dynamic Theme (defaults to male) */
     --primary: var(--male-primary);
@@ -64,13 +68,23 @@
     --gradient-card: linear-gradient(135deg, hsl(210 95% 22%) 0%, hsl(210 95% 18%) 100%);
   }
 
-  /* Female Theme Override */
+  /* Female Theme Override - Pink Dominant */
   .theme-female {
+    --background: var(--female-background);
+    --card: var(--female-card);
+    --card-foreground: 60 43% 90%;
+    --popover: 330 45% 15%;
+    --popover-foreground: 60 43% 90%;
     --primary: var(--female-primary);
     --primary-foreground: var(--female-primary-foreground);
     --secondary: var(--female-secondary);
     --accent: var(--female-accent);
     --theme-glow: var(--female-glow);
+    --border: var(--female-border);
+    --input: 330 40% 20%;
+    --ring: var(--female-primary);
+    --muted: var(--female-muted);
+    --muted-foreground: 330 30% 65%;
   }
 }
 
@@ -82,8 +96,13 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(180deg, hsl(207 85% 8%) 0%, hsl(207 85% 4%) 100%);
+    background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.95) 100%);
     background-attachment: fixed;
+  }
+  
+  .theme-female body,
+  body.theme-female {
+    background: linear-gradient(180deg, hsl(330 40% 8%) 0%, hsl(330 35% 5%) 100%);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -119,6 +138,18 @@
   .animate-shake {
     animation: shake 0.5s ease-in-out;
   }
+  
+  .animate-bounce-in {
+    animation: bounceIn 0.5s ease-out;
+  }
+  
+  .animate-correct-flash {
+    animation: correctFlash 0.5s ease-out;
+  }
+  
+  .animate-incorrect-flash {
+    animation: incorrectFlash 0.5s ease-out;
+  }
 
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
@@ -136,8 +167,27 @@
 
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-10px); }
+    80% { transform: translateX(10px); }
+  }
+  
+  @keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.1); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes correctFlash {
+    0%, 100% { box-shadow: 0 0 0 rgba(34, 197, 94, 0); }
+    50% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.6); }
+  }
+  
+  @keyframes incorrectFlash {
+    0%, 100% { box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
+    50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.6); }
   }
 }
 
