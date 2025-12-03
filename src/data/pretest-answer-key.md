@@ -1,106 +1,123 @@
 # Pre-Test Answer Key
 
 Use this guide for testing. Each law has 5 questions.
+Questions are RANDOMIZED on each attempt - use the question text to find the correct answer!
 
 ---
 
-## Product of Powers (product)
-| # | Question | Options | Correct Answer | Index |
-|---|----------|---------|----------------|-------|
-| 1 | Simplify: 3² × 3⁴ | A) 3⁶, B) 3⁸, C) 9⁶, D) 9⁸ | 3⁶ | A (0) |
-| 2 | Simplify: a³ × a⁵ | A) a⁸, B) a¹⁵, C) a², D) 2a⁸ | a⁸ | A (0) |
-| 3 | Simplify: x × x⁴ | A) x⁴, B) x⁵, C) x, D) 2x⁵ | x⁵ | B (1) |
-| 4 | Simplify: 7² × 7³ | A) 7⁵, B) 14⁵, C) 49⁵, D) 7⁶ | 7⁵ | A (0) |
-| 5 | Simplify: y² × y² × y | A) y⁴, B) y⁵, C) 3y⁵, D) y⁶ | y⁵ | B (1) |
+## 1. Product of Powers (Law ID: product)
+| Q# | Question | A | B | C | D | ✓ Answer |
+|----|----------|---|---|---|---|----------|
+| 1 | Simplify: 3² × 3⁴ | 3⁶ | 3⁸ | 9⁶ | 9⁸ | **A (3⁶)** |
+| 2 | Simplify: a³ × a⁵ | a⁸ | a¹⁵ | a² | 2a⁸ | **A (a⁸)** |
+| 3 | Simplify: x × x⁴ | x⁴ | x⁵ | x | 2x⁵ | **B (x⁵)** |
+| 4 | Simplify: 7² × 7³ | 7⁵ | 14⁵ | 49⁵ | 7⁶ | **A (7⁵)** |
+| 5 | Simplify: y² × y² × y | y⁴ | y⁵ | 3y⁵ | y⁶ | **B (y⁵)** |
 
 ---
 
-## Quotient of Powers (quotient)
-| # | Question | Options | Correct Answer | Index |
-|---|----------|---------|----------------|-------|
-| 1 | Simplify: x⁸ ÷ x³ | A) x⁵, B) x¹¹, C) x²⁴, D) 5x | x⁵ | A (0) |
-| 2 | Simplify: 5⁷ ÷ 5² | A) 5⁵, B) 5⁹, C) 25⁵, D) 5¹⁴ | 5⁵ | A (0) |
-| 3 | Simplify: a¹⁰ ÷ a⁴ | A) a⁶, B) a¹⁴, C) a⁴⁰, D) 6a | a⁶ | A (0) |
-| 4 | Simplify: m⁹ ÷ m⁹ | A) m⁰, B) 1, C) 0, D) m | 1 | B (1) |
-| 5 | Simplify: y¹² ÷ y⁵ | A) y⁷, B) y¹⁷, C) y⁶⁰, D) 7y | y⁷ | A (0) |
+## 2. Quotient of Powers (Law ID: quotient)
+| Q# | Question | A | B | C | D | ✓ Answer |
+|----|----------|---|---|---|---|----------|
+| 1 | Simplify: x⁸ ÷ x³ | x⁵ | x¹¹ | x²⁴ | 5x | **A (x⁵)** |
+| 2 | Simplify: 5⁷ ÷ 5² | 5⁵ | 5⁹ | 25⁵ | 5¹⁴ | **A (5⁵)** |
+| 3 | Simplify: a¹⁰ ÷ a⁴ | a⁶ | a¹⁴ | a⁴⁰ | 6a | **A (a⁶)** |
+| 4 | Simplify: m⁹ ÷ m⁹ | m⁰ | 1 | 0 | m | **B (1)** |
+| 5 | Simplify: y¹² ÷ y⁵ | y⁷ | y¹⁷ | y⁶⁰ | 7y | **A (y⁷)** |
 
 ---
 
-## Power of a Power (power)
-| # | Question | Options | Correct Answer | Index |
-|---|----------|---------|----------------|-------|
-| 1 | Simplify: (x³)⁴ | A) x⁷, B) x¹², C) x⁸¹, D) 4x³ | x¹² | B (1) |
-| 2 | Simplify: (2²)³ | A) 2⁵, B) 2⁶, C) 4³, D) 8 | 2⁶ | B (1) |
-| 3 | Simplify: (a⁴)² | A) a⁶, B) a⁸, C) a¹⁶, D) 2a⁴ | a⁸ | B (1) |
-| 4 | Simplify: (5³)² | A) 5⁵, B) 5⁶, C) 25⁶, D) 10⁶ | 5⁶ | B (1) |
-| 5 | Simplify: (y²)⁵ | A) y⁷, B) y¹⁰, C) y³², D) 5y² | y¹⁰ | B (1) |
+## 3. Power of a Power (Law ID: power)
+| Q# | Question | A | B | C | D | ✓ Answer |
+|----|----------|---|---|---|---|----------|
+| 1 | Simplify: (x³)⁴ | x⁷ | x¹² | x⁸¹ | 4x³ | **B (x¹²)** |
+| 2 | Simplify: (2²)³ | 2⁵ | 2⁶ | 4³ | 8 | **B (2⁶)** |
+| 3 | Simplify: (a⁴)² | a⁶ | a⁸ | a¹⁶ | 2a⁴ | **B (a⁸)** |
+| 4 | Simplify: (5³)² | 5⁵ | 5⁶ | 25⁶ | 10⁶ | **B (5⁶)** |
+| 5 | Simplify: (y²)⁵ | y⁷ | y¹⁰ | y³² | 5y² | **B (y¹⁰)** |
 
 ---
 
-## Zero Exponent Rule (zero)
-| # | Question | Options | Correct Answer | Index |
-|---|----------|---------|----------------|-------|
-| 1 | What is 10⁰? | A) 0, B) 1, C) 10, D) Undefined | 1 | B (1) |
-| 2 | What is (-5)⁰? | A) 0, B) 1, C) -5, D) -1 | 1 | B (1) |
-| 3 | What is (xyz)⁰? | A) 0, B) 1, C) xyz, D) x⁰y⁰z⁰ | 1 | B (1) |
-| 4 | What is (2 + 3)⁰? | A) 0, B) 1, C) 5, D) 2⁰ + 3⁰ | 1 | B (1) |
-| 5 | What is 1000⁰? | A) 0, B) 1, C) 1000, D) 100 | 1 | B (1) |
+## 4. Zero Exponent Rule (Law ID: zero)
+| Q# | Question | A | B | C | D | ✓ Answer |
+|----|----------|---|---|---|---|----------|
+| 1 | What is 10⁰? | 0 | 1 | 10 | Undefined | **B (1)** |
+| 2 | What is (-5)⁰? | 0 | 1 | -5 | -1 | **B (1)** |
+| 3 | What is (xyz)⁰? | 0 | 1 | xyz | x⁰y⁰z⁰ | **B (1)** |
+| 4 | What is (2 + 3)⁰? | 0 | 1 | 5 | 2⁰ + 3⁰ | **B (1)** |
+| 5 | What is 1000⁰? | 0 | 1 | 1000 | 100 | **B (1)** |
 
 ---
 
-## Negative Exponent Rule (negative)
-| # | Question | Options | Correct Answer | Index |
-|---|----------|---------|----------------|-------|
-| 1 | Simplify: 5⁻² | A) -10, B) 1/25, C) -25, D) 1/10 | 1/25 | B (1) |
-| 2 | Simplify: x⁻³ | A) -3x, B) 1/x³, C) -x³, D) x/3 | 1/x³ | B (1) |
-| 3 | Simplify: 2⁻⁴ | A) -8, B) 1/16, C) -16, D) 1/8 | 1/16 | B (1) |
-| 4 | Simplify: 10⁻¹ | A) -10, B) 1/10, C) -1/10, D) 0.1 | 1/10 | B (1) |
-| 5 | Simplify: a⁻⁵ | A) -5a, B) 1/a⁵, C) -a⁵, D) a/5 | 1/a⁵ | B (1) |
+## 5. Negative Exponent Rule (Law ID: negative)
+| Q# | Question | A | B | C | D | ✓ Answer |
+|----|----------|---|---|---|---|----------|
+| 1 | Simplify: 5⁻² | -10 | 1/25 | -25 | 1/10 | **B (1/25)** |
+| 2 | Simplify: x⁻³ | -3x | 1/x³ | -x³ | x/3 | **B (1/x³)** |
+| 3 | Simplify: 2⁻⁴ | -8 | 1/16 | -16 | 1/8 | **B (1/16)** |
+| 4 | Simplify: 10⁻¹ | -10 | 1/10 | -1/10 | 0.1 | **B (1/10)** |
+| 5 | Simplify: a⁻⁵ | -5a | 1/a⁵ | -a⁵ | a/5 | **B (1/a⁵)** |
 
 ---
 
-## Power of a Product (productpower)
-| # | Question | Options | Correct Answer | Index |
-|---|----------|---------|----------------|-------|
-| 1 | Simplify: (3 × 4)² | A) 3² × 4², B) 7², C) 12², D) 24 | 3² × 4² | A (0) |
-| 2 | Simplify: (xy)³ | A) x³y³, B) x³ + y³, C) 3xy, D) (x + y)³ | x³y³ | A (0) |
-| 3 | Simplify: (2a)⁴ | A) 2a⁴, B) 8a⁴, C) 2⁴a⁴, D) 16a | 2⁴a⁴ | C (2) |
-| 4 | Simplify: (5m)² | A) 5m², B) 10m², C) 25m², D) 5²m² | 5²m² | D (3) |
-| 5 | Simplify: (abc)² | A) a²b²c², B) 2abc, C) (a + b + c)², D) abc² | a²b²c² | A (0) |
+## 6. Power of a Product (Law ID: product-power)
+| Q# | Question | A | B | C | D | ✓ Answer |
+|----|----------|---|---|---|---|----------|
+| 1 | Simplify: (3 × 4)² | 3² × 4² | 7² | 12² | 24 | **A (3² × 4²)** |
+| 2 | Simplify: (xy)³ | x³y³ | x³ + y³ | 3xy | (x + y)³ | **A (x³y³)** |
+| 3 | Simplify: (2a)⁴ | 2a⁴ | 8a⁴ | 2⁴a⁴ | 16a | **C (2⁴a⁴)** |
+| 4 | Simplify: (5m)² | 5m² | 10m² | 25m² | 5²m² | **D (5²m²)** |
+| 5 | Simplify: (abc)² | a²b²c² | 2abc | (a + b + c)² | abc² | **A (a²b²c²)** |
 
 ---
 
-## Power of a Quotient (quotientpower)
-| # | Question | Options | Correct Answer | Index |
-|---|----------|---------|----------------|-------|
-| 1 | Simplify: (6/2)³ | A) 6³/2³, B) 3³, C) 18, D) Both A and B | Both A and B | D (3) |
-| 2 | Simplify: (a/b)² | A) a²/b, B) a/b², C) a²/b², D) 2a/b | a²/b² | C (2) |
-| 3 | Simplify: (x/y)⁴ | A) x⁴/y, B) x/y⁴, C) x⁴/y⁴, D) 4x/y | x⁴/y⁴ | C (2) |
-| 4 | Simplify: (8/4)² | A) 8²/4², B) 2², C) 4, D) Both A and C | Both A and C | D (3) |
-| 5 | Simplify: (m/n)³ | A) m³/n, B) m/n³, C) m³/n³, D) 3m/n | m³/n³ | C (2) |
+## 7. Power of a Quotient (Law ID: quotient-power)
+| Q# | Question | A | B | C | D | ✓ Answer |
+|----|----------|---|---|---|---|----------|
+| 1 | Simplify: (6/2)³ | 6³/2³ | 3³ | 18 | Both A and B | **D (Both A and B)** |
+| 2 | Simplify: (a/b)² | a²/b | a/b² | a²/b² | 2a/b | **C (a²/b²)** |
+| 3 | Simplify: (x/y)⁴ | x⁴/y | x/y⁴ | x⁴/y⁴ | 4x/y | **C (x⁴/y⁴)** |
+| 4 | Simplify: (8/4)² | 8²/4² | 2² | 4 | Both A and C | **D (Both A and C)** |
+| 5 | Simplify: (m/n)³ | m³/n | m/n³ | m³/n³ | 3m/n | **C (m³/n³)** |
 
 ---
 
-## Identity Exponent Rule (identity)
-| # | Question | Options | Correct Answer | Index |
-|---|----------|---------|----------------|-------|
-| 1 | What is 7¹? | A) 7, B) 1, C) 0, D) 7² | 7 | A (0) |
-| 2 | What is x¹? | A) x, B) 1, C) 0, D) x² | x | A (0) |
-| 3 | What is 100¹? | A) 100, B) 1, C) 0, D) 10 | 100 | A (0) |
-| 4 | What is (abc)¹? | A) abc, B) 1, C) 0, D) a + b + c | abc | A (0) |
-| 5 | What is 1¹? | A) 1, B) 0, C) 2, D) Undefined | 1 | A (0) |
+## 8. Identity Exponent Rule (Law ID: identity)
+| Q# | Question | A | B | C | D | ✓ Answer |
+|----|----------|---|---|---|---|----------|
+| 1 | What is 7¹? | 7 | 1 | 0 | 7² | **A (7)** |
+| 2 | What is x¹? | x | 1 | 0 | x² | **A (x)** |
+| 3 | What is 100¹? | 100 | 1 | 0 | 10 | **A (100)** |
+| 4 | What is (abc)¹? | abc | 1 | 0 | a + b + c | **A (abc)** |
+| 5 | What is 1¹? | 1 | 0 | 2 | Undefined | **A (1)** |
 
 ---
 
-## Quick Reference by Law (Questions are randomized!)
+# Quick Testing Guide
 
-- **Product of Powers**: A, A, B, A, B
+## Pre-Test Answer Patterns (Questions are randomized!)
+- **Product of Powers**: A, A, B, A, B (look at question text)
 - **Quotient of Powers**: A, A, A, B, A
-- **Power of a Power**: B, B, B, B, B
-- **Zero Exponent**: B, B, B, B, B
-- **Negative Exponent**: B, B, B, B, B
+- **Power of a Power**: B, B, B, B, B (always B!)
+- **Zero Exponent**: B, B, B, B, B (always B = 1!)
+- **Negative Exponent**: B, B, B, B, B (always B = reciprocal!)
 - **Power of Product**: A, A, C, D, A
 - **Power of Quotient**: D, C, C, D, C
-- **Identity Exponent**: A, A, A, A, A
+- **Identity Exponent**: A, A, A, A, A (always A!)
 
-**Note**: Questions are RANDOMIZED on each attempt, so use the question text to identify the correct answer!
+## Key Rules to Remember:
+1. **Product**: Add exponents (aᵐ × aⁿ = aᵐ⁺ⁿ)
+2. **Quotient**: Subtract exponents (aᵐ ÷ aⁿ = aᵐ⁻ⁿ)
+3. **Power of Power**: Multiply exponents ((aᵐ)ⁿ = aᵐⁿ)
+4. **Zero**: Any number⁰ = 1
+5. **Negative**: a⁻ⁿ = 1/aⁿ
+6. **Product Power**: (ab)ⁿ = aⁿbⁿ
+7. **Quotient Power**: (a/b)ⁿ = aⁿ/bⁿ
+8. **Identity**: a¹ = a
+
+---
+
+# Quiz Answer Guidelines (Easy/Medium/Hard)
+
+The quiz pulls 50 random questions from 150 per difficulty level.
+All questions follow the same exponent laws - use the rules above!
