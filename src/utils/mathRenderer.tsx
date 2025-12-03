@@ -6,24 +6,32 @@ import katex from 'katex';
 export function textToLatex(text: string): string {
   let latex = text;
   
-  // Convert superscripts
+  // Map Unicode superscript digits to regular digits
+  const superscriptMap: Record<string, string> = {
+    '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+    '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9'
+  };
+  
+  // Handle negative exponents with Unicode superscripts (e.g., x⁻³ → x^{-3})
+  latex = latex.replace(/([a-zA-Z0-9\)]+)⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
+    const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');
+    return `${base}^{-${expDigits}}`;
+  });
+  
+  // Handle positive exponents with Unicode superscripts (e.g., x² → x^{2})
+  latex = latex.replace(/([a-zA-Z0-9\)]+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
+    const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');
+    return `${base}^{${expDigits}}`;
+  });
+  
+  // Convert caret superscripts (e.g., x^12 → x^{12})
   latex = latex.replace(/([a-zA-Z0-9]+)\^([0-9]+)/g, '$1^{$2}');
-  latex = latex.replace(/([a-zA-Z0-9]+)⁰/g, '$1^{0}');
-  latex = latex.replace(/([a-zA-Z0-9]+)¹/g, '$1^{1}');
-  latex = latex.replace(/([a-zA-Z0-9]+)²/g, '$1^{2}');
-  latex = latex.replace(/([a-zA-Z0-9]+)³/g, '$1^{3}');
-  latex = latex.replace(/([a-zA-Z0-9]+)⁴/g, '$1^{4}');
-  latex = latex.replace(/([a-zA-Z0-9]+)⁵/g, '$1^{5}');
-  latex = latex.replace(/([a-zA-Z0-9]+)⁶/g, '$1^{6}');
-  latex = latex.replace(/([a-zA-Z0-9]+)⁷/g, '$1^{7}');
-  latex = latex.replace(/([a-zA-Z0-9]+)⁸/g, '$1^{8}');
-  latex = latex.replace(/([a-zA-Z0-9]+)⁹/g, '$1^{9}');
-  latex = latex.replace(/([a-zA-Z0-9]+)⁻([0-9]+)/g, '$1^{-$2}');
+  latex = latex.replace(/([a-zA-Z0-9]+)\^-([0-9]+)/g, '$1^{-$2}');
   
   // Convert subscripts
   latex = latex.replace(/([a-zA-Z])_([0-9]+)/g, '$1_{$2}');
   
-  // Convert division
+  // Convert division - handle fractions like a/b
   latex = latex.replace(/\//g, ' \\div ');
   
   // Convert multiplication
