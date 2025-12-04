@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { GemDisplay } from '@/components/GemDisplay';
+import GameMap from '@/components/GameMap';
 import { MathText } from '@/utils/mathRenderer';
 import { Lock, CheckCircle, Sparkles, ArrowRight, Swords, Trophy, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -73,6 +74,21 @@ const Laws = () => {
             </Button>
           </div>
           <GemDisplay className="justify-center mb-6" />
+        </motion.div>
+
+        {/* Game Progress Map */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-12"
+        >
+          <Card className="p-6 bg-card/80 backdrop-blur-sm border-2 border-primary/20">
+            <h2 className="text-xl font-orbitron font-bold text-center mb-4 text-foreground">
+              Your Journey
+            </h2>
+            <GameMap />
+          </Card>
         </motion.div>
 
         {/* Laws Grid */}
