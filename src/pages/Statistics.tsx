@@ -16,7 +16,8 @@ import {
   ArrowLeft,
   TrendingUp,
   CheckCircle,
-  Sparkles
+  Sparkles,
+  FileText
 } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -59,7 +60,7 @@ const Statistics = () => {
   const quizScoresData = quizLevels.map(level => ({
     name: level.name,
     bestScore: level.score || 0,
-    attempts: level.attempts
+    attempts: level.attempts.length
   }));
 
   // Achievement badges
@@ -151,7 +152,13 @@ const Statistics = () => {
                 Your journey through Exponentia
               </p>
             </div>
-            <GemDisplay />
+            <div className="flex items-center gap-3">
+              <GemDisplay />
+              <Button onClick={() => navigate('/report')} className="gap-2">
+                <FileText className="w-4 h-4" />
+                View Report
+              </Button>
+            </div>
           </div>
         </motion.div>
 
@@ -402,7 +409,7 @@ const Statistics = () => {
                       <div>
                         <h3 className="font-bold">{level.name}</h3>
                         <p className="text-sm text-muted-foreground">
-                          {level.attempts} attempt{level.attempts !== 1 ? 's' : ''}
+                          {level.attempts.length} attempt{level.attempts.length !== 1 ? 's' : ''}
                         </p>
                       </div>
                     </div>
