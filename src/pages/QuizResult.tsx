@@ -162,7 +162,7 @@ export default function QuizResult() {
 
         {/* Attempt Counter */}
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          Attempt #{currentLevel.attempts}
+          Attempt #{currentLevel.attempts.length}
         </div>
       </Card>
     </div>

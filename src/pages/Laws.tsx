@@ -244,9 +244,9 @@ const Laws = () => {
                                 Best Score: <span className="font-bold text-foreground">{level.score}%</span>
                               </span>
                             )}
-                            {level.attempts > 0 && (
+                            {level.attempts.length > 0 && (
                               <span className="text-sm text-muted-foreground">
-                                Attempts: {level.attempts}
+                                Attempts: {level.attempts.length}/3
                               </span>
                             )}
                           </div>
@@ -262,7 +262,7 @@ const Laws = () => {
                           disabled={!level.unlocked}
                           size="sm"
                         >
-                          {level.completed ? 'Retry' : level.attempts > 0 ? 'Try Again' : 'Start Battle'}
+                          {level.completed ? 'Retry' : level.attempts.length > 0 ? 'Try Again' : 'Start Battle'}
                         </Button>
                       </div>
                     </div>
