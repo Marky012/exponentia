@@ -2841,6 +2841,41 @@
         "options": ["y⁴", "y⁵", "3y⁵", "y⁶"],
         "correctIndex": 1,
         "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P006",
+        "question": "Simplify: 5³ × 5²",
+        "options": ["5⁵", "5⁶", "25⁵", "10⁵"],
+        "correctIndex": 0,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P007",
+        "question": "Simplify: m⁴ × m⁶",
+        "options": ["m¹⁰", "m²⁴", "2m¹⁰", "m²"],
+        "correctIndex": 0,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P008",
+        "question": "Simplify: 2⁵ × 2³",
+        "options": ["2⁸", "2¹⁵", "4⁸", "16"],
+        "correctIndex": 0,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P009",
+        "question": "Simplify: b × b × b²",
+        "options": ["b³", "b⁴", "3b²", "b⁵"],
+        "correctIndex": 1,
+        "lawTested": "Product of Powers"
+      },
+      {
+        "id": "PT_P010",
+        "question": "Simplify: 4² × 4¹",
+        "options": ["4³", "4²", "8²", "16"],
+        "correctIndex": 0,
+        "lawTested": "Product of Powers"
       }
     ],
     "quotient": [
@@ -2877,6 +2912,41 @@
         "question": "Simplify: y¹² ÷ y⁵",
         "options": ["y⁷", "y¹⁷", "y⁶⁰", "7y"],
         "correctIndex": 0,
+        "lawTested": "Quotient of Powers"
+      },
+      {
+        "id": "PT_Q006",
+        "question": "Simplify: 8⁶ ÷ 8²",
+        "options": ["8⁴", "8⁸", "8¹²", "64"],
+        "correctIndex": 0,
+        "lawTested": "Quotient of Powers"
+      },
+      {
+        "id": "PT_Q007",
+        "question": "Simplify: n¹⁵ ÷ n⁸",
+        "options": ["n⁷", "n²³", "n¹²⁰", "7n"],
+        "correctIndex": 0,
+        "lawTested": "Quotient of Powers"
+      },
+      {
+        "id": "PT_Q008",
+        "question": "Simplify: 3⁹ ÷ 3⁴",
+        "options": ["3⁵", "3¹³", "9⁵", "27"],
+        "correctIndex": 0,
+        "lawTested": "Quotient of Powers"
+      },
+      {
+        "id": "PT_Q009",
+        "question": "Simplify: z²⁰ ÷ z¹⁰",
+        "options": ["z¹⁰", "z³⁰", "z²⁰⁰", "10z"],
+        "correctIndex": 0,
+        "lawTested": "Quotient of Powers"
+      },
+      {
+        "id": "PT_Q010",
+        "question": "Simplify: 6⁵ ÷ 6³",
+        "options": ["6²", "6⁸", "36", "Both A and C"],
+        "correctIndex": 3,
         "lawTested": "Quotient of Powers"
       }
     ],
@@ -2915,6 +2985,41 @@
         "options": ["y⁷", "y¹⁰", "y³²", "5y²"],
         "correctIndex": 1,
         "lawTested": "Power of a Power"
+      },
+      {
+        "id": "PT_PP006",
+        "question": "Simplify: (3²)⁴",
+        "options": ["3⁶", "3⁸", "9⁴", "Both A and C"],
+        "correctIndex": 1,
+        "lawTested": "Power of a Power"
+      },
+      {
+        "id": "PT_PP007",
+        "question": "Simplify: (m⁵)³",
+        "options": ["m⁸", "m¹⁵", "m¹²⁵", "3m⁵"],
+        "correctIndex": 1,
+        "lawTested": "Power of a Power"
+      },
+      {
+        "id": "PT_PP008",
+        "question": "Simplify: (7¹)⁶",
+        "options": ["7⁶", "7⁷", "42", "7"],
+        "correctIndex": 0,
+        "lawTested": "Power of a Power"
+      },
+      {
+        "id": "PT_PP009",
+        "question": "Simplify: (n³)³",
+        "options": ["n⁶", "n⁹", "n²⁷", "3n³"],
+        "correctIndex": 1,
+        "lawTested": "Power of a Power"
+      },
+      {
+        "id": "PT_PP010",
+        "question": "Simplify: (4²)²",
+        "options": ["4⁴", "4⁸", "16²", "Both A and C"],
+        "correctIndex": 3,
+        "lawTested": "Power of a Power"
       }
     ],
     "zero": [
@@ -2952,6 +3057,41 @@
         "options": ["0", "1", "1000", "100"],
         "correctIndex": 1,
         "lawTested": "Zero Exponent Rule"
+      },
+      {
+        "id": "PT_Z006",
+        "question": "What is 7⁰?",
+        "options": ["7", "0", "1", "49"],
+        "correctIndex": 2,
+        "lawTested": "Zero Exponent Rule"
+      },
+      {
+        "id": "PT_Z007",
+        "question": "What is (a²b³)⁰?",
+        "options": ["a²b³", "0", "1", "a⁰b⁰"],
+        "correctIndex": 2,
+        "lawTested": "Zero Exponent Rule"
+      },
+      {
+        "id": "PT_Z008",
+        "question": "What is 99⁰?",
+        "options": ["99", "0", "1", "Undefined"],
+        "correctIndex": 2,
+        "lawTested": "Zero Exponent Rule"
+      },
+      {
+        "id": "PT_Z009",
+        "question": "What is (5 × 6)⁰?",
+        "options": ["30", "0", "1", "5⁰ × 6⁰"],
+        "correctIndex": 2,
+        "lawTested": "Zero Exponent Rule"
+      },
+      {
+        "id": "PT_Z010",
+        "question": "Simplify: x⁵ × x⁰",
+        "options": ["x⁵", "0", "x", "x⁰"],
+        "correctIndex": 0,
+        "lawTested": "Zero Exponent Rule"
       }
     ],
     "negative": [
@@ -2987,6 +3127,41 @@
         "id": "PT_N005",
         "question": "Simplify: a⁻⁵",
         "options": ["-5a", "1/a⁵", "-a⁵", "a/5"],
+        "correctIndex": 1,
+        "lawTested": "Negative Exponent Rule"
+      },
+      {
+        "id": "PT_N006",
+        "question": "Simplify: 3⁻²",
+        "options": ["1/9", "-6", "-9", "1/6"],
+        "correctIndex": 0,
+        "lawTested": "Negative Exponent Rule"
+      },
+      {
+        "id": "PT_N007",
+        "question": "Simplify: m⁻¹",
+        "options": ["-m", "1/m", "-1/m", "m"],
+        "correctIndex": 1,
+        "lawTested": "Negative Exponent Rule"
+      },
+      {
+        "id": "PT_N008",
+        "question": "Simplify: 4⁻³",
+        "options": ["1/64", "-12", "-64", "1/12"],
+        "correctIndex": 0,
+        "lawTested": "Negative Exponent Rule"
+      },
+      {
+        "id": "PT_N009",
+        "question": "What is the value of 6⁻¹?",
+        "options": ["-6", "6", "1/6", "-1/6"],
+        "correctIndex": 2,
+        "lawTested": "Negative Exponent Rule"
+      },
+      {
+        "id": "PT_N010",
+        "question": "Simplify: y⁻²",
+        "options": ["-2y", "1/y²", "-y²", "y/2"],
         "correctIndex": 1,
         "lawTested": "Negative Exponent Rule"
       }
@@ -3026,6 +3201,41 @@
         "options": ["a²b²c²", "2abc", "(a + b + c)²", "abc²"],
         "correctIndex": 0,
         "lawTested": "Power of a Product"
+      },
+      {
+        "id": "PT_PRP006",
+        "question": "Simplify: (2 × 5)³",
+        "options": ["2³ × 5³", "7³", "10³", "30"],
+        "correctIndex": 0,
+        "lawTested": "Power of a Product"
+      },
+      {
+        "id": "PT_PRP007",
+        "question": "Simplify: (3x)²",
+        "options": ["3x²", "6x²", "9x²", "3²x²"],
+        "correctIndex": 3,
+        "lawTested": "Power of a Product"
+      },
+      {
+        "id": "PT_PRP008",
+        "question": "Simplify: (ab)⁴",
+        "options": ["a⁴b⁴", "4ab", "a⁴ + b⁴", "(a + b)⁴"],
+        "correctIndex": 0,
+        "lawTested": "Power of a Product"
+      },
+      {
+        "id": "PT_PRP009",
+        "question": "Simplify: (4y)³",
+        "options": ["4y³", "12y³", "64y³", "4³y³"],
+        "correctIndex": 3,
+        "lawTested": "Power of a Product"
+      },
+      {
+        "id": "PT_PRP010",
+        "question": "Simplify: (mn)⁵",
+        "options": ["m⁵n⁵", "5mn", "m⁵ + n⁵", "(m + n)⁵"],
+        "correctIndex": 0,
+        "lawTested": "Power of a Product"
       }
     ],
     "quotientpower": [
@@ -3063,6 +3273,41 @@
         "options": ["m³/n", "m/n³", "m³/n³", "3m/n"],
         "correctIndex": 2,
         "lawTested": "Power of a Quotient"
+      },
+      {
+        "id": "PT_QPW006",
+        "question": "Simplify: (10/5)²",
+        "options": ["10²/5²", "2²", "4", "All of the above"],
+        "correctIndex": 3,
+        "lawTested": "Power of a Quotient"
+      },
+      {
+        "id": "PT_QPW007",
+        "question": "Simplify: (p/q)⁵",
+        "options": ["p⁵/q⁵", "p⁵/q", "p/q⁵", "5p/q"],
+        "correctIndex": 0,
+        "lawTested": "Power of a Quotient"
+      },
+      {
+        "id": "PT_QPW008",
+        "question": "Simplify: (12/3)²",
+        "options": ["12²/3²", "4²", "16", "All of the above"],
+        "correctIndex": 3,
+        "lawTested": "Power of a Quotient"
+      },
+      {
+        "id": "PT_QPW009",
+        "question": "Simplify: (a/2)³",
+        "options": ["a³/2³", "a³/8", "a³/2", "Both A and B"],
+        "correctIndex": 3,
+        "lawTested": "Power of a Quotient"
+      },
+      {
+        "id": "PT_QPW010",
+        "question": "Simplify: (9/3)³",
+        "options": ["9³/3³", "3³", "27", "All of the above"],
+        "correctIndex": 3,
+        "lawTested": "Power of a Quotient"
       }
     ],
     "identity": [
@@ -3098,6 +3343,41 @@
         "id": "PT_I005",
         "question": "What is 1¹?",
         "options": ["1", "0", "2", "Undefined"],
+        "correctIndex": 0,
+        "lawTested": "Identity Exponent Rule"
+      },
+      {
+        "id": "PT_I006",
+        "question": "What is 25¹?",
+        "options": ["25", "1", "5", "625"],
+        "correctIndex": 0,
+        "lawTested": "Identity Exponent Rule"
+      },
+      {
+        "id": "PT_I007",
+        "question": "What is (m + n)¹?",
+        "options": ["m + n", "1", "mn", "m¹ + n¹"],
+        "correctIndex": 0,
+        "lawTested": "Identity Exponent Rule"
+      },
+      {
+        "id": "PT_I008",
+        "question": "What is 50¹?",
+        "options": ["50", "1", "5", "500"],
+        "correctIndex": 0,
+        "lawTested": "Identity Exponent Rule"
+      },
+      {
+        "id": "PT_I009",
+        "question": "What is y¹?",
+        "options": ["y", "1", "0", "y²"],
+        "correctIndex": 0,
+        "lawTested": "Identity Exponent Rule"
+      },
+      {
+        "id": "PT_I010",
+        "question": "Simplify: a¹ × a¹",
+        "options": ["a²", "a¹", "2a", "a"],
         "correctIndex": 0,
         "lawTested": "Identity Exponent Rule"
       }

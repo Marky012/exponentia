@@ -58,6 +58,18 @@ const PreTest = () => {
     return shuffled;
   };
 
+  // Shuffle options for a question while tracking correct answer
+  const shuffleQuestionOptions = (q: Question): Question => {
+    const optionsWithIndices = q.options.map((opt, idx) => ({ opt, isCorrect: idx === q.correctIndex }));
+    const shuffledOptions = shuffleArray(optionsWithIndices);
+    const newCorrectIndex = shuffledOptions.findIndex(o => o.isCorrect);
+    return {
+      ...q,
+      options: shuffledOptions.map(o => o.opt),
+      correctIndex: newCorrectIndex
+    };
+  };
+
   useEffect(() => {
     if (!law || !lawId) {
       navigate('/laws');
@@ -69,9 +81,10 @@ const PreTest = () => {
     const preTestQuestions = preTestKey ? (questionsData.preTest as Record<string, Question[]>)[preTestKey] : null;
     
     if (preTestQuestions && preTestQuestions.length >= 5) {
-      // Shuffle questions for randomization
-      const shuffled = shuffleArray(preTestQuestions).slice(0, 5);
-      setQuestions(shuffled);
+      // Shuffle questions and their options for randomization
+      const shuffledQuestions = shuffleArray(preTestQuestions).slice(0, 5);
+      const questionsWithShuffledOptions = shuffledQuestions.map(shuffleQuestionOptions);
+      setQuestions(questionsWithShuffledOptions);
     } else {
       toast.error('Pre-test questions not available for this law');
       navigate('/laws');
@@ -133,13 +146,14 @@ const PreTest = () => {
   };
 
   const handleRetry = () => {
-    // Map lawId to the correct preTest key and reshuffle
+    // Map lawId to the correct preTest key and reshuffle with shuffled options
     const preTestKey = lawIdToPreTestKey[lawId || ''];
     const preTestQuestions = preTestKey ? (questionsData.preTest as Record<string, Question[]>)[preTestKey] : null;
     
     if (preTestQuestions && preTestQuestions.length >= 5) {
-      const shuffled = shuffleArray(preTestQuestions).slice(0, 5);
-      setQuestions(shuffled);
+      const shuffledQuestions = shuffleArray(preTestQuestions).slice(0, 5);
+      const questionsWithShuffledOptions = shuffledQuestions.map(shuffleQuestionOptions);
+      setQuestions(questionsWithShuffledOptions);
     }
     
     setCurrentQuestionIndex(0);
@@ -258,7 +272,7 @@ const PreTest = () => {
 
   return (
     <div 
-      className="min-h-screen p-4 md:p-8 bg-cover bg-center bg-no-repeat"
+      className="min-h-screen p-3 sm:p-4 md:p-8 bg-cover bg-center bg-no-repeat"
       style={{ 
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url(${trainingArena})`
       }}
@@ -266,30 +280,31 @@ const PreTest = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div 
-          className="flex items-center justify-between mb-6"
+          className="flex items-center justify-between mb-4 sm:mb-6 gap-2"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
             <Button
               variant="outline"
               size="icon"
+              className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10"
               onClick={() => navigate('/laws')}
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
-            <div>
-              <h1 className="text-2xl font-orbitron font-bold text-glow">
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl font-orbitron font-bold text-glow truncate">
                 Pre-Test: {law.name}
               </h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Get 5/5 correct to earn the gem
               </p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Correct Answers</p>
-            <p className="text-2xl font-orbitron font-bold text-gem">
+          <div className="text-right flex-shrink-0">
+            <p className="text-xs sm:text-sm text-muted-foreground">Score</p>
+            <p className="text-xl sm:text-2xl font-orbitron font-bold text-gem">
               {correctAnswers}/5
             </p>
           </div>
@@ -319,18 +334,18 @@ const PreTest = () => {
             transition={{ duration: 0.3 }}
           >
             <Card className={cn(
-              "p-6 md:p-8 bg-card/80 backdrop-blur-sm border-2 transition-all duration-300",
+              "p-4 sm:p-6 md:p-8 bg-card/80 backdrop-blur-sm border-2 transition-all duration-300",
               lastAnswerCorrect === true && "border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.3)]",
               lastAnswerCorrect === false && "border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-shake",
               lastAnswerCorrect === null && "border-primary/20"
             )}>
-              <div className="mb-8">
-                <MathDisplay className="text-2xl text-center">
+              <div className="mb-4 sm:mb-8">
+                <MathDisplay className="text-lg sm:text-2xl text-center break-words">
                   {currentQuestion.question}
                 </MathDisplay>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                 {currentQuestion.options.map((option, index) => {
                   const isSelected = selectedAnswer === index;
                   const isCorrect = index === currentQuestion.correctIndex;
@@ -342,7 +357,7 @@ const PreTest = () => {
                       onClick={() => handleAnswerSelect(index)}
                       disabled={isAnswered}
                       className={cn(
-                        "p-6 rounded-lg border-2 transition-all duration-300 text-left relative overflow-hidden",
+                        "p-3 sm:p-6 rounded-lg border-2 transition-all duration-300 text-left relative overflow-hidden",
                         !isAnswered && "border-border hover:border-primary hover:bg-primary/10",
                         showFeedback && isSelected && isCorrect && "border-green-500 bg-green-500/20",
                         showFeedback && isSelected && !isCorrect && "border-red-500 bg-red-500/20",
@@ -365,21 +380,21 @@ const PreTest = () => {
                         />
                       )}
                       
-                      <div className="flex items-center gap-3 relative z-10">
+                      <div className="flex items-center gap-2 sm:gap-3 relative z-10">
                         <div className={cn(
-                          "w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold text-sm transition-all",
+                          "w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs sm:text-sm transition-all flex-shrink-0",
                           !isAnswered && "border-border",
                           showFeedback && isSelected && isCorrect && "border-green-500 bg-green-500 text-white",
                           showFeedback && isSelected && !isCorrect && "border-red-500 bg-red-500 text-white",
                           showFeedback && !isSelected && isCorrect && "border-green-500 text-green-500"
                         )}>
                           {showFeedback && isSelected ? (
-                            isCorrect ? <CheckCircle2 className="w-5 h-5" /> : <X className="w-5 h-5" />
+                            isCorrect ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <X className="w-4 h-4 sm:w-5 sm:h-5" />
                           ) : (
                             String.fromCharCode(65 + index)
                           )}
                         </div>
-                        <MathDisplay className="text-lg flex-1">
+                        <MathDisplay className="text-sm sm:text-lg flex-1 break-words">
                           {option}
                         </MathDisplay>
                       </div>

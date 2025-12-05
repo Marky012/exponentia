@@ -36,17 +36,39 @@ export default function Quiz() {
 
   const currentLevel = quizLevels.find(l => l.id === levelId);
 
+  // Shuffle array helper
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   useEffect(() => {
     if (!levelId || !currentLevel?.unlocked) {
       navigate('/laws');
       return;
     }
 
-    // Select 50 random questions from the pool of 150
+    // Select 50 random questions and shuffle their options
     const allQuestions = questionsData[levelId] as Question[];
-    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-    const selected = shuffled.slice(0, 50);
-    setQuestions(selected);
+    const shuffledQuestions = shuffleArray(allQuestions).slice(0, 50);
+    
+    // Shuffle options for each question while tracking correct answer
+    const questionsWithShuffledOptions = shuffledQuestions.map(q => {
+      const optionsWithIndices = q.options.map((opt, idx) => ({ opt, isCorrect: idx === q.correctIndex }));
+      const shuffledOptions = shuffleArray(optionsWithIndices);
+      const newCorrectIndex = shuffledOptions.findIndex(o => o.isCorrect);
+      return {
+        ...q,
+        options: shuffledOptions.map(o => o.opt),
+        correctIndex: newCorrectIndex
+      };
+    });
+    
+    setQuestions(questionsWithShuffledOptions);
   }, [levelId, currentLevel, navigate]);
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -150,20 +172,20 @@ export default function Quiz() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Swords className="w-6 h-6 text-primary" />
-              <div>
-                <h1 className="text-xl font-orbitron font-bold text-foreground">
-                  Battle: {currentLevel?.name} Level
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+              <Swords className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-xl font-orbitron font-bold text-foreground truncate">
+                  {currentLevel?.name} Battle
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">
                   vs {enemyNames[levelId!]}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
               <motion.div 
                 className="flex items-center gap-2"
                 animate={lastAnswerCorrect === true ? { scale: [1, 1.3, 1] } : {}}
@@ -192,7 +214,7 @@ export default function Quiz() {
       </motion.div>
 
       {/* Question Area */}
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-3xl">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentQuestionIndex}
@@ -202,34 +224,34 @@ export default function Quiz() {
             transition={{ duration: 0.3 }}
           >
             <Card className={cn(
-              "p-6 bg-card/80 backdrop-blur-sm border-2 transition-all duration-300",
+              "p-4 sm:p-6 bg-card/80 backdrop-blur-sm border-2 transition-all duration-300",
               lastAnswerCorrect === true && "border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.3)]",
               lastAnswerCorrect === false && "border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-shake",
               lastAnswerCorrect === null && "border-primary/20"
             )}>
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-foreground mb-2">
+              <div className="mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-2xl font-bold text-foreground mb-2 break-words">
                   <MathText>{currentQuestion.question}</MathText>
                 </h2>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Law: {currentQuestion.lawTested}
                 </p>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {currentQuestion.options.map((option, index) => {
                   const isSelected = selectedAnswer === index;
                   const isCorrect = index === currentQuestion.correctIndex;
                   const showCorrect = showFeedback && isCorrect;
                   const showIncorrect = showFeedback && isSelected && !isCorrect;
 
-                  return (
+                      return (
                     <motion.button
                       key={index}
                       onClick={() => handleAnswerSelect(index)}
                       disabled={showFeedback}
                       className={cn(
-                        "w-full p-4 rounded-lg border-2 transition-all text-left relative overflow-hidden",
+                        "w-full p-3 sm:p-4 rounded-lg border-2 transition-all text-left relative overflow-hidden",
                         showCorrect && "bg-green-500/20 border-green-500 text-green-400 font-bold",
                         showIncorrect && "bg-red-500/20 border-red-500 text-red-400",
                         !showFeedback && isSelected && "bg-primary/20 border-primary text-primary",
@@ -251,22 +273,22 @@ export default function Quiz() {
                         />
                       )}
                       
-                      <div className="flex items-center gap-3 relative z-10">
+                      <div className="flex items-center gap-2 sm:gap-3 relative z-10">
                         <span className={cn(
-                          "flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all",
+                          "flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full font-bold transition-all text-sm flex-shrink-0",
                           showCorrect && "bg-green-500 text-white",
                           showIncorrect && "bg-red-500 text-white",
                           !showFeedback && "bg-background/50"
                         )}>
                           {showFeedback && isSelected ? (
-                            isCorrect ? <CheckCircle2 className="w-5 h-5" /> : <X className="w-5 h-5" />
+                            isCorrect ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <X className="w-4 h-4 sm:w-5 sm:h-5" />
                           ) : showFeedback && isCorrect ? (
-                            <CheckCircle2 className="w-5 h-5" />
+                            <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
                           ) : (
                             String.fromCharCode(65 + index)
                           )}
                         </span>
-                        <span className="flex-1">
+                        <span className="flex-1 text-sm sm:text-base break-words">
                           <MathText>{option}</MathText>
                         </span>
                       </div>
