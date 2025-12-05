@@ -48,7 +48,7 @@ export default function Quiz() {
 
   useEffect(() => {
     if (!levelId || !currentLevel?.unlocked) {
-      navigate('/laws');
+      navigate('/quiz-arena');
       return;
     }
 

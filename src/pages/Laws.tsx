@@ -4,16 +4,14 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { GemDisplay } from '@/components/GemDisplay';
-import GameMap from '@/components/GameMap';
 import { MathText } from '@/utils/mathRenderer';
-import { Lock, CheckCircle, Sparkles, ArrowRight, Swords, Trophy, BarChart3 } from 'lucide-react';
+import { Lock, CheckCircle, Sparkles, ArrowLeft, Map } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getExponentiaBackground, getBackgroundOverlay } from '@/utils/backgroundTransition';
 
 const Laws = () => {
   const navigate = useNavigate();
-  const { laws, quizLevels, unlockQuizLevels } = useGameStore();
-  const allGemsEarned = laws.every((law) => law.gemEarned);
+  const { laws } = useGameStore();
   
   // Calculate gems collected for background transition
   const gemsCollected = laws.filter((law) => law.gemEarned).length;
@@ -33,10 +31,6 @@ const Laws = () => {
     }
   };
 
-  const handleUnlockQuizLevels = () => {
-    unlockQuizLevels();
-  };
-
   return (
     <motion.div 
       className="min-h-screen p-4 md:p-8 bg-cover bg-center bg-no-repeat transition-all duration-1000"
@@ -51,44 +45,30 @@ const Laws = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
-          className="text-center mb-8"
+          className="mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <div className="flex items-center justify-between mb-6">
-            <div className="flex-1">
-              <h1 className="text-4xl md:text-5xl font-orbitron font-black mb-3 text-glow">
-                The 8 Laws of Exponents
-              </h1>
-              <p className="text-muted-foreground text-lg">
-                Master each law to earn a Gem of Power
-              </p>
-            </div>
             <Button
-              variant="outline"
-              onClick={() => navigate('/statistics')}
+              variant="ghost"
+              onClick={() => navigate('/hub')}
               className="gap-2"
             >
-              <BarChart3 className="w-4 h-4" />
-              Statistics
+              <ArrowLeft className="w-4 h-4" />
+              Back to Map
             </Button>
+            <GemDisplay />
           </div>
-          <GemDisplay className="justify-center mb-6" />
-        </motion.div>
-
-        {/* Game Progress Map */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-12"
-        >
-          <Card className="p-6 bg-card/80 backdrop-blur-sm border-2 border-primary/20">
-            <h2 className="text-xl font-orbitron font-bold text-center mb-4 text-foreground">
-              Your Journey
-            </h2>
-            <GameMap />
-          </Card>
+          
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-orbitron font-black mb-3 text-glow">
+              Training Grounds
+            </h1>
+            <p className="text-muted-foreground">
+              Master each law to earn a Gem of Power
+            </p>
+          </div>
         </motion.div>
 
         {/* Laws Grid */}
@@ -166,109 +146,23 @@ const Laws = () => {
           ))}
         </div>
 
-        {/* Unlock Quiz Levels Button */}
-        {allGemsEarned && !quizLevels.some(l => l.unlocked) && (
+        {/* All gems collected message */}
+        {laws.every(law => law.gemEarned) && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center"
+            className="text-center mt-8"
           >
-            <Card className="p-8 bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-primary glow-strong">
-              <Sparkles className="w-16 h-16 text-gem mx-auto mb-4 animate-pulse" />
-              <h2 className="text-3xl font-orbitron font-black mb-3 text-glow">
-                All Gems Collected!
-              </h2>
-              <p className="text-lg text-muted-foreground mb-6">
-                You've mastered all 8 Laws. Time to face the Nullers in combat!
+            <Card className="p-6 bg-gradient-to-br from-gem/20 to-primary/20 border-gem/50">
+              <Sparkles className="w-12 h-12 text-gem mx-auto mb-3" />
+              <h2 className="text-xl font-bold mb-2">All Gems Collected!</h2>
+              <p className="text-muted-foreground mb-4">
+                Return to the map to enter the Battle Arena!
               </p>
-              <Button
-                onClick={handleUnlockQuizLevels}
-                size="lg"
-                className="glow text-lg font-orbitron gap-2"
-              >
-                Unlock Quiz Battles
-                <ArrowRight className="w-5 h-5" />
+              <Button onClick={() => navigate('/hub')} className="gap-2">
+                <Map className="w-4 h-4" />
+                Return to Map
               </Button>
-            </Card>
-          </motion.div>
-        )}
-
-        {/* Quiz Levels Section */}
-        {quizLevels.some(l => l.unlocked) && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8"
-          >
-            <Card className="p-6 bg-card/80 backdrop-blur-sm border-2 border-primary/20">
-              <div className="flex items-center gap-3 mb-6">
-                <Swords className="w-6 h-6 text-primary" />
-                <h2 className="text-2xl font-orbitron font-bold text-foreground">
-                  Battle The Nullers
-                </h2>
-              </div>
-              <p className="text-muted-foreground mb-6">
-                Face The Nullers in three levels of increasing difficulty. Score 75% or higher to advance.
-              </p>
-
-              <div className="space-y-4">
-                {quizLevels.map((level) => (
-                  <Card
-                    key={level.id}
-                    className={`p-4 transition-all ${
-                      level.unlocked
-                        ? 'bg-background/50 border-primary/30'
-                        : 'bg-background/20 border-border/30 opacity-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between flex-wrap gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                          level.completed
-                            ? 'bg-success/20 text-success'
-                            : level.unlocked
-                            ? 'bg-primary/20 text-primary'
-                            : 'bg-muted/20 text-muted-foreground'
-                        }`}>
-                          {level.completed ? (
-                            <Trophy className="w-6 h-6" />
-                          ) : (
-                            <Swords className="w-6 h-6" />
-                          )}
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-foreground">{level.name} Level</h3>
-                          <div className="flex items-center gap-4 mt-1">
-                            {level.score !== null && (
-                              <span className="text-sm text-muted-foreground">
-                                Best Score: <span className="font-bold text-foreground">{level.score}%</span>
-                              </span>
-                            )}
-                            {level.attempts.length > 0 && (
-                              <span className="text-sm text-muted-foreground">
-                                Attempts: {level.attempts.length}/3
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {level.completed && (
-                          <span className="text-success font-bold mr-2">✓ Defeated</span>
-                        )}
-                        <Button
-                          onClick={() => navigate(`/quiz/${level.id}`)}
-                          disabled={!level.unlocked}
-                          size="sm"
-                        >
-                          {level.completed ? 'Retry' : level.attempts.length > 0 ? 'Try Again' : 'Start Battle'}
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
             </Card>
           </motion.div>
         )}

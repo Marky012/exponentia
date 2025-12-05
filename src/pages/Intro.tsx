@@ -39,7 +39,7 @@ const Intro = () => {
       setStoryStage(storyStage + 1);
     } else {
       completeIntro();
-      navigate('/laws');
+      navigate('/hub');
     }
   };
 

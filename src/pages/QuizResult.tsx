@@ -18,7 +18,7 @@ export default function QuizResult() {
 
   useEffect(() => {
     if (!score || !levelId) {
-      navigate('/laws');
+      navigate('/quiz-arena');
       return;
     }
 
@@ -141,22 +141,22 @@ export default function QuizResult() {
 
           {allCompleted && (
             <Button
-              onClick={() => navigate('/victory')}
+              onClick={() => navigate('/hub')}
               className="w-full"
               size="lg"
             >
               <Trophy className="w-5 h-5 mr-2" />
-              View Victory Ceremony
+              Return to Kingdom
             </Button>
           )}
 
           <Button
-            onClick={() => navigate('/laws')}
+            onClick={() => navigate('/quiz-arena')}
             variant="outline"
             className="w-full"
             size="lg"
           >
-            Return to Laws
+            Return to Battle Arena
           </Button>
         </div>
 
