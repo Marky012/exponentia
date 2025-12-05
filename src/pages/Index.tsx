@@ -9,10 +9,10 @@ const Index = () => {
   const hasStarted = useGameStore((state) => state.hasStarted);
 
   useEffect(() => {
-    // Show boot screen animation
+    // Show boot screen animation then go to map or welcome
     const timer = setTimeout(() => {
       if (hasStarted) {
-        navigate('/laws');
+        navigate('/hub');
       } else {
         navigate('/welcome');
       }

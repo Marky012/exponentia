@@ -8,10 +8,12 @@ import { useGameStore } from "@/store/gameStore";
 import Index from "./pages/Index";
 import Welcome from "./pages/Welcome";
 import Intro from "./pages/Intro";
+import GameHub from "./pages/GameHub";
 import Laws from "./pages/Laws";
 import LawLearn from "./pages/LawLearn";
 import PreTest from "./pages/PreTest";
 import Quiz from "./pages/Quiz";
+import QuizArena from "./pages/QuizArena";
 import QuizResult from "./pages/QuizResult";
 import Statistics from "./pages/Statistics";
 import StudentReport from "./pages/StudentReport";
@@ -45,9 +47,11 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/intro" element={<Intro />} />
+            <Route path="/hub" element={<GameHub />} />
             <Route path="/laws" element={<Laws />} />
             <Route path="/law/:lawId" element={<LawLearn />} />
             <Route path="/pretest/:lawId" element={<PreTest />} />
+            <Route path="/quiz-arena" element={<QuizArena />} />
             <Route path="/quiz/:levelId" element={<Quiz />} />
             <Route path="/quiz-result/:levelId" element={<QuizResult />} />
             <Route path="/statistics" element={<Statistics />} />
