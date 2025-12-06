@@ -261,23 +261,31 @@ const Statistics = () => {
                 <CardDescription>Your progress through the 8 Laws</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={350}>
                   <PieChart>
                     <Pie
                       data={lawProgressData}
                       cx="50%"
                       cy="50%"
-                      labelLine={false}
-                      label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={100}
+                      labelLine={true}
+                      label={({ name, value }) => value > 0 ? `${value}` : ''}
+                      outerRadius={80}
+                      innerRadius={40}
                       fill="#8884d8"
                       dataKey="value"
+                      paddingAngle={2}
                     >
                       {lawProgressData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
                     <Tooltip />
+                    <Legend 
+                      layout="horizontal" 
+                      verticalAlign="bottom" 
+                      align="center"
+                      wrapperStyle={{ paddingTop: '20px' }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>

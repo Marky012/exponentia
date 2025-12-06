@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { InstallButton } from '@/components/InstallButton';
+import { SettingsMenu } from '@/components/SettingsMenu';
 import { UserCircle2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -32,7 +33,11 @@ const Welcome = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 relative">
+      {/* Settings button in top right */}
+      <div className="absolute top-4 right-4">
+        <SettingsMenu />
+      </div>
       <motion.div
         className="w-full max-w-2xl"
         initial={{ opacity: 0, y: 20 }}

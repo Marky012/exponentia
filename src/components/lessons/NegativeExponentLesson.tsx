@@ -80,24 +80,44 @@ export const NegativeExponentLesson = ({ onComplete }: { onComplete: () => void 
 
             {step === 2 && (
               <div className="relative w-full flex items-center justify-center">
-                <div className="absolute left-1/2 h-48 w-1 bg-gradient-to-b from-primary/0 via-primary to-primary/0 -translate-x-1/2" />
+                {/* Mirror portal line */}
+                <div className="absolute left-1/2 h-48 w-1 bg-gradient-to-b from-primary/0 via-primary to-primary/0 -translate-x-1/2 z-10" />
                 
-                <motion.div
-                  className="w-28 h-28 rounded-full bg-secondary/20 border-4 border-secondary flex items-center justify-center absolute"
-                  animate={flipped ? { x: 100, rotateY: 180 } : { x: -100 }}
-                  style={{ transformStyle: 'preserve-3d' }}
-                >
-                  <MathText className="text-2xl font-bold">2⁻³</MathText>
-                </motion.div>
-
-                {flipped && (
+                {/* Original expression - hide after flip */}
+                {!flipped && (
                   <motion.div
-                    className="w-28 h-28 rounded-full bg-gem/20 border-4 border-gem flex items-center justify-center absolute"
-                    initial={{ x: 100, scale: 0 }}
-                    animate={{ x: 100, scale: 1 }}
+                    className="w-28 h-28 rounded-full bg-secondary/20 border-4 border-secondary flex items-center justify-center absolute"
+                    animate={{ x: -100 }}
+                    style={{ transformStyle: 'preserve-3d' }}
                   >
-                    <MathText className="text-xl font-bold">1/2³</MathText>
+                    <MathText className="text-2xl font-bold">2⁻³</MathText>
                   </motion.div>
+                )}
+
+                {/* Flipping animation - show during transition */}
+                {flipped && (
+                  <>
+                    {/* Orb moving through portal and fading */}
+                    <motion.div
+                      className="w-28 h-28 rounded-full bg-secondary/20 border-4 border-secondary flex items-center justify-center absolute"
+                      initial={{ x: -100, opacity: 1 }}
+                      animate={{ x: 0, opacity: 0, scale: 0.5 }}
+                      transition={{ duration: 0.5 }}
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
+                      <MathText className="text-2xl font-bold">2⁻³</MathText>
+                    </motion.div>
+
+                    {/* Result appearing on the other side */}
+                    <motion.div
+                      className="w-28 h-28 rounded-full bg-gem/20 border-4 border-gem flex items-center justify-center absolute"
+                      initial={{ x: 0, scale: 0, opacity: 0 }}
+                      animate={{ x: 100, scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.3 }}
+                    >
+                      <MathText className="text-xl font-bold">1/2³</MathText>
+                    </motion.div>
+                  </>
                 )}
               </div>
             )}

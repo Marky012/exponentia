@@ -52,8 +52,8 @@
     {
       "id": "E008",
       "question": "Simplify: (4/2)³",
-      "options": ["4³/2³", "2³", "8", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["4³/2³", "2³", "8", "64/8"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -108,8 +108,8 @@
     {
       "id": "E016",
       "question": "Simplify: (6/3)²",
-      "options": ["6²/3²", "2²", "4", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["6²/3²", "2²", "4", "36/9"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -164,8 +164,8 @@
     {
       "id": "E024",
       "question": "Simplify: (10/5)²",
-      "options": ["10²/5²", "2²", "4", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["10²/5²", "2²", "4", "100/25"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -220,8 +220,8 @@
     {
       "id": "E032",
       "question": "Simplify: (8/4)³",
-      "options": ["8³/4³", "2³", "8", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["8³/4³", "2³", "8", "512/64"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -276,8 +276,8 @@
     {
       "id": "E040",
       "question": "Simplify: (12/6)²",
-      "options": ["12²/6²", "2²", "4", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["12²/6²", "2²", "4", "144/36"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -332,8 +332,8 @@
     {
       "id": "E048",
       "question": "Simplify: (20/5)²",
-      "options": ["20²/5²", "4²", "16", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["20²/5²", "4²", "16", "400/25"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -388,8 +388,8 @@
     {
       "id": "E056",
       "question": "Simplify: (15/3)²",
-      "options": ["15²/3²", "5²", "25", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["15²/3²", "5²", "25", "225/9"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -444,8 +444,8 @@
     {
       "id": "E064",
       "question": "Simplify: (18/6)²",
-      "options": ["18²/6²", "3²", "9", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["18²/6²", "3²", "9", "324/36"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -500,8 +500,8 @@
     {
       "id": "E072",
       "question": "Simplify: (24/8)²",
-      "options": ["24²/8²", "3²", "9", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["24²/8²", "3²", "9", "576/64"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -556,8 +556,8 @@
     {
       "id": "E080",
       "question": "Simplify: (30/6)²",
-      "options": ["30²/6²", "5²", "25", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["30²/6²", "5²", "25", "900/36"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -612,8 +612,8 @@
     {
       "id": "E088",
       "question": "Simplify: (36/9)²",
-      "options": ["36²/9²", "4²", "16", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["36²/9²", "4²", "16", "1296/81"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -668,8 +668,8 @@
     {
       "id": "E096",
       "question": "Simplify: (42/7)²",
-      "options": ["42²/7²", "6²", "36", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["42²/7²", "6²", "36", "1764/49"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -724,8 +724,8 @@
     {
       "id": "E104",
       "question": "Simplify: (48/12)²",
-      "options": ["48²/12²", "4²", "16", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["48²/12²", "4²", "16", "2304/144"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -780,8 +780,8 @@
     {
       "id": "E112",
       "question": "Simplify: (50/10)²",
-      "options": ["50²/10²", "5²", "25", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["50²/10²", "5²", "25", "2500/100"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -836,8 +836,8 @@
     {
       "id": "E120",
       "question": "Simplify: (60/12)²",
-      "options": ["60²/12²", "5²", "25", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["60²/12²", "5²", "25", "3600/144"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -892,8 +892,8 @@
     {
       "id": "E128",
       "question": "Simplify: (70/14)²",
-      "options": ["70²/14²", "5²", "25", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["70²/14²", "5²", "25", "4900/196"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -948,8 +948,8 @@
     {
       "id": "E136",
       "question": "Simplify: (80/16)²",
-      "options": ["80²/16²", "5²", "25", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["80²/16²", "5²", "25", "6400/256"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -1004,8 +1004,8 @@
     {
       "id": "E144",
       "question": "Simplify: (90/18)²",
-      "options": ["90²/18²", "5²", "25", "Both A and C"],
-      "correctIndex": 3,
+      "options": ["90²/18²", "5²", "25", "8100/324"],
+      "correctIndex": 2,
       "lawTested": "Power of a Quotient"
     },
     {
@@ -2945,8 +2945,8 @@
       {
         "id": "PT_Q010",
         "question": "Simplify: 6⁵ ÷ 6³",
-        "options": ["6²", "6⁸", "36", "Both A and C"],
-        "correctIndex": 3,
+        "options": ["6²", "6⁸", "36", "6¹⁵"],
+        "correctIndex": 0,
         "lawTested": "Quotient of Powers"
       }
     ],
@@ -2989,7 +2989,7 @@
       {
         "id": "PT_PP006",
         "question": "Simplify: (3²)⁴",
-        "options": ["3⁶", "3⁸", "9⁴", "Both A and C"],
+        "options": ["3⁶", "3⁸", "9⁴", "6561"],
         "correctIndex": 1,
         "lawTested": "Power of a Power"
       },
@@ -3017,8 +3017,8 @@
       {
         "id": "PT_PP010",
         "question": "Simplify: (4²)²",
-        "options": ["4⁴", "4⁸", "16²", "Both A and C"],
-        "correctIndex": 3,
+        "options": ["4⁴", "4⁸", "16²", "256"],
+        "correctIndex": 0,
         "lawTested": "Power of a Power"
       }
     ],
@@ -3242,8 +3242,8 @@
       {
         "id": "PT_QPW001",
         "question": "Simplify: (6/2)³",
-        "options": ["6³/2³", "3³", "18", "Both A and B"],
-        "correctIndex": 3,
+        "options": ["6³/2³", "3³", "27", "216/8"],
+        "correctIndex": 2,
         "lawTested": "Power of a Quotient"
       },
       {
@@ -3263,8 +3263,8 @@
       {
         "id": "PT_QPW004",
         "question": "Simplify: (8/4)²",
-        "options": ["8²/4²", "2²", "4", "Both A and C"],
-        "correctIndex": 3,
+        "options": ["8²/4²", "2²", "4", "64/16"],
+        "correctIndex": 2,
         "lawTested": "Power of a Quotient"
       },
       {
@@ -3277,8 +3277,8 @@
       {
         "id": "PT_QPW006",
         "question": "Simplify: (10/5)²",
-        "options": ["10²/5²", "2²", "4", "All of the above"],
-        "correctIndex": 3,
+        "options": ["10²/5²", "2²", "4", "100/25"],
+        "correctIndex": 2,
         "lawTested": "Power of a Quotient"
       },
       {
@@ -3291,22 +3291,22 @@
       {
         "id": "PT_QPW008",
         "question": "Simplify: (12/3)²",
-        "options": ["12²/3²", "4²", "16", "All of the above"],
-        "correctIndex": 3,
+        "options": ["12²/3²", "4²", "16", "144/9"],
+        "correctIndex": 2,
         "lawTested": "Power of a Quotient"
       },
       {
         "id": "PT_QPW009",
         "question": "Simplify: (a/2)³",
-        "options": ["a³/2³", "a³/8", "a³/2", "Both A and B"],
-        "correctIndex": 3,
+        "options": ["a³/2³", "a³/8", "a³/2", "(a/8)"],
+        "correctIndex": 1,
         "lawTested": "Power of a Quotient"
       },
       {
         "id": "PT_QPW010",
         "question": "Simplify: (9/3)³",
-        "options": ["9³/3³", "3³", "27", "All of the above"],
-        "correctIndex": 3,
+        "options": ["9³/3³", "3³", "27", "729/27"],
+        "correctIndex": 2,
         "lawTested": "Power of a Quotient"
       }
     ],
