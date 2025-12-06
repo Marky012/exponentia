@@ -51,7 +51,6 @@ export function textToLatex(text: string): string {
   
   // Convert fractions like 1/x³ to proper LaTeX fractions
   latex = latex.replace(/1\/([a-zA-Z])\^{([^}]+)}/g, '\\frac{1}{$1^{$2}}');
-  latex = latex.replace(/1\/([a-zA-Z0-9]+)/g, '\\frac{1}{$1}');
   
   // Convert division symbol and slash for display
   latex = latex.replace(/÷/g, ' \\div ');
@@ -59,15 +58,23 @@ export function textToLatex(text: string): string {
   // Handle fractions with parentheses like (a/b)
   latex = latex.replace(/\(([^\/\)]+)\/([^\)]+)\)/g, '\\left(\\frac{$1}{$2}\\right)');
   
-  // Convert standalone fractions a/b (not in parentheses, simple cases)
-  // Only convert if not already converted and looks like a simple fraction
-  latex = latex.replace(/([a-zA-Z0-9]+)\s*\/\s*([a-zA-Z0-9]+)(?!\^)/g, (match, num, den) => {
-    // Don't convert if it's already in a frac or if it's part of larger expression
-    if (latex.includes('\\frac')) {
+  // Convert fractions with exponents like 12^{2}/6^{2} or a^{2}/b^{2}
+  latex = latex.replace(/([a-zA-Z0-9]+)\^{([^}]+)}\/([a-zA-Z0-9]+)\^{([^}]+)}/g, '\\frac{$1^{$2}}{$3^{$4}}');
+  
+  // Convert simple numeric fractions like 144/36
+  latex = latex.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+  
+  // Convert simple variable fractions like a/b (not already converted)
+  latex = latex.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, (match, num, den) => {
+    // Don't convert if already in a frac
+    if (match.includes('\\frac')) {
       return match;
     }
     return `\\frac{${num}}{${den}}`;
   });
+  
+  // Convert 1/x type fractions
+  latex = latex.replace(/1\/([a-zA-Z0-9]+)/g, '\\frac{1}{$1}');
   
   // Convert multiplication symbol
   latex = latex.replace(/×/g, ' \\times ');

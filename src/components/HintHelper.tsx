@@ -67,8 +67,8 @@ export const HintHelper = ({ hint, onHintUsed, hintAvailable }: HintHelperProps)
         </motion.button>
         {hintAvailable && (
           <motion.div
-            className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-card/90 backdrop-blur-sm border border-primary/20 rounded-lg px-3 py-1 text-xs font-medium"
-            initial={{ opacity: 0, y: 10 }}
+            className="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-card/90 backdrop-blur-sm border border-primary/20 rounded-lg px-3 py-1.5 text-xs font-medium"
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >

@@ -181,9 +181,9 @@ const VerticalGameMap = () => {
         ))}
       </div>
 
-      {/* Statistics Button */}
+      {/* Statistics Button - positioned to avoid overlap with settings */}
       <motion.div 
-        className="absolute top-4 right-4 z-20"
+        className="absolute top-16 right-4 z-20"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 1 }}
