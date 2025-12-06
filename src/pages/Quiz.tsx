@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { MathText } from '@/utils/mathRenderer';
 import questionsData from '@/data/questions.json';
-import { Shield, Swords, Skull, CheckCircle2, X } from 'lucide-react';
+import { Shield, Swords, Skull, CheckCircle2, X, ArrowLeft } from 'lucide-react';
 import { HintHelper } from '@/components/HintHelper';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -175,6 +175,14 @@ export default function Quiz() {
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => navigate('/quiz-arena')}
+                className="flex-shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
               <Swords className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
               <div className="min-w-0">
                 <h1 className="text-base sm:text-xl font-orbitron font-bold text-foreground truncate">

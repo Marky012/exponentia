@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import VerticalGameMap from '@/components/VerticalGameMap';
 import { InstallButton } from '@/components/InstallButton';
+import { SettingsMenu } from '@/components/SettingsMenu';
 
 const GameHub = () => {
   return (
@@ -12,7 +13,10 @@ const GameHub = () => {
     >
       <VerticalGameMap />
       
-      {/* Install Button */}
+      {/* Settings and Install Buttons */}
+      <div className="fixed top-4 right-4 z-30">
+        <SettingsMenu />
+      </div>
       <div className="fixed bottom-4 right-4 z-30">
         <InstallButton />
       </div>
