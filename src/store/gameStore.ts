@@ -336,10 +336,12 @@ export const useGameStore = create<GameState>()(
         const state = get();
         
         const getLevelReport = (level: QuizLevel): LevelReport | null => {
-          if (level.attempts.length === 0) return null;
+          // Handle legacy data where attempts might be a number instead of array
+          const attempts = Array.isArray(level.attempts) ? level.attempts : [];
+          if (attempts.length === 0) return null;
           
           const allMissedLaws: string[] = [];
-          level.attempts.forEach(attempt => {
+          attempts.forEach(attempt => {
             allMissedLaws.push(...attempt.missedLaws);
           });
           
@@ -352,8 +354,8 @@ export const useGameStore = create<GameState>()(
           const uniqueMissedLaws = [...new Set(allMissedLaws)];
           
           return {
-            attempts: level.attempts.length,
-            scores: level.attempts.map(a => a.score),
+            attempts: attempts.length,
+            scores: attempts.map(a => a.score),
             averageScore: level.averageScore || 0,
             passed: level.completed,
             missedLaws: uniqueMissedLaws,
@@ -365,9 +367,15 @@ export const useGameStore = create<GameState>()(
           .sort((a, b) => b[1] - a[1])
           .map(([law]) => law);
 
-        // Calculate total attempts and average
-        const totalAttempts = state.quizLevels.reduce((sum, level) => sum + level.attempts.length, 0);
-        const allScores = state.quizLevels.flatMap(level => level.attempts.map(a => a.score));
+        // Calculate total attempts and average (handle legacy data where attempts might be a number)
+        const totalAttempts = state.quizLevels.reduce((sum, level) => {
+          const attempts = Array.isArray(level.attempts) ? level.attempts : [];
+          return sum + attempts.length;
+        }, 0);
+        const allScores = state.quizLevels.flatMap(level => {
+          const attempts = Array.isArray(level.attempts) ? level.attempts : [];
+          return attempts.map(a => a.score);
+        });
         const averageScore = allScores.length > 0 
           ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length)
           : null;
