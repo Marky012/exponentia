@@ -17,6 +17,7 @@ import {
   TrendingUp,
   Star
 } from 'lucide-react';
+import exponentiaBg from '@/assets/exponentia-light.png';
 
 const StudentReportPage = () => {
   const navigate = useNavigate();
@@ -235,7 +236,10 @@ const StudentReportPage = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div 
+      className="min-h-screen p-4 md:p-8 bg-cover bg-center"
+      style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url(${exponentiaBg})` }}
+    >
       <div className="max-w-4xl mx-auto" ref={reportRef}>
         {/* Header */}
         <motion.div 
