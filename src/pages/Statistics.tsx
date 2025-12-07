@@ -20,6 +20,7 @@ import {
   FileText
 } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import exponentiaBg from '@/assets/exponentia-light.png';
 
 const Statistics = () => {
   const navigate = useNavigate();
@@ -126,7 +127,10 @@ const Statistics = () => {
   const earnedAchievements = achievements.filter(a => a.earned);
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div 
+      className="min-h-screen p-4 md:p-8 bg-cover bg-center"
+      style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url(${exponentiaBg})` }}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div

@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Swords, Trophy, Lock, Star, Target, Flame } from 'lucide-react';
 import { InstallButton } from '@/components/InstallButton';
+import exponentiaBg from '@/assets/exponentia-light.png';
 
 const QuizArena = () => {
   const navigate = useNavigate();
@@ -16,11 +17,12 @@ const QuizArena = () => {
   if (!allGemsEarned) {
     return (
       <motion.div
-        className="min-h-screen flex items-center justify-center p-4"
+        className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center"
+        style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url(${exponentiaBg})` }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <Card className="p-8 text-center max-w-md">
+        <Card className="p-8 text-center max-w-md bg-card/90 backdrop-blur-sm">
           <Lock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2">Arena Locked</h2>
           <p className="text-muted-foreground mb-4">
@@ -55,7 +57,8 @@ const QuizArena = () => {
 
   return (
     <motion.div
-      className="min-h-screen bg-background p-4 md:p-8"
+      className="min-h-screen bg-cover bg-center p-4 md:p-8"
+      style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url(${exponentiaBg})` }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
