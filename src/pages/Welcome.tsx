@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
 import { motion } from 'framer-motion';
@@ -15,6 +15,25 @@ const Welcome = () => {
   const { setPlayerName, setPlayerGender, startGame } = useGameStore();
   const [name, setName] = useState('');
   const [selectedGender, setSelectedGender] = useState<'male' | 'female' | null>(null);
+
+  // Preview theme based on selected gender
+  useEffect(() => {
+    if (selectedGender === 'female') {
+      document.body.classList.add('theme-female');
+    } else {
+      document.body.classList.remove('theme-female');
+    }
+    
+    // Cleanup on unmount - restore based on actual game state
+    return () => {
+      const storedGender = useGameStore.getState().playerGender;
+      if (storedGender === 'female') {
+        document.body.classList.add('theme-female');
+      } else {
+        document.body.classList.remove('theme-female');
+      }
+    };
+  }, [selectedGender]);
 
   const handleStart = () => {
     if (!name.trim()) {
@@ -51,7 +70,7 @@ const Welcome = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <h1 className="text-5xl font-orbitron font-black mb-3 text-glow">
+            <h1 className="text-5xl font-orbitron font-black mb-3 text-glow text-primary">
               Welcome to Exponentia
             </h1>
             <p className="text-lg text-muted-foreground">
@@ -67,7 +86,7 @@ const Welcome = () => {
           >
             {/* Name Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
+              <label className="text-sm font-medium flex items-center gap-2 text-primary">
                 <UserCircle2 className="w-4 h-4" />
                 Enter Your Name
               </label>
@@ -83,7 +102,7 @@ const Welcome = () => {
 
             {/* Gender Selection */}
             <div className="space-y-3">
-              <label className="text-sm font-medium flex items-center gap-2">
+              <label className="text-sm font-medium flex items-center gap-2 text-primary">
                 <Sparkles className="w-4 h-4" />
                 Choose Your Character
               </label>
@@ -92,8 +111,8 @@ const Welcome = () => {
                   onClick={() => setSelectedGender('male')}
                   className={`relative p-6 rounded-lg border-2 transition-all duration-300 ${
                     selectedGender === 'male'
-                      ? 'border-primary bg-primary/10 glow'
-                      : 'border-border hover:border-primary/50'
+                      ? 'border-[hsl(202,60%,65%)] bg-[hsl(202,60%,65%,0.1)] shadow-[0_0_16px_hsl(202,60%,75%,0.6)]'
+                      : 'border-border hover:border-[hsl(202,60%,65%,0.5)]'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -105,7 +124,7 @@ const Welcome = () => {
                   </p>
                   {selectedGender === 'male' && (
                     <motion.div
-                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center"
+                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[hsl(202,60%,65%)] flex items-center justify-center text-[hsl(207,85%,8%)]"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                     >
@@ -118,8 +137,8 @@ const Welcome = () => {
                   onClick={() => setSelectedGender('female')}
                   className={`relative p-6 rounded-lg border-2 transition-all duration-300 ${
                     selectedGender === 'female'
-                      ? 'border-pink-500 bg-pink-500/10 shadow-[0_0_16px_rgba(236,72,153,0.6)]'
-                      : 'border-border hover:border-pink-400/50'
+                      ? 'border-[hsl(330,85%,65%)] bg-[hsl(330,85%,65%,0.1)] shadow-[0_0_16px_hsl(330,90%,75%,0.6)]'
+                      : 'border-border hover:border-[hsl(330,85%,65%,0.5)]'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -131,7 +150,7 @@ const Welcome = () => {
                   </p>
                   {selectedGender === 'female' && (
                     <motion.div
-                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center text-white"
+                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[hsl(330,85%,65%)] flex items-center justify-center text-white"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                     >
