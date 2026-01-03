@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
-import { Lock, Star, BarChart3, Sparkles, Crown } from 'lucide-react';
+import { Lock, Star, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { soundEffects } from '@/utils/soundEffects';
+import { SettingsMenu } from '@/components/SettingsMenu';
 
 // Import map icons
 import map1Icon from '@/assets/map1.png';
@@ -45,11 +46,9 @@ const VerticalGameMap = () => {
   const allGemsEarned = laws.every(law => law.gemEarned);
   const allQuizzesCompleted = quizLevels.every(level => level.completed);
   
-  // Calculate progress percentages
   const lawsProgress = (laws.filter(law => law.gemEarned).length / laws.length) * 100;
   const quizProgress = (quizLevels.filter(level => level.completed).length / quizLevels.length) * 100;
   
-  // Calculate stars (0-3) for each stage
   const getStars = (isCompleted: boolean, progress: number): number => {
     if (!isCompleted && progress === 0) return 0;
     if (isCompleted) return 3;
@@ -58,7 +57,6 @@ const VerticalGameMap = () => {
     return 0;
   };
 
-  // Stages from bottom to top
   const stages: Stage[] = [
     {
       id: 1,
@@ -110,14 +108,12 @@ const VerticalGameMap = () => {
     },
   ];
 
-  // Check for newly unlocked stages
   useEffect(() => {
     const currentUnlockStates = stages.map(s => !s.isLocked);
     
     if (previousStagesRef.current.length > 0) {
       currentUnlockStates.forEach((isUnlocked, index) => {
         if (isUnlocked && !previousStagesRef.current[index]) {
-          // Stage just got unlocked!
           triggerUnlockAnimation(index);
         }
       });
@@ -130,14 +126,13 @@ const VerticalGameMap = () => {
     setUnlockingStage(stageIndex);
     soundEffects.playUnlock();
     
-    // Generate particles
-    const colors = ['#FFD700', '#FFA500', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
-    const newParticles: UnlockParticle[] = Array.from({ length: 24 }, (_, i) => ({
+    const colors = ['#60A5FA', '#34D399', '#FBBF24', '#F472B6', '#A78BFA'];
+    const newParticles: UnlockParticle[] = Array.from({ length: 12 }, (_, i) => ({
       id: Date.now() + i,
-      x: (Math.random() - 0.5) * 150,
-      y: (Math.random() - 0.5) * 150,
-      size: Math.random() * 12 + 6,
-      delay: Math.random() * 0.3,
+      x: (Math.random() - 0.5) * 100,
+      y: (Math.random() - 0.5) * 100,
+      size: Math.random() * 8 + 4,
+      delay: Math.random() * 0.2,
       color: colors[Math.floor(Math.random() * colors.length)],
     }));
     setParticles(newParticles);
@@ -145,7 +140,7 @@ const VerticalGameMap = () => {
     setTimeout(() => {
       setUnlockingStage(null);
       setParticles([]);
-    }, 1500);
+    }, 1000);
   };
 
   const handleStageClick = (stage: Stage, index: number) => {
@@ -163,19 +158,7 @@ const VerticalGameMap = () => {
     }
   };
 
-  // Reversed for display (bottom to top becomes top to bottom in scroll)
   const displayStages = [...stages].reverse();
-
-  // Define winding path positions for each stage
-  const getStagePosition = (index: number): { marginLeft: string; marginRight: string } => {
-    const positions = [
-      { marginLeft: '50%', marginRight: '0' },    // Stage 4 (Kingdom) - right side
-      { marginLeft: '5%', marginRight: '0' },     // Stage 3 (Arena) - left side
-      { marginLeft: '50%', marginRight: '0' },    // Stage 2 (Training) - right side
-      { marginLeft: '5%', marginRight: '0' },     // Stage 1 (Beginning) - left side
-    ];
-    return positions[index];
-  };
 
   return (
     <div 
@@ -185,359 +168,239 @@ const VerticalGameMap = () => {
         backgroundSize: 'cover',
       }}
     >
-      {/* Subtle overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30" />
+      {/* Blue overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-900/20 via-transparent to-sky-900/30" />
 
-      {/* Floating magical particles background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 rounded-full"
-            style={{
-              background: `radial-gradient(circle, rgba(255,215,0,0.8) 0%, transparent 70%)`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [-20, -100, -20],
-              opacity: [0, 0.8, 0],
-              scale: [0.5, 1, 0.5],
-            }}
-            transition={{
-              duration: 4 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 4,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Title with fantasy styling */}
-      <motion.div
-        className="absolute top-4 left-4 z-20"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3, type: "spring" }}
-      >
-        <div className="bg-gradient-to-r from-amber-900/80 to-amber-800/60 backdrop-blur-sm rounded-lg px-4 py-2 border border-amber-600/50 shadow-lg">
-          <h1 className="text-xl md:text-2xl font-orbitron font-bold bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent">
+      {/* Header */}
+      <div className="absolute top-0 left-0 right-0 z-20 px-4 py-3 flex items-center justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h1 className="text-xl md:text-2xl font-orbitron font-bold text-sky-100 drop-shadow-lg">
             EXPONENTIA
           </h1>
-          <p className="text-xs text-amber-200/80">Your Quest Awaits</p>
-        </div>
-      </motion.div>
+          <p className="text-[10px] text-sky-200/80">Your Quest Awaits</p>
+        </motion.div>
 
-      {/* Statistics Button */}
-      <motion.div 
-        className="absolute top-16 right-4 z-20"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            soundEffects.playClick();
-            navigate('/statistics');
-          }}
-          className="gap-2 bg-amber-900/70 border-amber-600/50 text-amber-100 hover:bg-amber-800/80 hover:text-amber-50 backdrop-blur-sm shadow-lg"
+        <motion.div 
+          className="flex items-center gap-2"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
         >
-          <BarChart3 className="w-4 h-4" />
-          <span className="hidden sm:inline">Stats</span>
-        </Button>
-      </motion.div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              soundEffects.playClick();
+              navigate('/statistics');
+            }}
+            className="w-9 h-9 rounded-full bg-sky-900/50 backdrop-blur-sm text-sky-100 hover:bg-sky-800/60 border border-sky-400/30"
+          >
+            <BarChart3 className="w-4 h-4" />
+          </Button>
+          <SettingsMenu />
+        </motion.div>
+      </div>
 
-      {/* Winding Path SVG - Golden fantasy road */}
-      <svg 
-        className="absolute inset-0 w-full h-full z-0 pointer-events-none"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-      >
-        {/* Path glow */}
-        <motion.path
-          d="M 20 88 Q 50 78 70 68 Q 30 58 20 48 Q 60 38 70 28 Q 40 18 50 10"
-          fill="none"
-          stroke="rgba(255,200,100,0.3)"
-          strokeWidth="8"
-          strokeLinecap="round"
-          filter="blur(4px)"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 2, ease: "easeInOut" }}
-        />
-        {/* Main path */}
-        <motion.path
-          d="M 20 88 Q 50 78 70 68 Q 30 58 20 48 Q 60 38 70 28 Q 40 18 50 10"
-          fill="none"
-          stroke="url(#pathGradient)"
-          strokeWidth="4"
-          strokeLinecap="round"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 2, ease: "easeInOut", delay: 0.2 }}
-        />
-        {/* Path border */}
-        <path
-          d="M 20 88 Q 50 78 70 68 Q 30 58 20 48 Q 60 38 70 28 Q 40 18 50 10"
-          fill="none"
-          stroke="rgba(139,69,19,0.6)"
-          strokeWidth="6"
-          strokeLinecap="round"
-          style={{ zIndex: -1 }}
-        />
-        <defs>
-          <linearGradient id="pathGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stopColor="#D4A574" />
-            <stop offset="50%" stopColor="#C19A6B" />
-            <stop offset="100%" stopColor="#8B7355" />
-          </linearGradient>
-        </defs>
-      </svg>
-
-      {/* Stage Nodes */}
-      <div className="relative z-10 min-h-screen py-20 px-4">
-        <div className="relative max-w-sm mx-auto h-[85vh] flex flex-col justify-between">
+      {/* Map Content */}
+      <div className="relative z-10 h-screen pt-16 pb-4 px-4 overflow-y-auto">
+        <div className="max-w-sm mx-auto h-full flex flex-col justify-around py-4">
           {displayStages.map((stage, displayIndex) => {
-            const position = getStagePosition(displayIndex);
             const actualIndex = stages.length - 1 - displayIndex;
             const isUnlocking = unlockingStage === actualIndex;
+            const isLeft = displayIndex % 2 === 0;
             
             return (
               <motion.div
                 key={stage.id}
-                className="relative"
-                style={{ 
-                  marginLeft: position.marginLeft,
-                  marginRight: position.marginRight,
-                }}
-                initial={{ opacity: 0, scale: 0.3, y: 50 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className={`relative flex items-center gap-3 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}
+                initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ 
-                  duration: 0.6, 
-                  delay: 0.4 + displayIndex * 0.2,
+                  duration: 0.5, 
+                  delay: 0.2 + displayIndex * 0.1,
                   type: "spring",
                   stiffness: 150
                 }}
               >
-                {/* Stars above stage */}
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex gap-1">
-                  {[1, 2, 3].map((starNum) => (
-                    <motion.div
-                      key={starNum}
-                      initial={{ scale: 0, rotate: -180 }}
-                      animate={{ 
-                        scale: stage.stars >= starNum ? 1 : 0.5, 
-                        rotate: 0 
-                      }}
-                      transition={{ 
-                        delay: 1 + displayIndex * 0.2 + starNum * 0.1,
-                        type: "spring",
-                        stiffness: 300
-                      }}
-                    >
-                      <Star 
-                        className={`w-6 h-6 drop-shadow-lg transition-all ${
-                          stage.stars >= starNum 
-                            ? 'text-yellow-400 fill-yellow-400' 
-                            : 'text-gray-400/30 fill-gray-400/20'
-                        }`}
-                        style={{
-                          filter: stage.stars >= starNum ? 'drop-shadow(0 0 6px rgba(255,200,0,0.8))' : 'none'
-                        }}
-                      />
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Stage Button Container */}
-                <div className="relative">
+                {/* Stage Icon Button */}
+                <motion.button
+                  onClick={() => handleStageClick(stage, actualIndex)}
+                  onMouseEnter={() => handleStageHover(stage)}
+                  disabled={stage.isLocked}
+                  className={`
+                    relative w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center shrink-0
+                    backdrop-blur-sm transition-all duration-300
+                    ${stage.isCompleted 
+                      ? 'bg-emerald-500/30 border-2 border-emerald-400/70 shadow-[0_0_20px_rgba(52,211,153,0.4)]' 
+                      : stage.isActive 
+                        ? 'bg-sky-500/30 border-2 border-sky-400/70 shadow-[0_0_25px_rgba(56,189,248,0.5)]' 
+                        : stage.isLocked 
+                          ? 'bg-slate-600/40 border-2 border-slate-500/50 cursor-not-allowed' 
+                          : 'bg-sky-500/25 border-2 border-sky-400/60'
+                    }
+                  `}
+                  whileHover={!stage.isLocked ? { scale: 1.08 } : {}}
+                  whileTap={!stage.isLocked ? { scale: 0.95 } : {}}
+                  animate={stage.isActive ? {
+                    boxShadow: [
+                      '0 0 20px rgba(56,189,248,0.4)',
+                      '0 0 35px rgba(56,189,248,0.7)',
+                      '0 0 20px rgba(56,189,248,0.4)',
+                    ],
+                  } : {}}
+                  transition={stage.isActive ? {
+                    boxShadow: { duration: 1.5, repeat: Infinity }
+                  } : {}}
+                >
                   {/* Unlock particles */}
                   <AnimatePresence>
                     {isUnlocking && particles.map((particle) => (
                       <motion.div
                         key={particle.id}
-                        className="absolute left-1/2 top-1/2 rounded-full pointer-events-none"
+                        className="absolute rounded-full pointer-events-none z-20"
                         style={{
                           width: particle.size,
                           height: particle.size,
                           backgroundColor: particle.color,
-                          boxShadow: `0 0 ${particle.size}px ${particle.color}`,
+                          boxShadow: `0 0 ${particle.size * 2}px ${particle.color}`,
                         }}
-                        initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-                        animate={{ 
-                          x: particle.x, 
-                          y: particle.y, 
-                          opacity: 0, 
-                          scale: 0 
-                        }}
-                        exit={{ opacity: 0 }}
-                        transition={{ 
-                          duration: 1, 
-                          delay: particle.delay,
-                          ease: 'easeOut' 
-                        }}
+                        initial={{ x: 0, y: 0, opacity: 1 }}
+                        animate={{ x: particle.x, y: particle.y, opacity: 0 }}
+                        transition={{ duration: 0.7, delay: particle.delay }}
                       />
                     ))}
                   </AnimatePresence>
 
-                  {/* Unlock flash effect */}
+                  {/* Unlock flash */}
                   <AnimatePresence>
                     {isUnlocking && (
                       <motion.div
-                        className="absolute inset-0 -m-4 rounded-full bg-yellow-400/60 blur-xl"
-                        initial={{ scale: 0.5, opacity: 0 }}
-                        animate={{ scale: 2, opacity: [0, 1, 0] }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.8 }}
+                        className="absolute inset-0 rounded-2xl bg-sky-400/60"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: [0, 1, 0] }}
+                        transition={{ duration: 0.5 }}
                       />
                     )}
                   </AnimatePresence>
 
-                  {/* Stage Button */}
-                  <motion.button
-                    onClick={() => handleStageClick(stage, actualIndex)}
-                    onMouseEnter={() => handleStageHover(stage)}
-                    disabled={stage.isLocked}
-                    className={`
-                      relative w-20 h-20 md:w-24 md:h-24 rounded-xl 
-                      flex items-center justify-center
-                      transition-all duration-300
-                      ${stage.isCompleted 
-                        ? 'bg-gradient-to-br from-emerald-400 via-green-500 to-emerald-600 shadow-[0_0_20px_rgba(16,185,129,0.5)]' 
-                        : stage.isActive 
-                          ? 'bg-gradient-to-br from-amber-400 via-orange-500 to-amber-600 shadow-[0_0_25px_rgba(245,158,11,0.6)]' 
-                          : stage.isLocked 
-                            ? 'bg-gradient-to-br from-slate-500 via-gray-600 to-slate-700 cursor-not-allowed shadow-lg opacity-80' 
-                            : 'bg-gradient-to-br from-sky-400 via-blue-500 to-sky-600 shadow-[0_0_15px_rgba(56,189,248,0.4)]'
-                      }
-                    `}
-                    style={{
-                      border: stage.isCompleted 
-                        ? '3px solid rgba(52,211,153,0.8)' 
-                        : stage.isActive 
-                          ? '3px solid rgba(251,191,36,0.8)'
-                          : stage.isLocked
-                            ? '3px solid rgba(100,116,139,0.5)'
-                            : '3px solid rgba(125,211,252,0.6)',
-                    }}
-                    whileHover={!stage.isLocked ? { 
-                      scale: 1.15, 
-                      rotate: [0, -3, 3, 0],
-                      transition: { rotate: { duration: 0.3 } }
-                    } : {}}
-                    whileTap={!stage.isLocked ? { scale: 0.92 } : {}}
-                    animate={stage.isActive ? {
-                      boxShadow: [
-                        '0 0 20px rgba(245,158,11,0.4)',
-                        '0 0 35px rgba(245,158,11,0.7)',
-                        '0 0 20px rgba(245,158,11,0.4)',
-                      ],
-                    } : {}}
-                    transition={stage.isActive ? {
-                      boxShadow: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
-                    } : {}}
-                  >
-                    {/* Inner glow for active */}
-                    {stage.isActive && (
-                      <motion.div
-                        className="absolute inset-1 rounded-lg bg-gradient-to-br from-white/30 to-transparent"
-                        animate={{ opacity: [0.5, 0.8, 0.5] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                    )}
+                  {stage.isLocked ? (
+                    <Lock className="w-8 h-8 text-slate-300/70" />
+                  ) : (
+                    <motion.img 
+                      src={stage.icon} 
+                      alt={stage.name}
+                      className="w-14 h-14 md:w-16 md:h-16 object-contain"
+                      animate={stage.isActive ? { y: [0, -3, 0] } : {}}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                  )}
 
-                    {/* Sparkle decorations for completed */}
-                    {stage.isCompleted && (
-                      <>
-                        <motion.div
-                          className="absolute -top-1 -right-1"
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                        >
-                          <Sparkles className="w-5 h-5 text-yellow-300 drop-shadow-lg" />
-                        </motion.div>
-                        <motion.div
-                          className="absolute -bottom-1 -left-1"
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        >
-                          <Crown className="w-4 h-4 text-yellow-300 drop-shadow-lg" />
-                        </motion.div>
-                      </>
-                    )}
-
-                    {/* Lock icon or Stage icon */}
-                    {stage.isLocked ? (
-                      <motion.div
-                        animate={{ y: [0, -2, 0] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
-                        <Lock className="w-8 h-8 md:w-10 md:h-10 text-white/70 drop-shadow" />
-                      </motion.div>
-                    ) : (
-                      <motion.img 
-                        src={stage.icon} 
-                        alt={stage.name}
-                        className="w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-lg"
-                        animate={stage.isActive ? { y: [0, -4, 0] } : {}}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                      />
-                    )}
-                  </motion.button>
-
-                  {/* Progress ring for active stages */}
+                  {/* Progress ring */}
                   {stage.isActive && stage.progress > 0 && stage.progress < 100 && (
-                    <svg 
-                      className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] pointer-events-none"
-                      viewBox="0 0 100 100"
-                    >
+                    <svg className="absolute inset-0 w-full h-full -rotate-90">
                       <circle
-                        cx="50" cy="50" r="46"
+                        cx="50%" cy="50%" r="45%"
                         fill="none"
-                        stroke="rgba(255,255,255,0.2)"
-                        strokeWidth="4"
+                        stroke="rgba(255,255,255,0.15)"
+                        strokeWidth="3"
                       />
                       <motion.circle
-                        cx="50" cy="50" r="46"
+                        cx="50%" cy="50%" r="45%"
                         fill="none"
-                        stroke="rgba(255,200,50,0.9)"
-                        strokeWidth="4"
+                        stroke="rgba(56,189,248,0.9)"
+                        strokeWidth="3"
                         strokeLinecap="round"
-                        strokeDasharray={`${2 * Math.PI * 46}`}
-                        initial={{ strokeDashoffset: 2 * Math.PI * 46 }}
-                        animate={{ strokeDashoffset: 2 * Math.PI * 46 * (1 - stage.progress / 100) }}
-                        style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
-                        transition={{ duration: 1, ease: "easeOut" }}
+                        pathLength="1"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: stage.progress / 100 }}
+                        transition={{ duration: 1 }}
                       />
                     </svg>
                   )}
+                </motion.button>
+
+                {/* Stage Info Card */}
+                <div className={`
+                  flex-1 p-3 rounded-xl backdrop-blur-sm
+                  ${stage.isCompleted 
+                    ? 'bg-emerald-900/30 border border-emerald-400/40' 
+                    : stage.isActive 
+                      ? 'bg-sky-900/40 border border-sky-400/50' 
+                      : stage.isLocked 
+                        ? 'bg-slate-800/30 border border-slate-500/30' 
+                        : 'bg-sky-900/30 border border-sky-400/40'
+                  }
+                `}>
+                  {/* Stars */}
+                  <div className="flex gap-0.5 mb-1">
+                    {[1, 2, 3].map((starNum) => (
+                      <Star 
+                        key={starNum}
+                        className={`w-4 h-4 ${
+                          stage.stars >= starNum 
+                            ? 'text-yellow-400 fill-yellow-400' 
+                            : 'text-slate-500/40 fill-slate-500/20'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <h3 className={`text-sm font-bold mb-0.5 ${
+                    stage.isLocked ? 'text-slate-400' : 'text-white'
+                  }`}>
+                    {stage.name}
+                  </h3>
+                  <p className={`text-xs ${
+                    stage.isLocked ? 'text-slate-500' : 'text-sky-200/80'
+                  }`}>
+                    {stage.description}
+                  </p>
+
+                  {/* Progress bar */}
+                  {stage.isActive && stage.progress > 0 && (
+                    <div className="mt-2">
+                      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <motion.div 
+                          className="h-full bg-sky-400 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${stage.progress}%` }}
+                          transition={{ duration: 1 }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-sky-300/70 mt-0.5">
+                        {Math.round(stage.progress)}%
+                      </p>
+                    </div>
+                  )}
+
+                  {stage.isCompleted && (
+                    <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500/20 rounded text-[10px] text-emerald-300">
+                      ✓ Complete
+                    </div>
+                  )}
                 </div>
 
-                {/* Stage label with fantasy styling */}
+                {/* Stage Number */}
                 <motion.div
-                  className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center whitespace-nowrap"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 + displayIndex * 0.2 }}
-                >
-                  <div className={`
-                    px-3 py-1 rounded-full backdrop-blur-sm
-                    ${stage.isLocked 
-                      ? 'bg-slate-800/60 text-slate-300' 
-                      : stage.isActive
-                        ? 'bg-amber-900/70 text-amber-100 border border-amber-500/50'
-                        : stage.isCompleted
-                          ? 'bg-emerald-900/70 text-emerald-100 border border-emerald-500/50'
-                          : 'bg-sky-900/70 text-sky-100'
+                  className={`
+                    absolute ${isLeft ? '-left-3' : '-right-3'} top-1/2 -translate-y-1/2
+                    w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+                    ${stage.isCompleted 
+                      ? 'bg-emerald-500 text-white' 
+                      : stage.isActive 
+                        ? 'bg-sky-500 text-white' 
+                        : 'bg-slate-500/60 text-slate-300'
                     }
-                  `}>
-                    <p className="text-sm font-bold drop-shadow">
-                      {stage.name}
-                    </p>
-                  </div>
+                  `}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.4 + displayIndex * 0.1 }}
+                >
+                  {stage.id}
                 </motion.div>
               </motion.div>
             );
