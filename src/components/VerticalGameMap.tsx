@@ -222,8 +222,19 @@ const VerticalGameMap = () => {
                 <stop offset="50%" stopColor="rgba(52,211,153,0.7)" />
                 <stop offset="100%" stopColor="rgba(56,189,248,0.5)" />
               </linearGradient>
+              <linearGradient id="completedGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="rgba(52,211,153,1)" />
+                <stop offset="100%" stopColor="rgba(34,197,94,0.8)" />
+              </linearGradient>
               <filter id="glow">
                 <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <filter id="checkpointGlow">
+                <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
                 <feMerge>
                   <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="SourceGraphic"/>
@@ -250,6 +261,146 @@ const VerticalGameMap = () => {
               animate={{ pathLength: 1, opacity: 1 }}
               transition={{ duration: 2.5, delay: 0.3, ease: "easeOut" }}
             />
+            
+            {/* Milestone checkpoint markers along the path */}
+            {/* Checkpoint 1 - near stage 4 (top) */}
+            <motion.g
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.3 }}
+            >
+              <circle 
+                cx="50" cy="8" r="2.5" 
+                fill={stages[3].isCompleted ? "url(#completedGradient)" : stages[3].isActive ? "rgba(56,189,248,0.9)" : "rgba(100,116,139,0.5)"}
+                filter="url(#checkpointGlow)"
+              />
+              {stages[3].isCompleted && (
+                <motion.path
+                  d="M 48.5 8 L 49.5 9 L 51.5 7"
+                  stroke="white"
+                  strokeWidth="0.5"
+                  fill="none"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ delay: 1, duration: 0.3 }}
+                />
+              )}
+            </motion.g>
+            
+            {/* Checkpoint 2 - between stages 4 and 3 */}
+            <motion.g
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1, duration: 0.3 }}
+            >
+              <circle 
+                cx="42" cy="21" r="1.8" 
+                fill={stages[2].isCompleted ? "url(#completedGradient)" : stages[2].isActive ? "rgba(56,189,248,0.7)" : "rgba(100,116,139,0.4)"}
+                filter="url(#checkpointGlow)"
+              />
+            </motion.g>
+            
+            {/* Checkpoint 3 - near stage 3 */}
+            <motion.g
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.2, duration: 0.3 }}
+            >
+              <circle 
+                cx="50" cy="35" r="2.5" 
+                fill={stages[2].isCompleted ? "url(#completedGradient)" : stages[2].isActive ? "rgba(56,189,248,0.9)" : "rgba(100,116,139,0.5)"}
+                filter="url(#checkpointGlow)"
+              />
+              {stages[2].isCompleted && (
+                <motion.path
+                  d="M 48.5 35 L 49.5 36 L 51.5 34"
+                  stroke="white"
+                  strokeWidth="0.5"
+                  fill="none"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ delay: 1.4, duration: 0.3 }}
+                />
+              )}
+            </motion.g>
+            
+            {/* Checkpoint 4 - between stages 3 and 2 */}
+            <motion.g
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.4, duration: 0.3 }}
+            >
+              <circle 
+                cx="38" cy="48" r="1.8" 
+                fill={stages[1].isCompleted ? "url(#completedGradient)" : stages[1].isActive ? "rgba(56,189,248,0.7)" : "rgba(100,116,139,0.4)"}
+                filter="url(#checkpointGlow)"
+              />
+            </motion.g>
+            
+            {/* Checkpoint 5 - near stage 2 */}
+            <motion.g
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.6, duration: 0.3 }}
+            >
+              <circle 
+                cx="50" cy="62" r="2.5" 
+                fill={stages[1].isCompleted ? "url(#completedGradient)" : stages[1].isActive ? "rgba(56,189,248,0.9)" : "rgba(100,116,139,0.5)"}
+                filter="url(#checkpointGlow)"
+              />
+              {stages[1].isCompleted && (
+                <motion.path
+                  d="M 48.5 62 L 49.5 63 L 51.5 61"
+                  stroke="white"
+                  strokeWidth="0.5"
+                  fill="none"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ delay: 1.8, duration: 0.3 }}
+                />
+              )}
+            </motion.g>
+            
+            {/* Checkpoint 6 - between stages 2 and 1 */}
+            <motion.g
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.8, duration: 0.3 }}
+            >
+              <circle 
+                cx="45" cy="76" r="1.8" 
+                fill={stages[0].isCompleted ? "url(#completedGradient)" : stages[0].isActive ? "rgba(56,189,248,0.7)" : "rgba(100,116,139,0.4)"}
+                filter="url(#checkpointGlow)"
+              />
+            </motion.g>
+            
+            {/* Checkpoint 7 - near stage 1 (bottom) */}
+            <motion.g
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 2, duration: 0.3 }}
+            >
+              <circle 
+                cx="50" cy="92" r="2.5" 
+                fill={stages[0].isCompleted ? "url(#completedGradient)" : stages[0].isActive ? "rgba(56,189,248,0.9)" : "rgba(100,116,139,0.5)"}
+                filter="url(#checkpointGlow)"
+              />
+              {stages[0].isCompleted && (
+                <motion.path
+                  d="M 48.5 92 L 49.5 93 L 51.5 91"
+                  stroke="white"
+                  strokeWidth="0.5"
+                  fill="none"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ delay: 2.2, duration: 0.3 }}
+                />
+              )}
+            </motion.g>
             
             {/* Animated traveling dot along the path */}
             <motion.circle
