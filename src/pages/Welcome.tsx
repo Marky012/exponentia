@@ -13,6 +13,7 @@ import warriorImage from '@/assets/warrior-character.png';
 import mageImage from '@/assets/mage-character.png';
 import SparkleEffect from '@/components/SparkleEffect';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import ExponentiaBackground from '@/components/ExponentiaBackground';
 
 // Convert name to sentence case (first letter uppercase, rest lowercase)
 const toSentenceCase = (str: string): string => {
@@ -65,7 +66,10 @@ const Welcome = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background */}
+      {/* Exponentia character background */}
+      <ExponentiaBackground overlayOpacity={0.3} />
+      
+      {/* Animated theme background */}
       <AnimatedBackground theme={selectedGender} />
       
       {/* Settings button in top right */}

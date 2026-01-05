@@ -7,16 +7,11 @@ import { GemDisplay } from '@/components/GemDisplay';
 import { MathText } from '@/utils/mathRenderer';
 import { Lock, CheckCircle, Sparkles, ArrowLeft, Map } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getExponentiaBackground, getBackgroundOverlay } from '@/utils/backgroundTransition';
+import ExponentiaBackground from '@/components/ExponentiaBackground';
 
 const Laws = () => {
   const navigate = useNavigate();
   const { laws } = useGameStore();
-  
-  // Calculate gems collected for background transition
-  const gemsCollected = laws.filter((law) => law.gemEarned).length;
-  const backgroundImage = getExponentiaBackground(gemsCollected);
-  const overlayOpacity = getBackgroundOverlay(gemsCollected);
 
   const handleLawClick = (lawId: string, completed: boolean, gemEarned: boolean) => {
     if (gemEarned) {
@@ -33,16 +28,15 @@ const Laws = () => {
 
   return (
     <motion.div 
-      className="min-h-screen p-4 md:p-8 bg-cover bg-center bg-no-repeat transition-all duration-1000"
-      style={{ 
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, ${overlayOpacity}), rgba(0, 0, 0, ${overlayOpacity})), url(${backgroundImage})`
-      }}
-      animate={{ 
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, ${overlayOpacity}), rgba(0, 0, 0, ${overlayOpacity})), url(${backgroundImage})`
-      }}
-      transition={{ duration: 1.5 }}
+      className="min-h-screen p-4 md:p-8 relative"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
     >
-      <div className="max-w-6xl mx-auto">
+      {/* Background */}
+      <ExponentiaBackground overlayOpacity={0.4} />
+      
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <motion.div
           className="mb-8"
