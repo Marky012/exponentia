@@ -209,20 +209,21 @@ const VerticalGameMap = () => {
       <div className="relative z-10 h-screen pt-16 pb-4 px-4 overflow-y-auto">
         <div className="max-w-sm mx-auto h-full flex flex-col justify-around py-4 relative">
           
-          {/* Connecting Path SVG - behind all cards */}
+          {/* Curving Dotted Path SVG - behind all cards */}
           <svg 
             className="absolute inset-0 w-full h-full pointer-events-none"
             style={{ zIndex: 0 }}
+            viewBox="0 0 100 100"
             preserveAspectRatio="none"
           >
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="rgba(56,189,248,0.8)" />
-                <stop offset="50%" stopColor="rgba(52,211,153,0.6)" />
-                <stop offset="100%" stopColor="rgba(56,189,248,0.4)" />
+                <stop offset="0%" stopColor="rgba(56,189,248,0.9)" />
+                <stop offset="50%" stopColor="rgba(52,211,153,0.7)" />
+                <stop offset="100%" stopColor="rgba(56,189,248,0.5)" />
               </linearGradient>
               <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
                 <feMerge>
                   <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="SourceGraphic"/>
@@ -230,22 +231,41 @@ const VerticalGameMap = () => {
               </filter>
             </defs>
             
-            {/* Main connecting path */}
+            {/* Curving adventure path */}
             <motion.path
-              d="M 50% 12% 
-                 C 30% 20%, 70% 30%, 50% 37%
-                 C 30% 44%, 70% 54%, 50% 62%
-                 C 30% 70%, 70% 80%, 50% 88%"
+              d="M 50 8
+                 C 25 12, 20 18, 35 25
+                 S 65 28, 50 35
+                 C 30 40, 25 48, 40 52
+                 S 70 55, 50 62
+                 C 25 68, 20 75, 40 80
+                 S 75 85, 50 92"
               fill="none"
               stroke="url(#pathGradient)"
-              strokeWidth="3"
-              strokeDasharray="8 6"
+              strokeWidth="0.8"
+              strokeDasharray="2 1.5"
               strokeLinecap="round"
               filter="url(#glow)"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 2, delay: 0.5 }}
+              transition={{ duration: 2.5, delay: 0.3, ease: "easeOut" }}
             />
+            
+            {/* Animated traveling dot along the path */}
+            <motion.circle
+              r="1"
+              fill="rgba(56,189,248,1)"
+              filter="url(#glow)"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1, 1, 0] }}
+              transition={{ duration: 4, repeat: Infinity, delay: 3 }}
+            >
+              <animateMotion
+                dur="4s"
+                repeatCount="indefinite"
+                path="M 50 8 C 25 12, 20 18, 35 25 S 65 28, 50 35 C 30 40, 25 48, 40 52 S 70 55, 50 62 C 25 68, 20 75, 40 80 S 75 85, 50 92"
+              />
+            </motion.circle>
           </svg>
           
           {displayStages.map((stage, displayIndex) => {
@@ -268,50 +288,6 @@ const VerticalGameMap = () => {
                   stiffness: 150
                 }}
               >
-                {/* Connecting line to next stage */}
-                {!isLast && (
-                  <motion.div
-                    className="absolute left-1/2 -translate-x-1/2 w-1"
-                    style={{
-                      top: '100%',
-                      height: 'calc(25vh - 40px)',
-                      background: stage.isCompleted || stages[actualIndex + 1]?.isActive
-                        ? 'linear-gradient(180deg, rgba(52,211,153,0.6) 0%, rgba(56,189,248,0.4) 100%)'
-                        : 'linear-gradient(180deg, rgba(100,116,139,0.3) 0%, rgba(100,116,139,0.1) 100%)',
-                      boxShadow: stage.isCompleted 
-                        ? '0 0 10px rgba(52,211,153,0.5)' 
-                        : 'none',
-                    }}
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: 1 }}
-                    transition={{ delay: 0.5 + displayIndex * 0.2, duration: 0.5 }}
-                  />
-                )}
-                
-                {/* Animated dots along the path */}
-                {!isLast && (stage.isCompleted || stage.isActive) && (
-                  <>
-                    {[0, 1, 2].map((dotIndex) => (
-                      <motion.div
-                        key={dotIndex}
-                        className="absolute left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-sky-400"
-                        style={{
-                          top: `calc(100% + ${dotIndex * 30 + 20}px)`,
-                          boxShadow: '0 0 8px rgba(56,189,248,0.8)',
-                        }}
-                        animate={{
-                          opacity: [0.3, 1, 0.3],
-                          scale: [0.8, 1.2, 0.8],
-                        }}
-                        transition={{
-                          duration: 1.5,
-                          repeat: Infinity,
-                          delay: dotIndex * 0.3,
-                        }}
-                      />
-                    ))}
-                  </>
-                )}
                 
                 {/* Stage Icon Button */}
                 <motion.button
