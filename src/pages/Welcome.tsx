@@ -9,6 +9,8 @@ import { InstallButton } from '@/components/InstallButton';
 import { SettingsMenu } from '@/components/SettingsMenu';
 import { UserCircle2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import warriorImage from '@/assets/warrior-character.png';
+import mageImage from '@/assets/mage-character.png';
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -109,7 +111,7 @@ const Welcome = () => {
               <div className="grid grid-cols-2 gap-4">
                 <motion.button
                   onClick={() => setSelectedGender('male')}
-                  className={`relative p-6 rounded-lg border-2 transition-all duration-300 ${
+                  className={`relative p-4 rounded-lg border-2 overflow-hidden ${
                     selectedGender === 'male'
                       ? 'border-[hsl(202,60%,65%)] bg-[hsl(202,60%,65%,0.1)] shadow-[0_0_16px_hsl(202,60%,75%,0.6)]'
                       : 'border-border hover:border-[hsl(202,60%,65%,0.5)]'
@@ -117,11 +119,25 @@ const Welcome = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="text-6xl mb-2">⚔️</div>
-                  <h3 className="font-orbitron font-bold text-lg">Warrior</h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Blue & Green Theme
-                  </p>
+                  <div className="flex flex-col items-center gap-3">
+                    <motion.div 
+                      className="w-24 h-24 rounded-full overflow-hidden border-2 border-[hsl(202,60%,50%)] shadow-[0_0_12px_hsl(202,60%,65%,0.4)]"
+                      animate={selectedGender === 'male' ? { scale: [1, 1.05, 1] } : {}}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <img 
+                        src={warriorImage} 
+                        alt="Warrior character" 
+                        className="w-full h-full object-cover"
+                      />
+                    </motion.div>
+                    <div className="text-center">
+                      <h3 className="font-orbitron font-bold text-lg">Warrior</h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Blue & Cyan Theme
+                      </p>
+                    </div>
+                  </div>
                   {selectedGender === 'male' && (
                     <motion.div
                       className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[hsl(202,60%,65%)] flex items-center justify-center text-[hsl(207,85%,8%)]"
@@ -135,7 +151,7 @@ const Welcome = () => {
 
                 <motion.button
                   onClick={() => setSelectedGender('female')}
-                  className={`relative p-6 rounded-lg border-2 transition-all duration-300 ${
+                  className={`relative p-4 rounded-lg border-2 overflow-hidden ${
                     selectedGender === 'female'
                       ? 'border-[hsl(330,85%,65%)] bg-[hsl(330,85%,65%,0.1)] shadow-[0_0_16px_hsl(330,90%,75%,0.6)]'
                       : 'border-border hover:border-[hsl(330,85%,65%,0.5)]'
@@ -143,11 +159,25 @@ const Welcome = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="text-6xl mb-2">🔮</div>
-                  <h3 className="font-orbitron font-bold text-lg">Mage</h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Pink & Magenta Theme
-                  </p>
+                  <div className="flex flex-col items-center gap-3">
+                    <motion.div 
+                      className="w-24 h-24 rounded-full overflow-hidden border-2 border-[hsl(330,85%,55%)] shadow-[0_0_12px_hsl(330,85%,65%,0.4)]"
+                      animate={selectedGender === 'female' ? { scale: [1, 1.05, 1] } : {}}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <img 
+                        src={mageImage} 
+                        alt="Mage character" 
+                        className="w-full h-full object-cover"
+                      />
+                    </motion.div>
+                    <div className="text-center">
+                      <h3 className="font-orbitron font-bold text-lg">Mage</h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Pink & Magenta Theme
+                      </p>
+                    </div>
+                  </div>
                   {selectedGender === 'female' && (
                     <motion.div
                       className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[hsl(330,85%,65%)] flex items-center justify-center text-white"

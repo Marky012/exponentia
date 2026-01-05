@@ -98,11 +98,27 @@
     font-family: 'Inter', sans-serif;
     background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.95) 100%);
     background-attachment: fixed;
+    transition: background 0.5s ease-in-out, color 0.3s ease-in-out;
   }
   
   .theme-female body,
   body.theme-female {
     background: linear-gradient(180deg, hsl(330 40% 8%) 0%, hsl(330 35% 5%) 100%);
+  }
+
+  /* Smooth theme transition for all themed elements */
+  body *,
+  body *::before,
+  body *::after {
+    transition-property: background-color, border-color, box-shadow, color, fill, stroke, filter;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-in-out;
+  }
+  
+  /* Exclude animations from transition interference */
+  body [class*="animate-"],
+  body .transition-transform {
+    transition-property: transform, opacity;
   }
 
   h1, h2, h3, h4, h5, h6 {
