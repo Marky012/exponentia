@@ -11,6 +11,14 @@ import { UserCircle2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import warriorImage from '@/assets/warrior-character.png';
 import mageImage from '@/assets/mage-character.png';
+import SparkleEffect from '@/components/SparkleEffect';
+import AnimatedBackground from '@/components/AnimatedBackground';
+
+// Convert name to sentence case (first letter uppercase, rest lowercase)
+const toSentenceCase = (str: string): string => {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -47,25 +55,30 @@ const Welcome = () => {
       return;
     }
 
-    setPlayerName(name.trim());
+    // Convert name to sentence case before saving
+    const formattedName = toSentenceCase(name.trim());
+    setPlayerName(formattedName);
     setPlayerGender(selectedGender);
     startGame();
     navigate('/intro');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated background */}
+      <AnimatedBackground theme={selectedGender} />
+      
       {/* Settings button in top right */}
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 z-10">
         <SettingsMenu />
       </div>
       <motion.div
-        className="w-full max-w-2xl"
+        className="w-full max-w-2xl relative z-10"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <Card className="p-8 bg-card/80 backdrop-blur-sm border-2 border-primary/20">
+        <Card className="p-8 bg-card/80 backdrop-blur-md border-2 border-primary/20 shadow-2xl">
           <motion.div
             className="text-center mb-8"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -120,17 +133,20 @@ const Welcome = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex flex-col items-center gap-3">
-                    <motion.div 
-                      className="w-24 h-24 rounded-full overflow-hidden border-2 border-[hsl(202,60%,50%)] shadow-[0_0_12px_hsl(202,60%,65%,0.4)]"
-                      animate={selectedGender === 'male' ? { scale: [1, 1.05, 1] } : {}}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <img 
-                        src={warriorImage} 
-                        alt="Warrior character" 
-                        className="w-full h-full object-cover"
-                      />
-                    </motion.div>
+                    <div className="relative">
+                      <motion.div 
+                        className="w-24 h-24 rounded-full overflow-hidden border-2 border-[hsl(202,60%,50%)] shadow-[0_0_12px_hsl(202,60%,65%,0.4)]"
+                        animate={selectedGender === 'male' ? { scale: [1, 1.05, 1] } : {}}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <img 
+                          src={warriorImage} 
+                          alt="Warrior character" 
+                          className="w-full h-full object-cover"
+                        />
+                      </motion.div>
+                      <SparkleEffect isActive={selectedGender === 'male'} color="blue" />
+                    </div>
                     <div className="text-center">
                       <h3 className="font-orbitron font-bold text-lg">Warrior</h3>
                       <p className="text-xs text-muted-foreground mt-1">
@@ -160,17 +176,20 @@ const Welcome = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex flex-col items-center gap-3">
-                    <motion.div 
-                      className="w-24 h-24 rounded-full overflow-hidden border-2 border-[hsl(330,85%,55%)] shadow-[0_0_12px_hsl(330,85%,65%,0.4)]"
-                      animate={selectedGender === 'female' ? { scale: [1, 1.05, 1] } : {}}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <img 
-                        src={mageImage} 
-                        alt="Mage character" 
-                        className="w-full h-full object-cover"
-                      />
-                    </motion.div>
+                    <div className="relative">
+                      <motion.div 
+                        className="w-24 h-24 rounded-full overflow-hidden border-2 border-[hsl(330,85%,55%)] shadow-[0_0_12px_hsl(330,85%,65%,0.4)]"
+                        animate={selectedGender === 'female' ? { scale: [1, 1.05, 1] } : {}}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <img 
+                          src={mageImage} 
+                          alt="Mage character" 
+                          className="w-full h-full object-cover"
+                        />
+                      </motion.div>
+                      <SparkleEffect isActive={selectedGender === 'female'} color="pink" />
+                    </div>
                     <div className="text-center">
                       <h3 className="font-orbitron font-bold text-lg">Mage</h3>
                       <p className="text-xs text-muted-foreground mt-1">
