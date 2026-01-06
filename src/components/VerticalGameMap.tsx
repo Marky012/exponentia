@@ -249,13 +249,13 @@ const VerticalGameMap = () => {
 
       {/* Map Content */}
       <div className="relative z-10 h-screen pt-16 pb-4 px-4 overflow-y-auto">
-        <div className="max-w-sm mx-auto h-full flex flex-col justify-around py-4 relative">
+        <div className="max-w-md mx-auto h-full flex flex-col justify-around py-4 relative">
           
-          {/* Curving Dotted Path SVG - positioned on the left side */}
+          {/* Curving Dotted Path SVG - zigzag between stages */}
           <svg 
-            className="absolute left-0 top-0 h-full pointer-events-none"
-            style={{ zIndex: 0, width: '60px' }}
-            viewBox="0 0 30 100"
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            style={{ zIndex: 0 }}
+            viewBox="0 0 100 100"
             preserveAspectRatio="none"
           >
             <defs>
@@ -264,19 +264,8 @@ const VerticalGameMap = () => {
                 <stop offset="50%" stopColor={theme.pathGradient.split(', ')[1]} />
                 <stop offset="100%" stopColor={theme.pathGradient.split(', ')[2]} />
               </linearGradient>
-              <linearGradient id="completedGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-                <stop offset="0%" stopColor="rgba(52,211,153,1)" />
-                <stop offset="100%" stopColor="rgba(34,197,94,0.8)" />
-              </linearGradient>
               <filter id="glow">
-                <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-              <filter id="checkpointGlow">
-                <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+                <feGaussianBlur stdDeviation="0.3" result="coloredBlur"/>
                 <feMerge>
                   <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="SourceGraphic"/>
@@ -284,17 +273,21 @@ const VerticalGameMap = () => {
               </filter>
             </defs>
             
-            {/* Curving adventure path - on the side */}
+            {/* Zigzag curving path - Stage 1 (bottom-right) to Stage 4 (top-left) */}
             <motion.path
-              d="M 15 92
-                 C 8 85, 5 78, 12 72
-                 S 25 65, 15 58
-                 C 5 52, 8 45, 15 38
-                 S 25 30, 15 22
-                 C 8 16, 10 10, 15 5"
+              d="M 72 88 
+                 C 82 84, 85 80, 80 76
+                 C 75 72, 60 70, 50 70
+                 C 40 70, 25 68, 20 64
+                 C 15 60, 18 56, 28 54
+                 C 38 52, 60 52, 72 52
+                 C 84 52, 88 48, 82 44
+                 C 76 40, 60 38, 50 38
+                 C 40 38, 25 36, 20 32
+                 C 15 28, 18 24, 28 22"
               fill="none"
               stroke="url(#pathGradient)"
-              strokeWidth="1.2"
+              strokeWidth="0.6"
               strokeDasharray="2 1.5"
               strokeLinecap="round"
               filter="url(#glow)"
@@ -303,110 +296,9 @@ const VerticalGameMap = () => {
               transition={{ duration: 2.5, delay: 0.3, ease: "easeOut" }}
             />
             
-            {/* Milestone checkpoint markers along the path */}
-            {/* Checkpoint at stage 1 (bottom - start) */}
-            <motion.g
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.8, duration: 0.3 }}
-            >
-              <circle 
-                cx="15" cy="92" r="3" 
-                fill={stages[0].isCompleted ? "url(#completedGradient)" : stages[0].isActive ? theme.activeCheckpoint : "rgba(100,116,139,0.5)"}
-                filter="url(#checkpointGlow)"
-              />
-              {stages[0].isCompleted && (
-                <motion.path
-                  d="M 13.5 92 L 14.5 93 L 16.5 91"
-                  stroke="white"
-                  strokeWidth="0.6"
-                  fill="none"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 1, duration: 0.3 }}
-                />
-              )}
-            </motion.g>
-            
-            {/* Checkpoint at stage 2 */}
-            <motion.g
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.2, duration: 0.3 }}
-            >
-              <circle 
-                cx="15" cy="58" r="3" 
-                fill={stages[1].isCompleted ? "url(#completedGradient)" : stages[1].isActive ? theme.activeCheckpoint : "rgba(100,116,139,0.5)"}
-                filter="url(#checkpointGlow)"
-              />
-              {stages[1].isCompleted && (
-                <motion.path
-                  d="M 13.5 58 L 14.5 59 L 16.5 57"
-                  stroke="white"
-                  strokeWidth="0.6"
-                  fill="none"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 1.4, duration: 0.3 }}
-                />
-              )}
-            </motion.g>
-            
-            {/* Checkpoint at stage 3 */}
-            <motion.g
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.6, duration: 0.3 }}
-            >
-              <circle 
-                cx="15" cy="22" r="3" 
-                fill={stages[2].isCompleted ? "url(#completedGradient)" : stages[2].isActive ? theme.activeCheckpoint : "rgba(100,116,139,0.5)"}
-                filter="url(#checkpointGlow)"
-              />
-              {stages[2].isCompleted && (
-                <motion.path
-                  d="M 13.5 22 L 14.5 23 L 16.5 21"
-                  stroke="white"
-                  strokeWidth="0.6"
-                  fill="none"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 1.8, duration: 0.3 }}
-                />
-              )}
-            </motion.g>
-            
-            {/* Checkpoint at stage 4 (top - finish) */}
-            <motion.g
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 2, duration: 0.3 }}
-            >
-              <circle 
-                cx="15" cy="5" r="3" 
-                fill={stages[3].isCompleted ? "url(#completedGradient)" : stages[3].isActive ? theme.activeCheckpoint : "rgba(100,116,139,0.5)"}
-                filter="url(#checkpointGlow)"
-              />
-              {stages[3].isCompleted && (
-                <motion.path
-                  d="M 13.5 5 L 14.5 6 L 16.5 4"
-                  stroke="white"
-                  strokeWidth="0.6"
-                  fill="none"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 2.2, duration: 0.3 }}
-                />
-              )}
-            </motion.g>
-            
             {/* Animated traveling dot along the path - going UPWARDS */}
             <motion.circle
-              r="1.5"
+              r="1"
               fill={theme.dotColor}
               filter="url(#glow)"
               initial={{ opacity: 0 }}
@@ -416,7 +308,7 @@ const VerticalGameMap = () => {
               <animateMotion
                 dur="4s"
                 repeatCount="indefinite"
-                path="M 15 92 C 8 85, 5 78, 12 72 S 25 65, 15 58 C 5 52, 8 45, 15 38 S 25 30, 15 22 C 8 16, 10 10, 15 5"
+                path="M 72 88 C 82 84, 85 80, 80 76 C 75 72, 60 70, 50 70 C 40 70, 25 68, 20 64 C 15 60, 18 56, 28 54 C 38 52, 60 52, 72 52 C 84 52, 88 48, 82 44 C 76 40, 60 38, 50 38 C 40 38, 25 36, 20 32 C 15 28, 18 24, 28 22"
               />
             </motion.circle>
           </svg>
@@ -424,13 +316,18 @@ const VerticalGameMap = () => {
           {displayStages.map((stage, displayIndex) => {
             const actualIndex = stages.length - 1 - displayIndex;
             const isUnlocking = unlockingStage === actualIndex;
+            // Zigzag pattern: stage 4 (top-left), stage 3 (right), stage 2 (left), stage 1 (bottom-right)
+            // displayIndex 0 = stage 4 (top) -> left
+            // displayIndex 1 = stage 3 -> right  
+            // displayIndex 2 = stage 2 -> left
+            // displayIndex 3 = stage 1 (bottom) -> right
             const isLeft = displayIndex % 2 === 0;
             const isLast = displayIndex === displayStages.length - 1;
             
             return (
               <motion.div
                 key={stage.id}
-                className={`relative flex items-center gap-3 ml-16 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}
+                className={`relative flex items-center gap-3 ${isLeft ? 'justify-start' : 'justify-end'}`}
                 style={{ zIndex: 1 }}
                 initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -448,8 +345,9 @@ const VerticalGameMap = () => {
                   onMouseEnter={() => handleStageHover(stage)}
                   disabled={stage.isLocked}
                   className={`
-                    relative w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center shrink-0
+                    relative w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center shrink-0
                     backdrop-blur-sm transition-all duration-500
+                    ${isLeft ? 'order-1' : 'order-2'}
                     ${stage.isCompleted 
                       ? 'bg-emerald-500/30 border-2 border-emerald-400/70 shadow-[0_0_20px_rgba(52,211,153,0.4)]' 
                       : stage.isActive 
@@ -539,9 +437,10 @@ const VerticalGameMap = () => {
                   )}
                 </motion.button>
 
-                {/* Stage Info Card */}
+                {/* Stage Info Card - only shown on inner side */}
                 <div className={`
-                  flex-1 p-3 rounded-xl backdrop-blur-sm transition-all duration-500
+                  w-40 md:w-48 p-3 rounded-xl backdrop-blur-sm transition-all duration-500
+                  ${isLeft ? 'order-2' : 'order-1'}
                   ${stage.isCompleted 
                     ? 'bg-emerald-900/30 border border-emerald-400/40' 
                     : stage.isActive 
@@ -600,10 +499,10 @@ const VerticalGameMap = () => {
                   )}
                 </div>
 
-                {/* Stage Number */}
+                {/* Stage Number Badge */}
                 <motion.div
                   className={`
-                    absolute ${isLeft ? '-left-3' : '-right-3'} top-1/2 -translate-y-1/2
+                    absolute -top-2 ${isLeft ? 'left-0' : 'right-0'}
                     w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-500
                     ${stage.isCompleted 
                       ? 'bg-emerald-500 text-white' 
