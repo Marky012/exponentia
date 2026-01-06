@@ -14,6 +14,35 @@ import map3Icon from '@/assets/map3.png';
 import map4Icon from '@/assets/map4.png';
 import exponentiaBg from '@/assets/exponentia-light.png';
 
+// Theme-based color configurations
+const getThemeColors = (isFemale: boolean) => ({
+  headerBg: isFemale ? 'bg-pink-900/50' : 'bg-sky-900/50',
+  headerBorder: isFemale ? 'border-pink-400/30' : 'border-sky-400/30',
+  headerHover: isFemale ? 'hover:bg-pink-800/60' : 'hover:bg-sky-800/60',
+  titleColor: isFemale ? 'text-pink-100' : 'text-sky-100',
+  subtitleColor: isFemale ? 'text-pink-200/80' : 'text-sky-200/80',
+  overlayGradient: isFemale 
+    ? 'from-pink-900/20 via-transparent to-pink-900/30' 
+    : 'from-sky-900/20 via-transparent to-sky-900/30',
+  activeBg: isFemale ? 'bg-pink-500/30' : 'bg-sky-500/30',
+  activeBorder: isFemale ? 'border-pink-400/70' : 'border-sky-400/70',
+  activeShadow: isFemale ? 'shadow-[0_0_25px_rgba(236,72,153,0.5)]' : 'shadow-[0_0_25px_rgba(56,189,248,0.5)]',
+  unlockedBg: isFemale ? 'bg-pink-500/25' : 'bg-sky-500/25',
+  unlockedBorder: isFemale ? 'border-pink-400/60' : 'border-sky-400/60',
+  stageInfoActive: isFemale ? 'bg-pink-900/40 border-pink-400/50' : 'bg-sky-900/40 border-sky-400/50',
+  stageInfoUnlocked: isFemale ? 'bg-pink-900/30 border-pink-400/40' : 'bg-sky-900/30 border-sky-400/40',
+  progressColor: isFemale ? 'bg-pink-400' : 'bg-sky-400',
+  textHighlight: isFemale ? 'text-pink-200/80' : 'text-sky-200/80',
+  progressText: isFemale ? 'text-pink-300/70' : 'text-sky-300/70',
+  stageNumActive: isFemale ? 'bg-pink-500' : 'bg-sky-500',
+  pathGradient: isFemale 
+    ? 'rgba(236,72,153,0.9), rgba(244,114,182,0.7), rgba(236,72,153,0.5)' 
+    : 'rgba(56,189,248,0.9), rgba(52,211,153,0.7), rgba(56,189,248,0.5)',
+  dotColor: isFemale ? 'rgba(236,72,153,1)' : 'rgba(56,189,248,1)',
+  activeCheckpoint: isFemale ? 'rgba(236,72,153,0.9)' : 'rgba(56,189,248,0.9)',
+  activeCheckpointLight: isFemale ? 'rgba(244,114,182,0.7)' : 'rgba(56,189,248,0.7)',
+});
+
 interface Stage {
   id: number;
   name: string;
@@ -38,13 +67,23 @@ interface UnlockParticle {
 
 const VerticalGameMap = () => {
   const navigate = useNavigate();
-  const { introCompleted, laws, quizLevels } = useGameStore();
+  const { introCompleted, laws, quizLevels, playerGender, unlockQuizLevels } = useGameStore();
   const [unlockingStage, setUnlockingStage] = useState<number | null>(null);
   const [particles, setParticles] = useState<UnlockParticle[]>([]);
   const previousStagesRef = useRef<boolean[]>([]);
   
+  const isFemale = playerGender === 'female';
+  const theme = getThemeColors(isFemale);
+  
   const allGemsEarned = laws.every(law => law.gemEarned);
   const allQuizzesCompleted = quizLevels.every(level => level.completed);
+  
+  // Unlock quiz levels when all gems are earned
+  useEffect(() => {
+    if (allGemsEarned && !quizLevels[0].unlocked) {
+      unlockQuizLevels();
+    }
+  }, [allGemsEarned, quizLevels, unlockQuizLevels]);
   
   const lawsProgress = (laws.filter(law => law.gemEarned).length / laws.length) * 100;
   const quizProgress = (quizLevels.filter(level => level.completed).length / quizLevels.length) * 100;
@@ -161,15 +200,18 @@ const VerticalGameMap = () => {
   const displayStages = [...stages].reverse();
 
   return (
-    <div 
-      className="relative min-h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat"
+    <motion.div 
+      className="relative min-h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat transition-all duration-500"
       style={{ 
         backgroundImage: `url(${exponentiaBg})`,
         backgroundSize: 'cover',
       }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
     >
-      {/* Blue overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-900/20 via-transparent to-sky-900/30" />
+      {/* Theme-based overlay */}
+      <div className={`absolute inset-0 bg-gradient-to-b ${theme.overlayGradient} transition-colors duration-500`} />
 
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-20 px-4 py-3 flex items-center justify-between">
@@ -178,10 +220,10 @@ const VerticalGameMap = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <h1 className="text-xl md:text-2xl font-orbitron font-bold text-sky-100 drop-shadow-lg">
+          <h1 className={`text-xl md:text-2xl font-orbitron font-bold ${theme.titleColor} drop-shadow-lg transition-colors duration-500`}>
             EXPONENTIA
           </h1>
-          <p className="text-[10px] text-sky-200/80">Your Quest Awaits</p>
+          <p className={`text-[10px] ${theme.subtitleColor} transition-colors duration-500`}>Your Quest Awaits</p>
         </motion.div>
 
         <motion.div 
@@ -197,7 +239,7 @@ const VerticalGameMap = () => {
               soundEffects.playClick();
               navigate('/statistics');
             }}
-            className="w-9 h-9 rounded-full bg-sky-900/50 backdrop-blur-sm text-sky-100 hover:bg-sky-800/60 border border-sky-400/30"
+            className={`w-9 h-9 rounded-full ${theme.headerBg} backdrop-blur-sm ${theme.titleColor} ${theme.headerHover} border ${theme.headerBorder} transition-colors duration-500`}
           >
             <BarChart3 className="w-4 h-4" />
           </Button>
@@ -209,20 +251,20 @@ const VerticalGameMap = () => {
       <div className="relative z-10 h-screen pt-16 pb-4 px-4 overflow-y-auto">
         <div className="max-w-sm mx-auto h-full flex flex-col justify-around py-4 relative">
           
-          {/* Curving Dotted Path SVG - behind all cards */}
+          {/* Curving Dotted Path SVG - positioned on the left side */}
           <svg 
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            style={{ zIndex: 0 }}
-            viewBox="0 0 100 100"
+            className="absolute left-0 top-0 h-full pointer-events-none"
+            style={{ zIndex: 0, width: '60px' }}
+            viewBox="0 0 30 100"
             preserveAspectRatio="none"
           >
             <defs>
-              <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="rgba(56,189,248,0.9)" />
-                <stop offset="50%" stopColor="rgba(52,211,153,0.7)" />
-                <stop offset="100%" stopColor="rgba(56,189,248,0.5)" />
+              <linearGradient id="pathGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stopColor={theme.pathGradient.split(', ')[0]} />
+                <stop offset="50%" stopColor={theme.pathGradient.split(', ')[1]} />
+                <stop offset="100%" stopColor={theme.pathGradient.split(', ')[2]} />
               </linearGradient>
-              <linearGradient id="completedGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id="completedGradient" x1="0%" y1="100%" x2="0%" y2="0%">
                 <stop offset="0%" stopColor="rgba(52,211,153,1)" />
                 <stop offset="100%" stopColor="rgba(34,197,94,0.8)" />
               </linearGradient>
@@ -242,18 +284,17 @@ const VerticalGameMap = () => {
               </filter>
             </defs>
             
-            {/* Curving adventure path */}
+            {/* Curving adventure path - on the side */}
             <motion.path
-              d="M 50 8
-                 C 25 12, 20 18, 35 25
-                 S 65 28, 50 35
-                 C 30 40, 25 48, 40 52
-                 S 70 55, 50 62
-                 C 25 68, 20 75, 40 80
-                 S 75 85, 50 92"
+              d="M 15 92
+                 C 8 85, 5 78, 12 72
+                 S 25 65, 15 58
+                 C 5 52, 8 45, 15 38
+                 S 25 30, 15 22
+                 C 8 16, 10 10, 15 5"
               fill="none"
               stroke="url(#pathGradient)"
-              strokeWidth="0.8"
+              strokeWidth="1.2"
               strokeDasharray="2 1.5"
               strokeLinecap="round"
               filter="url(#glow)"
@@ -263,22 +304,22 @@ const VerticalGameMap = () => {
             />
             
             {/* Milestone checkpoint markers along the path */}
-            {/* Checkpoint 1 - near stage 4 (top) */}
+            {/* Checkpoint at stage 1 (bottom - start) */}
             <motion.g
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.8, duration: 0.3 }}
             >
               <circle 
-                cx="50" cy="8" r="2.5" 
-                fill={stages[3].isCompleted ? "url(#completedGradient)" : stages[3].isActive ? "rgba(56,189,248,0.9)" : "rgba(100,116,139,0.5)"}
+                cx="15" cy="92" r="3" 
+                fill={stages[0].isCompleted ? "url(#completedGradient)" : stages[0].isActive ? theme.activeCheckpoint : "rgba(100,116,139,0.5)"}
                 filter="url(#checkpointGlow)"
               />
-              {stages[3].isCompleted && (
+              {stages[0].isCompleted && (
                 <motion.path
-                  d="M 48.5 8 L 49.5 9 L 51.5 7"
+                  d="M 13.5 92 L 14.5 93 L 16.5 91"
                   stroke="white"
-                  strokeWidth="0.5"
+                  strokeWidth="0.6"
                   fill="none"
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
@@ -288,35 +329,22 @@ const VerticalGameMap = () => {
               )}
             </motion.g>
             
-            {/* Checkpoint 2 - between stages 4 and 3 */}
-            <motion.g
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1, duration: 0.3 }}
-            >
-              <circle 
-                cx="42" cy="21" r="1.8" 
-                fill={stages[2].isCompleted ? "url(#completedGradient)" : stages[2].isActive ? "rgba(56,189,248,0.7)" : "rgba(100,116,139,0.4)"}
-                filter="url(#checkpointGlow)"
-              />
-            </motion.g>
-            
-            {/* Checkpoint 3 - near stage 3 */}
+            {/* Checkpoint at stage 2 */}
             <motion.g
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1.2, duration: 0.3 }}
             >
               <circle 
-                cx="50" cy="35" r="2.5" 
-                fill={stages[2].isCompleted ? "url(#completedGradient)" : stages[2].isActive ? "rgba(56,189,248,0.9)" : "rgba(100,116,139,0.5)"}
+                cx="15" cy="58" r="3" 
+                fill={stages[1].isCompleted ? "url(#completedGradient)" : stages[1].isActive ? theme.activeCheckpoint : "rgba(100,116,139,0.5)"}
                 filter="url(#checkpointGlow)"
               />
-              {stages[2].isCompleted && (
+              {stages[1].isCompleted && (
                 <motion.path
-                  d="M 48.5 35 L 49.5 36 L 51.5 34"
+                  d="M 13.5 58 L 14.5 59 L 16.5 57"
                   stroke="white"
-                  strokeWidth="0.5"
+                  strokeWidth="0.6"
                   fill="none"
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
@@ -326,35 +354,22 @@ const VerticalGameMap = () => {
               )}
             </motion.g>
             
-            {/* Checkpoint 4 - between stages 3 and 2 */}
-            <motion.g
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.4, duration: 0.3 }}
-            >
-              <circle 
-                cx="38" cy="48" r="1.8" 
-                fill={stages[1].isCompleted ? "url(#completedGradient)" : stages[1].isActive ? "rgba(56,189,248,0.7)" : "rgba(100,116,139,0.4)"}
-                filter="url(#checkpointGlow)"
-              />
-            </motion.g>
-            
-            {/* Checkpoint 5 - near stage 2 */}
+            {/* Checkpoint at stage 3 */}
             <motion.g
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1.6, duration: 0.3 }}
             >
               <circle 
-                cx="50" cy="62" r="2.5" 
-                fill={stages[1].isCompleted ? "url(#completedGradient)" : stages[1].isActive ? "rgba(56,189,248,0.9)" : "rgba(100,116,139,0.5)"}
+                cx="15" cy="22" r="3" 
+                fill={stages[2].isCompleted ? "url(#completedGradient)" : stages[2].isActive ? theme.activeCheckpoint : "rgba(100,116,139,0.5)"}
                 filter="url(#checkpointGlow)"
               />
-              {stages[1].isCompleted && (
+              {stages[2].isCompleted && (
                 <motion.path
-                  d="M 48.5 62 L 49.5 63 L 51.5 61"
+                  d="M 13.5 22 L 14.5 23 L 16.5 21"
                   stroke="white"
-                  strokeWidth="0.5"
+                  strokeWidth="0.6"
                   fill="none"
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
@@ -364,35 +379,22 @@ const VerticalGameMap = () => {
               )}
             </motion.g>
             
-            {/* Checkpoint 6 - between stages 2 and 1 */}
-            <motion.g
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.8, duration: 0.3 }}
-            >
-              <circle 
-                cx="45" cy="76" r="1.8" 
-                fill={stages[0].isCompleted ? "url(#completedGradient)" : stages[0].isActive ? "rgba(56,189,248,0.7)" : "rgba(100,116,139,0.4)"}
-                filter="url(#checkpointGlow)"
-              />
-            </motion.g>
-            
-            {/* Checkpoint 7 - near stage 1 (bottom) */}
+            {/* Checkpoint at stage 4 (top - finish) */}
             <motion.g
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 2, duration: 0.3 }}
             >
               <circle 
-                cx="50" cy="92" r="2.5" 
-                fill={stages[0].isCompleted ? "url(#completedGradient)" : stages[0].isActive ? "rgba(56,189,248,0.9)" : "rgba(100,116,139,0.5)"}
+                cx="15" cy="5" r="3" 
+                fill={stages[3].isCompleted ? "url(#completedGradient)" : stages[3].isActive ? theme.activeCheckpoint : "rgba(100,116,139,0.5)"}
                 filter="url(#checkpointGlow)"
               />
-              {stages[0].isCompleted && (
+              {stages[3].isCompleted && (
                 <motion.path
-                  d="M 48.5 92 L 49.5 93 L 51.5 91"
+                  d="M 13.5 5 L 14.5 6 L 16.5 4"
                   stroke="white"
-                  strokeWidth="0.5"
+                  strokeWidth="0.6"
                   fill="none"
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
@@ -402,10 +404,10 @@ const VerticalGameMap = () => {
               )}
             </motion.g>
             
-            {/* Animated traveling dot along the path */}
+            {/* Animated traveling dot along the path - going UPWARDS */}
             <motion.circle
-              r="1"
-              fill="rgba(56,189,248,1)"
+              r="1.5"
+              fill={theme.dotColor}
               filter="url(#glow)"
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 1, 1, 0] }}
@@ -414,7 +416,7 @@ const VerticalGameMap = () => {
               <animateMotion
                 dur="4s"
                 repeatCount="indefinite"
-                path="M 50 8 C 25 12, 20 18, 35 25 S 65 28, 50 35 C 30 40, 25 48, 40 52 S 70 55, 50 62 C 25 68, 20 75, 40 80 S 75 85, 50 92"
+                path="M 15 92 C 8 85, 5 78, 12 72 S 25 65, 15 58 C 5 52, 8 45, 15 38 S 25 30, 15 22 C 8 16, 10 10, 15 5"
               />
             </motion.circle>
           </svg>
@@ -428,7 +430,7 @@ const VerticalGameMap = () => {
             return (
               <motion.div
                 key={stage.id}
-                className={`relative flex items-center gap-3 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}
+                className={`relative flex items-center gap-3 ml-16 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}
                 style={{ zIndex: 1 }}
                 initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -447,14 +449,14 @@ const VerticalGameMap = () => {
                   disabled={stage.isLocked}
                   className={`
                     relative w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center shrink-0
-                    backdrop-blur-sm transition-all duration-300
+                    backdrop-blur-sm transition-all duration-500
                     ${stage.isCompleted 
                       ? 'bg-emerald-500/30 border-2 border-emerald-400/70 shadow-[0_0_20px_rgba(52,211,153,0.4)]' 
                       : stage.isActive 
-                        ? 'bg-sky-500/30 border-2 border-sky-400/70 shadow-[0_0_25px_rgba(56,189,248,0.5)]' 
+                        ? `${theme.activeBg} border-2 ${theme.activeBorder} ${theme.activeShadow}` 
                         : stage.isLocked 
                           ? 'bg-slate-600/40 border-2 border-slate-500/50 cursor-not-allowed' 
-                          : 'bg-sky-500/25 border-2 border-sky-400/60'
+                          : `${theme.unlockedBg} border-2 ${theme.unlockedBorder}`
                     }
                   `}
                   whileHover={!stage.isLocked ? { scale: 1.08 } : {}}
@@ -539,14 +541,14 @@ const VerticalGameMap = () => {
 
                 {/* Stage Info Card */}
                 <div className={`
-                  flex-1 p-3 rounded-xl backdrop-blur-sm
+                  flex-1 p-3 rounded-xl backdrop-blur-sm transition-all duration-500
                   ${stage.isCompleted 
                     ? 'bg-emerald-900/30 border border-emerald-400/40' 
                     : stage.isActive 
-                      ? 'bg-sky-900/40 border border-sky-400/50' 
+                      ? theme.stageInfoActive 
                       : stage.isLocked 
                         ? 'bg-slate-800/30 border border-slate-500/30' 
-                        : 'bg-sky-900/30 border border-sky-400/40'
+                        : theme.stageInfoUnlocked
                   }
                 `}>
                   {/* Stars */}
@@ -563,13 +565,13 @@ const VerticalGameMap = () => {
                     ))}
                   </div>
 
-                  <h3 className={`text-sm font-bold mb-0.5 ${
+                  <h3 className={`text-sm font-bold mb-0.5 transition-colors duration-500 ${
                     stage.isLocked ? 'text-slate-400' : 'text-white'
                   }`}>
                     {stage.name}
                   </h3>
-                  <p className={`text-xs ${
-                    stage.isLocked ? 'text-slate-500' : 'text-sky-200/80'
+                  <p className={`text-xs transition-colors duration-500 ${
+                    stage.isLocked ? 'text-slate-500' : theme.textHighlight
                   }`}>
                     {stage.description}
                   </p>
@@ -579,13 +581,13 @@ const VerticalGameMap = () => {
                     <div className="mt-2">
                       <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
                         <motion.div 
-                          className="h-full bg-sky-400 rounded-full"
+                          className={`h-full ${theme.progressColor} rounded-full transition-colors duration-500`}
                           initial={{ width: 0 }}
                           animate={{ width: `${stage.progress}%` }}
                           transition={{ duration: 1 }}
                         />
                       </div>
-                      <p className="text-[10px] text-sky-300/70 mt-0.5">
+                      <p className={`text-[10px] ${theme.progressText} mt-0.5 transition-colors duration-500`}>
                         {Math.round(stage.progress)}%
                       </p>
                     </div>
@@ -602,11 +604,11 @@ const VerticalGameMap = () => {
                 <motion.div
                   className={`
                     absolute ${isLeft ? '-left-3' : '-right-3'} top-1/2 -translate-y-1/2
-                    w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+                    w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-500
                     ${stage.isCompleted 
                       ? 'bg-emerald-500 text-white' 
                       : stage.isActive 
-                        ? 'bg-sky-500 text-white' 
+                        ? theme.stageNumActive + ' text-white' 
                         : 'bg-slate-500/60 text-slate-300'
                     }
                   `}
@@ -621,7 +623,7 @@ const VerticalGameMap = () => {
           })}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

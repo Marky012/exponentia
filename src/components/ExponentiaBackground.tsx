@@ -7,19 +7,27 @@ interface ExponentiaBackgroundProps {
 
 const ExponentiaBackground = ({ overlayOpacity = 0.6 }: ExponentiaBackgroundProps) => {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
-      {/* Background image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+    <motion.div 
+      className="fixed inset-0 -z-10 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Background image with smooth transition */}
+      <motion.div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500"
         style={{ backgroundImage: `url(${exponentiaLight})` }}
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
       />
       
-      {/* Gradient overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/70" />
+      {/* Gradient overlay for readability - uses theme colors */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/70 transition-colors duration-500" />
       
-      {/* Animated gradient orbs */}
+      {/* Animated gradient orbs - uses theme colors */}
       <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full blur-3xl opacity-10"
+        className="absolute w-[500px] h-[500px] rounded-full blur-3xl opacity-10 transition-colors duration-500"
         style={{ 
           background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)',
           top: '-10%',
@@ -37,7 +45,7 @@ const ExponentiaBackground = ({ overlayOpacity = 0.6 }: ExponentiaBackgroundProp
         }}
       />
       <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full blur-3xl opacity-10"
+        className="absolute w-[400px] h-[400px] rounded-full blur-3xl opacity-10 transition-colors duration-500"
         style={{ 
           background: 'radial-gradient(circle, hsl(var(--accent)) 0%, transparent 70%)',
           bottom: '-5%',
@@ -59,7 +67,7 @@ const ExponentiaBackground = ({ overlayOpacity = 0.6 }: ExponentiaBackgroundProp
       {Array.from({ length: 10 }, (_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1.5 h-1.5 rounded-full bg-primary/20"
+          className="absolute w-1.5 h-1.5 rounded-full bg-primary/20 transition-colors duration-500"
           style={{
             left: `${10 + Math.random() * 80}%`,
             top: `${10 + Math.random() * 80}%`,
@@ -77,7 +85,7 @@ const ExponentiaBackground = ({ overlayOpacity = 0.6 }: ExponentiaBackgroundProp
           }}
         />
       ))}
-    </div>
+    </motion.div>
   );
 };
 
