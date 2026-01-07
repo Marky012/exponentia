@@ -14,6 +14,24 @@ import { PowerOfProductLesson } from '@/components/lessons/PowerOfProductLesson'
 import { PowerOfQuotientLesson } from '@/components/lessons/PowerOfQuotientLesson';
 import { IdentityExponentLesson } from '@/components/lessons/IdentityExponentLesson';
 import productOfPowersVideo from '@/assets/videos/product-of-powers.mp4';
+import quotientOfPowersVideo from '@/assets/videos/quotient-of-powers.mp4';
+import powerOfPowerVideo from '@/assets/videos/power-of-power.mp4';
+import zeroExponentVideo from '@/assets/videos/zero-exponent.mp4';
+import negativeExponentVideo from '@/assets/videos/negative-exponent.mp4';
+import powerOfProductVideo from '@/assets/videos/power-of-product.mp4';
+import powerOfQuotientVideo from '@/assets/videos/power-of-quotient.mp4';
+import identityExponentVideo from '@/assets/videos/identity-exponent.mp4';
+
+const lawVideos: Record<string, string> = {
+  product: productOfPowersVideo,
+  quotient: quotientOfPowersVideo,
+  power: powerOfPowerVideo,
+  zero: zeroExponentVideo,
+  negative: negativeExponentVideo,
+  'product-power': powerOfProductVideo,
+  'quotient-power': powerOfQuotientVideo,
+  identity: identityExponentVideo,
+};
 
 const lawHints: Record<string, string> = {
   product: "When multiplying powers with the same base, keep the base and add the exponents together!",
@@ -80,10 +98,10 @@ const LawLearn = () => {
           </div>
 
           {/* Educational Video Guide */}
-          {law.id === 'product' && (
+          {lawVideos[law.id] && (
             <div className="mb-8 rounded-lg overflow-hidden border border-primary/30 bg-black/20">
               <video 
-                src={productOfPowersVideo}
+                src={lawVideos[law.id]}
                 autoPlay 
                 loop 
                 muted 
