@@ -1,9 +1,11 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore, StudentReport as StudentReportType } from '@/store/gameStore';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
 import { 
   ArrowLeft, 
@@ -15,14 +17,25 @@ import {
   Trophy,
   Target,
   TrendingUp,
-  Star
+  Star,
+  HelpCircle
 } from 'lucide-react';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const StudentReportPage = () => {
   const navigate = useNavigate();
   const reportRef = useRef<HTMLDivElement>(null);
   const { getStudentReport, playerName, needsAttention } = useGameStore();
+  const [showNameDialog, setShowNameDialog] = useState(false);
+  const [fullName, setFullName] = useState('');
   
   const report: StudentReportType = getStudentReport();
 
@@ -32,6 +45,7 @@ const StudentReportPage = () => {
       case 'good': return 'text-blue-500';
       case 'needs_improvement': return 'text-yellow-500';
       case 'needs_attention': return 'text-red-500';
+      case 'not_assessed': return 'text-muted-foreground';
       default: return 'text-muted-foreground';
     }
   };
@@ -42,6 +56,7 @@ const StudentReportPage = () => {
       case 'good': return <CheckCircle className="w-8 h-8 text-blue-500" />;
       case 'needs_improvement': return <Target className="w-8 h-8 text-yellow-500" />;
       case 'needs_attention': return <AlertTriangle className="w-8 h-8 text-red-500" />;
+      case 'not_assessed': return <HelpCircle className="w-8 h-8 text-muted-foreground" />;
       default: return null;
     }
   };
@@ -52,28 +67,50 @@ const StudentReportPage = () => {
       case 'good': return 'Good Performance';
       case 'needs_improvement': return 'Needs Improvement';
       case 'needs_attention': return 'Needs Immediate Attention';
+      case 'not_assessed': return 'Not Yet Assessed';
       default: return 'Not Assessed';
     }
   };
 
+  const handleDownloadClick = () => {
+    setShowNameDialog(true);
+  };
+
   const handleDownloadPDF = () => {
-    // Create printable content
+    const nameToUse = fullName.trim() || report.playerName || 'Student';
+    
+    // Create printable content with proper left alignment
     const printContent = `
+      <!DOCTYPE html>
       <html>
         <head>
-          <title>Student Report - ${playerName}</title>
+          <title>Student Report - ${nameToUse}</title>
           <style>
-            body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
-            h1 { color: #333; border-bottom: 2px solid #6366f1; padding-bottom: 10px; }
-            h2 { color: #4f46e5; margin-top: 30px; }
+            @media print {
+              @page { margin: 20mm; }
+            }
+            * { box-sizing: border-box; }
+            body { 
+              font-family: Arial, sans-serif; 
+              padding: 40px; 
+              max-width: 800px; 
+              margin: 0 auto; 
+              text-align: left;
+            }
+            h1 { color: #333; border-bottom: 2px solid #6366f1; padding-bottom: 10px; text-align: center; }
+            h2 { color: #4f46e5; margin-top: 30px; text-align: left; }
+            h3 { text-align: left; }
+            p { text-align: left; margin: 8px 0; }
+            ul { text-align: left; padding-left: 20px; }
+            li { text-align: left; margin: 5px 0; }
             .header { text-align: center; margin-bottom: 30px; }
-            .section { margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; }
-            .level-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; }
+            .section { margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; text-align: left; }
+            .level-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; text-align: left; }
             .passed { border-left: 4px solid #22c55e; }
             .failed { border-left: 4px solid #ef4444; }
-            .alert { background: #fef2f2; border: 1px solid #ef4444; padding: 15px; border-radius: 8px; margin: 20px 0; }
-            .recommendation { background: #f0f9ff; padding: 10px; margin: 5px 0; border-radius: 4px; }
-            .stat { display: inline-block; margin: 10px 20px 10px 0; }
+            .alert { background: #fef2f2; border: 1px solid #ef4444; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left; }
+            .recommendation { background: #f0f9ff; padding: 10px; margin: 5px 0; border-radius: 4px; text-align: left; }
+            .stat { display: inline-block; margin: 10px 20px 10px 0; text-align: left; }
             .stat-value { font-size: 24px; font-weight: bold; color: #4f46e5; }
             .stat-label { font-size: 12px; color: #666; }
             table { width: 100%; border-collapse: collapse; margin: 15px 0; }
@@ -85,12 +122,12 @@ const StudentReportPage = () => {
         <body>
           <div class="header">
             <h1>📊 EXPONENTIA - Student Performance Report</h1>
-            <p>Generated on ${new Date().toLocaleDateString()}</p>
+            <p style="text-align: center;">Generated on ${new Date().toLocaleDateString()}</p>
           </div>
           
           <div class="section">
             <h2>Student Information</h2>
-            <p><strong>Name:</strong> ${report.playerName || 'Unknown'}</p>
+            <p><strong>Name:</strong> ${nameToUse}</p>
             <p><strong>Overall Performance:</strong> ${getPerformanceLabel(report.overallPerformance)}</p>
             <p><strong>Levels Completed:</strong> ${report.completedLevels}/3</p>
             <p><strong>Average Score:</strong> ${report.averageScore !== null ? report.averageScore + '%' : 'N/A'}</p>
@@ -153,7 +190,9 @@ const StudentReportPage = () => {
 
           <h2>Recommendations</h2>
           <div class="section">
-            ${report.recommendations.map(rec => `<div class="recommendation">• ${rec}</div>`).join('')}
+            ${report.recommendations.length > 0 
+              ? report.recommendations.map(rec => `<div class="recommendation">• ${rec}</div>`).join('') 
+              : '<p>Complete quiz levels to receive personalized recommendations.</p>'}
           </div>
 
           <div class="footer">
@@ -164,12 +203,21 @@ const StudentReportPage = () => {
       </html>
     `;
 
-    const printWindow = window.open('', '_blank');
+    // Create a Blob and open it with a proper URL to avoid "about:blank"
+    const blob = new Blob([printContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const printWindow = window.open(url, '_blank');
+    
     if (printWindow) {
-      printWindow.document.write(printContent);
-      printWindow.document.close();
-      printWindow.print();
+      printWindow.onload = () => {
+        printWindow.print();
+        // Clean up the URL after printing
+        URL.revokeObjectURL(url);
+      };
     }
+    
+    setShowNameDialog(false);
+    setFullName('');
   };
 
   const renderLevelCard = (
@@ -260,11 +308,48 @@ const StudentReportPage = () => {
               </p>
             </div>
           </div>
-          <Button onClick={handleDownloadPDF} className="gap-2">
+          <Button onClick={handleDownloadClick} className="gap-2">
             <Download className="w-4 h-4" />
             Download PDF
           </Button>
         </motion.div>
+
+        {/* Full Name Dialog */}
+        <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Enter Full Name for Report</DialogTitle>
+              <DialogDescription>
+                Please enter the student's complete name for the official report document.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  placeholder="e.g., Juan Dela Cruz"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && fullName.trim()) {
+                      handleDownloadPDF();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowNameDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleDownloadPDF} disabled={!fullName.trim()}>
+                <Download className="w-4 h-4 mr-2" />
+                Generate Report
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Overall Performance Card */}
         <motion.div

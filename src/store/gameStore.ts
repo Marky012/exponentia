@@ -69,7 +69,7 @@ export interface GameState {
 
 export interface StudentReport {
   playerName: string;
-  overallPerformance: 'excellent' | 'good' | 'needs_improvement' | 'needs_attention';
+  overallPerformance: 'excellent' | 'good' | 'needs_improvement' | 'needs_attention' | 'not_assessed';
   easyLevel: LevelReport | null;
   mediumLevel: LevelReport | null;
   hardLevel: LevelReport | null;
@@ -382,9 +382,11 @@ export const useGameStore = create<GameState>()(
 
         const completedLevels = state.quizLevels.filter(l => l.completed).length;
 
-        // Determine overall performance
-        let overallPerformance: StudentReport['overallPerformance'] = 'excellent';
-        if (state.needsAttention) {
+        // Determine overall performance - only based on quiz attempts
+        let overallPerformance: StudentReport['overallPerformance'] = 'not_assessed';
+        if (totalAttempts === 0) {
+          overallPerformance = 'not_assessed';
+        } else if (state.needsAttention) {
           overallPerformance = 'needs_attention';
         } else if (averageScore !== null) {
           if (averageScore >= 90) overallPerformance = 'excellent';
