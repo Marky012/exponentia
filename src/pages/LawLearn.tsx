@@ -13,6 +13,7 @@ import { NegativeExponentLesson } from '@/components/lessons/NegativeExponentLes
 import { PowerOfProductLesson } from '@/components/lessons/PowerOfProductLesson';
 import { PowerOfQuotientLesson } from '@/components/lessons/PowerOfQuotientLesson';
 import { IdentityExponentLesson } from '@/components/lessons/IdentityExponentLesson';
+import productOfPowersVideo from '@/assets/videos/product-of-powers.mp4';
 
 const lawHints: Record<string, string> = {
   product: "When multiplying powers with the same base, keep the base and add the exponents together!",
@@ -77,6 +78,20 @@ const LawLearn = () => {
               </p>
             </div>
           </div>
+
+          {/* Educational Video Guide */}
+          {law.id === 'product' && (
+            <div className="mb-8 rounded-lg overflow-hidden border border-primary/30 bg-black/20">
+              <video 
+                src={productOfPowersVideo}
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                className="w-full h-auto"
+              />
+            </div>
+          )}
 
           {/* Interactive Lessons */}
           {law.id === 'product' && <ProductOfPowersLesson onComplete={handleComplete} />}
