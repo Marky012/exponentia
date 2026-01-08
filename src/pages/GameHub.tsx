@@ -13,10 +13,7 @@ const GameHub = () => {
     >
       <VerticalGameMap />
       
-      {/* Settings and Install Buttons */}
-      <div className="fixed top-4 right-4 z-30">
-        <SettingsMenu />
-      </div>
+      {/* Install Button */}
       <div className="fixed bottom-4 right-4 z-30">
         <InstallButton />
       </div>
