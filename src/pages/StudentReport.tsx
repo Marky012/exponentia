@@ -135,7 +135,7 @@ const StudentReportPage = () => {
 
           ${needsAttention ? `
           <div class="alert">
-            <h3>⚠️ ATTENTION REQUIRED</h3>
+            <h3>ATTENTION REQUIRED</h3>
             <p>This student requires additional support and guidance. The student has struggled to meet the passing threshold after multiple attempts.</p>
             <p><strong>Observations:</strong></p>
             <ul>
@@ -150,7 +150,7 @@ const StudentReportPage = () => {
           
           ${report.easyLevel ? `
           <div class="level-card ${report.easyLevel.passed ? 'passed' : 'failed'}">
-            <h3>Easy Level ${report.easyLevel.passed ? '✓ PASSED' : '✗ NOT PASSED'}</h3>
+            <h3>Easy Level - ${report.easyLevel.passed ? 'PASSED' : 'NOT PASSED'}</h3>
             <table>
               <tr><td><strong>Attempts:</strong></td><td>${report.easyLevel.attempts}</td></tr>
               <tr><td><strong>Average Score:</strong></td><td>${report.easyLevel.averageScore}%</td></tr>
@@ -164,7 +164,7 @@ const StudentReportPage = () => {
 
           ${report.mediumLevel ? `
           <div class="level-card ${report.mediumLevel.passed ? 'passed' : 'failed'}">
-            <h3>Medium Level ${report.mediumLevel.passed ? '✓ PASSED' : '✗ NOT PASSED'}</h3>
+            <h3>Medium Level - ${report.mediumLevel.passed ? 'PASSED' : 'NOT PASSED'}</h3>
             <table>
               <tr><td><strong>Attempts:</strong></td><td>${report.mediumLevel.attempts}</td></tr>
               <tr><td><strong>Average Score:</strong></td><td>${report.mediumLevel.averageScore}%</td></tr>
@@ -178,7 +178,7 @@ const StudentReportPage = () => {
 
           ${report.hardLevel ? `
           <div class="level-card ${report.hardLevel.passed ? 'passed' : 'failed'}">
-            <h3>Hard Level ${report.hardLevel.passed ? '✓ PASSED' : '✗ NOT PASSED'}</h3>
+            <h3>Hard Level - ${report.hardLevel.passed ? 'PASSED' : 'NOT PASSED'}</h3>
             <table>
               <tr><td><strong>Attempts:</strong></td><td>${report.hardLevel.attempts}</td></tr>
               <tr><td><strong>Average Score:</strong></td><td>${report.hardLevel.averageScore}%</td></tr>

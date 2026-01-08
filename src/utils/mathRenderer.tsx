@@ -22,6 +22,9 @@ const subscriptMap: Record<string, string> = {
 export function textToLatex(text: string): string {
   let latex = text;
   
+  // Normalize spacing around colons (Simplify: x² → Simplify: x²)
+  latex = latex.replace(/:\s*/g, ': ');
+  
   // Handle negative exponents with Unicode superscripts (e.g., x⁻³ → x^{-3}, x⁻¹² → x^{-12})
   latex = latex.replace(/([a-zA-Z0-9\)\]]+)⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
     const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');

@@ -24,7 +24,7 @@ export const HintHelper = ({ hint, onHintUsed, hintAvailable }: HintHelperProps)
     <>
       {/* Floating Helper Pet */}
       <motion.div
-        className="fixed right-4 sm:right-8 bottom-20 sm:bottom-8 z-40"
+        className="fixed right-4 sm:right-8 bottom-4 sm:bottom-8 z-40 flex flex-col items-center"
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ type: "spring", duration: 0.8 }}
@@ -67,7 +67,7 @@ export const HintHelper = ({ hint, onHintUsed, hintAvailable }: HintHelperProps)
         </motion.button>
         {hintAvailable && (
           <motion.div
-            className="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-card/90 backdrop-blur-sm border border-primary/20 rounded-lg px-3 py-1.5 text-xs font-medium"
+            className="mt-2 whitespace-nowrap bg-card/90 backdrop-blur-sm border border-primary/20 rounded-lg px-3 py-1.5 text-xs font-medium"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
