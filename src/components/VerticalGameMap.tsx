@@ -5,7 +5,6 @@ import { useGameStore } from '@/store/gameStore';
 import { Lock, Star, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { soundEffects } from '@/utils/soundEffects';
-import { SettingsMenu } from '@/components/SettingsMenu';
 
 // Import map icons
 import map1Icon from '@/assets/map1.png';
@@ -243,13 +242,12 @@ const VerticalGameMap = () => {
           >
             <BarChart3 className="w-4 h-4" />
           </Button>
-          <SettingsMenu />
         </motion.div>
       </div>
 
       {/* Map Content */}
       <div className="relative z-10 h-screen pt-16 pb-4 px-4 overflow-y-auto">
-        <div className="max-w-md mx-auto h-full flex flex-col justify-around py-4 relative">
+        <div className="max-w-sm mx-auto h-full flex flex-col justify-around py-4 relative">
           
           {/* Curving Dotted Path SVG - zigzag between stages */}
           <svg 
@@ -502,7 +500,7 @@ const VerticalGameMap = () => {
                 {/* Stage Number Badge */}
                 <motion.div
                   className={`
-                    absolute -top-2 ${isLeft ? 'left-0' : 'right-0'}
+                    absolute -top-2 ${isLeft ? 'left-0' : 'right-0'} z-10
                     w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-500
                     ${stage.isCompleted 
                       ? 'bg-emerald-500 text-white' 
