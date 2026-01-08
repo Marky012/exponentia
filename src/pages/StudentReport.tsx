@@ -121,8 +121,8 @@ const StudentReportPage = () => {
         </head>
         <body>
           <div class="header">
-            <h1>📊 EXPONENTIA - Student Performance Report</h1>
-            <p style="text-align: center;">Generated on ${new Date().toLocaleDateString()}</p>
+            <h1>EXPONENTIA - Student Performance Report</h1>
+            <p style="text-align: center;">Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
           </div>
           
           <div class="section">
