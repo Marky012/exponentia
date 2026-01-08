@@ -151,9 +151,13 @@ const StudentReportPage = () => {
           ${report.easyLevel ? `
           <div class="level-card ${report.easyLevel.passed ? 'passed' : 'failed'}">
             <h3>Easy Level ${report.easyLevel.passed ? '✓ PASSED' : '✗ NOT PASSED'}</h3>
-            <div class="stat"><span class="stat-value">${report.easyLevel.attempts}</span><br><span class="stat-label">Attempts</span></div>
-            <div class="stat"><span class="stat-value">${report.easyLevel.averageScore}%</span><br><span class="stat-label">Average Score</span></div>
-            <p><strong>Individual Scores:</strong> ${report.easyLevel.scores.join('%, ')}%</p>
+            <table>
+              <tr><td><strong>Attempts:</strong></td><td>${report.easyLevel.attempts}</td></tr>
+              <tr><td><strong>Average Score:</strong></td><td>${report.easyLevel.averageScore}%</td></tr>
+              <tr><td><strong>Individual Scores:</strong></td><td>${report.easyLevel.scores.map(s => s + '%').join(', ')}</td></tr>
+              <tr><td><strong>Correct Answers (Best):</strong></td><td>${Math.round((Math.max(...report.easyLevel.scores) / 100) * 50)}/50</td></tr>
+              <tr><td><strong>Mistakes (Best):</strong></td><td>${50 - Math.round((Math.max(...report.easyLevel.scores) / 100) * 50)}/50</td></tr>
+            </table>
             ${report.easyLevel.missedLaws.length > 0 ? `<p><strong>Laws Missed:</strong> ${report.easyLevel.missedLaws.join(', ')}</p>` : ''}
           </div>
           ` : '<p>Easy level not attempted</p>'}
@@ -161,9 +165,13 @@ const StudentReportPage = () => {
           ${report.mediumLevel ? `
           <div class="level-card ${report.mediumLevel.passed ? 'passed' : 'failed'}">
             <h3>Medium Level ${report.mediumLevel.passed ? '✓ PASSED' : '✗ NOT PASSED'}</h3>
-            <div class="stat"><span class="stat-value">${report.mediumLevel.attempts}</span><br><span class="stat-label">Attempts</span></div>
-            <div class="stat"><span class="stat-value">${report.mediumLevel.averageScore}%</span><br><span class="stat-label">Average Score</span></div>
-            <p><strong>Individual Scores:</strong> ${report.mediumLevel.scores.join('%, ')}%</p>
+            <table>
+              <tr><td><strong>Attempts:</strong></td><td>${report.mediumLevel.attempts}</td></tr>
+              <tr><td><strong>Average Score:</strong></td><td>${report.mediumLevel.averageScore}%</td></tr>
+              <tr><td><strong>Individual Scores:</strong></td><td>${report.mediumLevel.scores.map(s => s + '%').join(', ')}</td></tr>
+              <tr><td><strong>Correct Answers (Best):</strong></td><td>${Math.round((Math.max(...report.mediumLevel.scores) / 100) * 50)}/50</td></tr>
+              <tr><td><strong>Mistakes (Best):</strong></td><td>${50 - Math.round((Math.max(...report.mediumLevel.scores) / 100) * 50)}/50</td></tr>
+            </table>
             ${report.mediumLevel.missedLaws.length > 0 ? `<p><strong>Laws Missed:</strong> ${report.mediumLevel.missedLaws.join(', ')}</p>` : ''}
           </div>
           ` : '<p>Medium level not attempted</p>'}
@@ -171,9 +179,13 @@ const StudentReportPage = () => {
           ${report.hardLevel ? `
           <div class="level-card ${report.hardLevel.passed ? 'passed' : 'failed'}">
             <h3>Hard Level ${report.hardLevel.passed ? '✓ PASSED' : '✗ NOT PASSED'}</h3>
-            <div class="stat"><span class="stat-value">${report.hardLevel.attempts}</span><br><span class="stat-label">Attempts</span></div>
-            <div class="stat"><span class="stat-value">${report.hardLevel.averageScore}%</span><br><span class="stat-label">Average Score</span></div>
-            <p><strong>Individual Scores:</strong> ${report.hardLevel.scores.join('%, ')}%</p>
+            <table>
+              <tr><td><strong>Attempts:</strong></td><td>${report.hardLevel.attempts}</td></tr>
+              <tr><td><strong>Average Score:</strong></td><td>${report.hardLevel.averageScore}%</td></tr>
+              <tr><td><strong>Individual Scores:</strong></td><td>${report.hardLevel.scores.map(s => s + '%').join(', ')}</td></tr>
+              <tr><td><strong>Correct Answers (Best):</strong></td><td>${Math.round((Math.max(...report.hardLevel.scores) / 100) * 50)}/50</td></tr>
+              <tr><td><strong>Mistakes (Best):</strong></td><td>${50 - Math.round((Math.max(...report.hardLevel.scores) / 100) * 50)}/50</td></tr>
+            </table>
             ${report.hardLevel.missedLaws.length > 0 ? `<p><strong>Laws Missed:</strong> ${report.hardLevel.missedLaws.join(', ')}</p>` : ''}
           </div>
           ` : '<p>Hard level not attempted</p>'}

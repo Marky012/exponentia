@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
-import { Lock, Star, BarChart3 } from 'lucide-react';
+import { Lock, Star, BarChart3, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { soundEffects } from '@/utils/soundEffects';
+import { SettingsMenu } from '@/components/SettingsMenu';
 
 // Import map icons
 import map1Icon from '@/assets/map1.png';
@@ -226,7 +227,7 @@ const VerticalGameMap = () => {
         </motion.div>
 
         <motion.div 
-          className="flex items-center gap-2"
+          className="flex items-center gap-3"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -242,6 +243,7 @@ const VerticalGameMap = () => {
           >
             <BarChart3 className="w-4 h-4" />
           </Button>
+          <SettingsMenu />
         </motion.div>
       </div>
 

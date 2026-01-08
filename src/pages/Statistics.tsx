@@ -58,11 +58,14 @@ const Statistics = () => {
     { name: 'Incomplete', value: totalLaws - completedLaws, color: 'hsl(var(--muted))' }
   ];
 
-  const quizScoresData = quizLevels.map(level => ({
-    name: level.name,
-    bestScore: level.score || 0,
-    attempts: level.attempts.length
-  }));
+  const quizScoresData = quizLevels.map(level => {
+    const attemptsCount = Array.isArray(level.attempts) ? level.attempts.length : 0;
+    return {
+      name: level.name,
+      bestScore: level.score || 0,
+      attempts: attemptsCount
+    };
+  });
 
   // Achievement badges
   const achievements = [
@@ -400,48 +403,85 @@ const Statistics = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {quizLevels.map((level, index) => (
-                  <motion.div
-                    key={level.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1 + index * 0.1 }}
-                    className="flex items-center justify-between p-4 bg-card border border-border rounded-lg"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                        level.completed 
-                          ? 'bg-primary/20 text-primary'
-                          : level.unlocked
-                          ? 'bg-accent/20 text-accent'
-                          : 'bg-muted text-muted-foreground'
-                      }`}>
-                        {level.completed ? <Trophy className="w-6 h-6" /> : <Zap className="w-6 h-6" />}
+                {quizLevels.map((level, index) => {
+                  const attemptsCount = Array.isArray(level.attempts) ? level.attempts.length : 0;
+                  const attemptsArray = Array.isArray(level.attempts) ? level.attempts : [];
+                  const totalQuestions = 50;
+                  const correctCount = level.score ? Math.round((level.score / 100) * totalQuestions) : 0;
+                  const mistakesCount = totalQuestions - correctCount;
+                  
+                  return (
+                    <motion.div
+                      key={level.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1 + index * 0.1 }}
+                      className="p-4 bg-card border border-border rounded-lg"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                            level.completed 
+                              ? 'bg-primary/20 text-primary'
+                              : level.unlocked
+                              ? 'bg-accent/20 text-accent'
+                              : 'bg-muted text-muted-foreground'
+                          }`}>
+                            {level.completed ? <Trophy className="w-6 h-6" /> : <Zap className="w-6 h-6" />}
+                          </div>
+                          <div>
+                            <h3 className="font-bold">{level.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {attemptsCount} attempt{attemptsCount !== 1 ? 's' : ''}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-primary">
+                            {level.score || 0}%
+                          </div>
+                          {level.completed && (
+                            <Badge variant="default" className="mt-1">
+                              Completed
+                            </Badge>
+                          )}
+                          {!level.unlocked && (
+                            <Badge variant="secondary" className="mt-1">
+                              Locked
+                            </Badge>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-bold">{level.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {level.attempts.length} attempt{level.attempts.length !== 1 ? 's' : ''}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-primary">
-                        {level.score || 0}%
-                      </div>
-                      {level.completed && (
-                        <Badge variant="default" className="mt-1">
-                          Completed
-                        </Badge>
+                      
+                      {attemptsCount > 0 && (
+                        <div className="mt-3 pt-3 border-t border-border/50 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                          <div className="bg-muted/30 p-2 rounded">
+                            <p className="text-muted-foreground text-xs">Best Score</p>
+                            <p className="font-bold text-primary">{level.score || 0}%</p>
+                          </div>
+                          <div className="bg-muted/30 p-2 rounded">
+                            <p className="text-muted-foreground text-xs">Correct</p>
+                            <p className="font-bold text-green-500">{correctCount}/{totalQuestions}</p>
+                          </div>
+                          <div className="bg-muted/30 p-2 rounded">
+                            <p className="text-muted-foreground text-xs">Mistakes</p>
+                            <p className="font-bold text-red-500">{mistakesCount}/{totalQuestions}</p>
+                          </div>
+                          <div className="bg-muted/30 p-2 rounded">
+                            <p className="text-muted-foreground text-xs">Average</p>
+                            <p className="font-bold">{level.averageScore || level.score || 0}%</p>
+                          </div>
+                        </div>
                       )}
-                      {!level.unlocked && (
-                        <Badge variant="secondary" className="mt-1">
-                          Locked
-                        </Badge>
+                      
+                      {attemptsArray.length > 0 && (
+                        <div className="mt-2 text-xs text-muted-foreground">
+                          <span>All scores: {attemptsArray.map(a => `${a.score}%`).join(', ')}</span>
+                        </div>
                       )}
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
