@@ -258,8 +258,9 @@ const StudentReportPage = () => {
             {levelIcon}
             <div>
               <p className="font-semibold text-foreground">{levelName} Level</p>
-              <p className={`text-sm ${level.passed ? 'text-green-500' : 'text-red-500'}`}>
-                {level.passed ? '✓ Passed' : '✗ Not Passed'}
+              <p className={`text-sm flex items-center gap-1 ${level.passed ? 'text-green-500' : 'text-red-500'}`}>
+                {level.passed ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                {level.passed ? 'Passed' : 'Not Passed'}
               </p>
             </div>
           </div>
