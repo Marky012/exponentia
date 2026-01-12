@@ -238,7 +238,7 @@ export default function Quiz() {
               lastAnswerCorrect === null && "border-primary/20"
             )}>
               <div className="mb-4 sm:mb-6">
-                <h2 className="text-base sm:text-xl md:text-2xl font-bold text-foreground mb-2 whitespace-normal break-words leading-relaxed">
+                <h2 className="text-sm sm:text-lg md:text-xl font-bold text-foreground mb-2 whitespace-pre-wrap break-words leading-relaxed hyphens-auto" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                   <MathText>{currentQuestion.question}</MathText>
                 </h2>
                 <p className="text-xs sm:text-sm text-muted-foreground">
