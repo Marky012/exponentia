@@ -238,7 +238,7 @@ export default function Quiz() {
               lastAnswerCorrect === null && "border-primary/20"
             )}>
               <div className="mb-4 sm:mb-6">
-                <h2 className="text-lg sm:text-2xl font-bold text-foreground mb-2 break-words">
+                <h2 className="text-base sm:text-xl md:text-2xl font-bold text-foreground mb-2 whitespace-normal break-words leading-relaxed">
                   <MathText>{currentQuestion.question}</MathText>
                 </h2>
                 <p className="text-xs sm:text-sm text-muted-foreground">
