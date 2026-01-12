@@ -25,6 +25,11 @@ export function textToLatex(text: string): string {
   // Normalize spacing around colons (Simplify: x² → Simplify: x²)
   latex = latex.replace(/:\s*/g, ': ');
   
+  // Preserve spaces before math expressions (e.g., "What is 7⁰" should keep space before 7)
+  // This ensures words don't merge with numbers/variables
+  latex = latex.replace(/(\s)(\d+[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)/g, '$1 $2');
+  latex = latex.replace(/(\s)([a-zA-Z][⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)/g, '$1 $2');
+  
   // Handle negative exponents with Unicode superscripts (e.g., x⁻³ → x^{-3}, x⁻¹² → x^{-12})
   latex = latex.replace(/([a-zA-Z0-9\)\]]+)⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
     const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');
