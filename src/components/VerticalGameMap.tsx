@@ -201,10 +201,11 @@ const VerticalGameMap = () => {
 
   return (
     <motion.div 
-      className="relative min-h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat transition-all duration-500"
+      className="relative min-h-screen w-full overflow-hidden bg-no-repeat transition-all duration-500"
       style={{ 
         backgroundImage: `url(${exponentiaBg})`,
         backgroundSize: 'cover',
+        backgroundPosition: 'center center',
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
