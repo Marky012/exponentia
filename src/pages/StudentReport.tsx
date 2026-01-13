@@ -203,7 +203,7 @@ const StudentReportPage = () => {
           <h2>Recommendations</h2>
           <div class="section">
             ${report.recommendations.length > 0 
-              ? report.recommendations.map(rec => `<div class="recommendation">• ${rec}</div>`).join('') 
+              ? '<ul>' + report.recommendations.map(rec => `<li>${rec}</li>`).join('') + '</ul>'
               : '<p>Complete quiz levels to receive personalized recommendations.</p>'}
           </div>
 
@@ -509,14 +509,16 @@ const StudentReportPage = () => {
             Recommendations
           </h2>
           <Card className="p-4 bg-card/80">
-            <div className="space-y-3">
+            <ul className="space-y-3 list-none">
               {report.recommendations.map((rec, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg">
-                  <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                <li key={index} className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg">
+                  <span className="w-5 h-5 flex-shrink-0 mt-0.5 flex items-center justify-center rounded-full bg-primary/20 text-primary text-xs font-bold">
+                    {index + 1}
+                  </span>
                   <p className="text-sm text-foreground">{rec}</p>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           </Card>
         </motion.div>
 
