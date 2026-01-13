@@ -238,10 +238,12 @@ export default function Quiz() {
               lastAnswerCorrect === null && "border-primary/20"
             )}>
               <div className="mb-4 sm:mb-6">
-                <h2 className="text-sm sm:text-lg md:text-xl font-bold text-foreground mb-2 whitespace-pre-wrap break-words leading-relaxed hyphens-auto" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
-                  <MathText>{currentQuestion.question}</MathText>
-                </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground">
+                <div className="max-h-[120px] sm:max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent pr-2">
+                  <h2 className="text-sm sm:text-base md:text-lg font-bold text-foreground leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                    <MathText>{currentQuestion.question}</MathText>
+                  </h2>
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-2">
                   Law: {currentQuestion.lawTested}
                 </p>
               </div>
@@ -283,20 +285,23 @@ export default function Quiz() {
                       
                       <div className="flex items-center gap-2 sm:gap-3 relative z-10">
                         <span className={cn(
-                          "flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full font-bold transition-all text-sm flex-shrink-0",
+                          "flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full font-bold transition-all text-xs sm:text-sm flex-shrink-0",
                           showCorrect && "bg-green-500 text-white",
                           showIncorrect && "bg-red-500 text-white",
                           !showFeedback && "bg-background/50"
                         )}>
                           {showFeedback && isSelected ? (
-                            isCorrect ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                            isCorrect ? <CheckCircle2 className="w-3 h-3 sm:w-5 sm:h-5" /> : <X className="w-3 h-3 sm:w-5 sm:h-5" />
                           ) : showFeedback && isCorrect ? (
-                            <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <CheckCircle2 className="w-3 h-3 sm:w-5 sm:h-5" />
                           ) : (
                             String.fromCharCode(65 + index)
                           )}
                         </span>
-                        <span className="flex-1 text-sm sm:text-base break-words">
+                        <span className={cn(
+                          "flex-1 break-words",
+                          levelId === 'hard' ? "text-xs sm:text-sm" : "text-sm sm:text-base"
+                        )}>
                           <MathText>{option}</MathText>
                         </span>
                       </div>
