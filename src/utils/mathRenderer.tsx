@@ -22,13 +22,18 @@ const subscriptMap: Record<string, string> = {
 export function textToLatex(text: string): string {
   let latex = text;
   
-  // Normalize spacing around colons (Simplify: x² → Simplify: x²)
-  latex = latex.replace(/:\s*/g, ': ');
+  // Add explicit non-breaking space markers before numbers/variables that follow text
+  // This ensures "What is 49¹?" keeps spacing as "What is 49^{1}?"
+  latex = latex.replace(/([a-zA-Z])\s+(\d)/g, '$1\\text{ }$2');
+  latex = latex.replace(/([,?!:=])\s+/g, '$1\\text{ }');
   
-  // Preserve spaces before math expressions (e.g., "What is 7⁰" should keep space before 7)
-  // This ensures words don't merge with numbers/variables
-  latex = latex.replace(/(\s)(\d+[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)/g, '$1 $2');
-  latex = latex.replace(/(\s)([a-zA-Z][⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)/g, '$1 $2');
+  // Handle special patterns like "and a = b = c" with proper spacing
+  latex = latex.replace(/\band\s*/g, '\\text{and }');
+  latex = latex.replace(/\bwhat\s+is\s*/gi, '\\text{what is }');
+  latex = latex.replace(/\bIf\s+/g, '\\text{If }');
+  
+  // Normalize spacing around colons (Simplify: x² → Simplify: x²)
+  latex = latex.replace(/:\s*/g, '\\text{: }');
   
   // Handle negative exponents with Unicode superscripts (e.g., x⁻³ → x^{-3}, x⁻¹² → x^{-12})
   latex = latex.replace(/([a-zA-Z0-9\)\]]+)⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
