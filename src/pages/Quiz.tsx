@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { MathText } from '@/utils/mathRenderer';
 import questionsData from '@/data/questions.json';
-import { Shield, Swords, Skull, CheckCircle2, X, ArrowLeft } from 'lucide-react';
+import { Shield, Swords, Skull, CheckCircle2, X, ArrowLeft, ChevronDown } from 'lucide-react';
 import { HintHelper } from '@/components/HintHelper';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -33,6 +33,7 @@ export default function Quiz() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(false);
 
   const currentLevel = quizLevels.find(l => l.id === levelId);
 
@@ -238,10 +239,48 @@ export default function Quiz() {
               lastAnswerCorrect === null && "border-primary/20"
             )}>
               <div className="mb-4 sm:mb-6">
-                <div className="max-h-[120px] sm:max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent pr-2">
-                  <h2 className="text-sm sm:text-base md:text-lg font-bold text-foreground leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
-                    <MathText>{currentQuestion.question}</MathText>
-                  </h2>
+                <div className="relative">
+                  <div 
+                    id="question-scroll-container"
+                    className="max-h-[120px] sm:max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent pr-2"
+                    ref={(el) => {
+                      if (el) {
+                        const hasOverflow = el.scrollHeight > el.clientHeight;
+                        if (hasOverflow !== showScrollIndicator) {
+                          setShowScrollIndicator(hasOverflow);
+                        }
+                      }
+                    }}
+                    onScroll={(e) => {
+                      const target = e.target as HTMLDivElement;
+                      const isAtBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 10;
+                      if (isAtBottom && showScrollIndicator) {
+                        setShowScrollIndicator(false);
+                      } else if (!isAtBottom && !showScrollIndicator) {
+                        setShowScrollIndicator(true);
+                      }
+                    }}
+                  >
+                    <h2 className="text-sm sm:text-base md:text-lg font-bold text-foreground leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                      <MathText>{currentQuestion.question}</MathText>
+                    </h2>
+                  </div>
+                  {/* Scroll indicator - only shows when content overflows */}
+                  {showScrollIndicator && (
+                    <div 
+                      className="absolute bottom-0 left-0 right-0 flex justify-center pointer-events-none transition-opacity duration-300"
+                      style={{ 
+                        background: 'linear-gradient(to top, hsl(var(--card)) 0%, transparent 100%)',
+                        paddingTop: '20px',
+                        paddingBottom: '4px'
+                      }}
+                    >
+                      <div className="flex items-center gap-1 text-xs text-primary animate-bounce">
+                        <ChevronDown className="w-4 h-4" />
+                        <span>Scroll for more</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-2">
                   Law: {currentQuestion.lawTested}
