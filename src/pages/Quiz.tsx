@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
 import { Button } from '@/components/ui/button';
@@ -6,12 +6,18 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { MathText } from '@/utils/mathRenderer';
 import questionsData from '@/data/questions.json';
-import { Shield, Swords, Skull, CheckCircle2, X, ArrowLeft, ChevronDown } from 'lucide-react';
+import { Shield, Swords, Skull, CheckCircle2, X, ArrowLeft, ChevronDown, Maximize2 } from 'lucide-react';
 import { HintHelper } from '@/components/HintHelper';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { soundEffects } from '@/utils/soundEffects';
 import exponentiaDark from '@/assets/exponentia-dark.png';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Question {
   id: string;
@@ -34,6 +40,8 @@ export default function Quiz() {
   const [hintUsed, setHintUsed] = useState(false);
   const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null);
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
+  const [showExpandedQuestion, setShowExpandedQuestion] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const currentLevel = quizLevels.find(l => l.id === levelId);
 
@@ -241,30 +249,53 @@ export default function Quiz() {
               <div className="mb-4 sm:mb-6">
                 <div className="relative">
                   <div 
-                    id="question-scroll-container"
-                    className="max-h-[120px] sm:max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent pr-2"
-                    ref={(el) => {
-                      if (el) {
-                        const hasOverflow = el.scrollHeight > el.clientHeight;
-                        if (hasOverflow !== showScrollIndicator) {
-                          setShowScrollIndicator(hasOverflow);
-                        }
-                      }
+                    ref={scrollContainerRef}
+                    className="max-h-[120px] sm:max-h-[150px] overflow-y-auto overflow-x-hidden pr-2"
+                    style={{
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: 'hsl(var(--primary) / 0.3) transparent'
                     }}
                     onScroll={(e) => {
                       const target = e.target as HTMLDivElement;
                       const isAtBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 10;
                       if (isAtBottom && showScrollIndicator) {
                         setShowScrollIndicator(false);
-                      } else if (!isAtBottom && !showScrollIndicator) {
+                      } else if (!isAtBottom && target.scrollHeight > target.clientHeight && !showScrollIndicator) {
                         setShowScrollIndicator(true);
                       }
                     }}
                   >
-                    <h2 className="text-sm sm:text-base md:text-lg font-bold text-foreground leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                    <h2 
+                      className="text-sm sm:text-base md:text-lg font-bold text-foreground leading-relaxed whitespace-pre-wrap"
+                      style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+                      ref={(el) => {
+                        // Check for overflow after content renders
+                        setTimeout(() => {
+                          if (scrollContainerRef.current) {
+                            const hasOverflow = scrollContainerRef.current.scrollHeight > scrollContainerRef.current.clientHeight;
+                            if (hasOverflow !== showScrollIndicator) {
+                              setShowScrollIndicator(hasOverflow);
+                            }
+                          }
+                        }, 100);
+                      }}
+                    >
                       <MathText>{currentQuestion.question}</MathText>
                     </h2>
                   </div>
+                  
+                  {/* Expand button for long questions */}
+                  {showScrollIndicator && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-0 right-0 p-1 h-auto opacity-70 hover:opacity-100"
+                      onClick={() => setShowExpandedQuestion(true)}
+                    >
+                      <Maximize2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                  
                   {/* Scroll indicator - only shows when content overflows */}
                   {showScrollIndicator && (
                     <div 
@@ -277,7 +308,7 @@ export default function Quiz() {
                     >
                       <div className="flex items-center gap-1 text-xs text-primary animate-bounce">
                         <ChevronDown className="w-4 h-4" />
-                        <span>Scroll for more</span>
+                        <span>Scroll down or tap expand</span>
                       </div>
                     </div>
                   )}
@@ -286,6 +317,22 @@ export default function Quiz() {
                   Law: {currentQuestion.lawTested}
                 </p>
               </div>
+              
+              {/* Expanded Question Modal */}
+              <Dialog open={showExpandedQuestion} onOpenChange={setShowExpandedQuestion}>
+                <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-sm text-muted-foreground">
+                      Question {currentQuestionIndex + 1} - {currentQuestion.lawTested}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="py-4">
+                    <h2 className="text-lg sm:text-xl font-bold text-foreground leading-relaxed whitespace-pre-wrap">
+                      <MathText>{currentQuestion.question}</MathText>
+                    </h2>
+                  </div>
+                </DialogContent>
+              </Dialog>
 
               <div className="space-y-2 sm:space-y-3">
                 {currentQuestion.options.map((option, index) => {
