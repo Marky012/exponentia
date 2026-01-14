@@ -18,81 +18,96 @@ const subscriptMap: Record<string, string> = {
 
 /**
  * Converts common text representations of math to LaTeX
+ * Preserves proper spacing in sentences while converting math notation
  */
 export function textToLatex(text: string): string {
-  let latex = text;
+  // Simple approach: Process the text word by word, wrapping non-math words in \text{}
+  const words = text.split(/(\s+)/); // Split but keep whitespace
+  let result = '';
   
-  // Add explicit non-breaking space markers before numbers/variables that follow text
-  // This ensures "What is 49¹?" keeps spacing as "What is 49^{1}?"
-  latex = latex.replace(/([a-zA-Z])\s+(\d)/g, '$1\\text{ }$2');
-  latex = latex.replace(/([,?!:=])\s+/g, '$1\\text{ }');
-  
-  // Handle special patterns like "and a = b = c" with proper spacing
-  latex = latex.replace(/\band\s*/g, '\\text{and }');
-  latex = latex.replace(/\bwhat\s+is\s*/gi, '\\text{what is }');
-  latex = latex.replace(/\bIf\s+/g, '\\text{If }');
-  
-  // Normalize spacing around colons (Simplify: x² → Simplify: x²)
-  latex = latex.replace(/:\s*/g, '\\text{: }');
-  
-  // Handle negative exponents with Unicode superscripts (e.g., x⁻³ → x^{-3}, x⁻¹² → x^{-12})
-  latex = latex.replace(/([a-zA-Z0-9\)\]]+)⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
-    const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');
-    return `${base}^{-${expDigits}}`;
-  });
-  
-  // Handle positive exponents with Unicode superscripts (e.g., x² → x^{2}, x¹² → x^{12})
-  latex = latex.replace(/([a-zA-Z0-9\)\]]+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
-    const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');
-    return `${base}^{${expDigits}}`;
-  });
-  
-  // Handle subscripts with Unicode (e.g., x₁ → x_{1})
-  latex = latex.replace(/([a-zA-Z])([₀₁₂₃₄₅₆₇₈₉]+)/g, (match, base, sub) => {
-    const subDigits = sub.split('').map((c: string) => subscriptMap[c] || c).join('');
-    return `${base}_{${subDigits}}`;
-  });
-  
-  // Convert caret superscripts with negative (e.g., x^-12 → x^{-12})
-  latex = latex.replace(/([a-zA-Z0-9\)\]]+)\^-([0-9]+)/g, '$1^{-$2}');
-  
-  // Convert caret superscripts (e.g., x^12 → x^{12})
-  latex = latex.replace(/([a-zA-Z0-9\)\]]+)\^([0-9]+)/g, '$1^{$2}');
-  
-  // Convert underscore subscripts
-  latex = latex.replace(/([a-zA-Z])_([0-9]+)/g, '$1_{$2}');
-  
-  // Convert fractions like 1/x³ to proper LaTeX fractions
-  latex = latex.replace(/1\/([a-zA-Z])\^{([^}]+)}/g, '\\frac{1}{$1^{$2}}');
-  
-  // Convert division symbol and slash for display
-  latex = latex.replace(/÷/g, ' \\div ');
-  
-  // Handle fractions with parentheses like (a/b)
-  latex = latex.replace(/\(([^\/\)]+)\/([^\)]+)\)/g, '\\left(\\frac{$1}{$2}\\right)');
-  
-  // Convert fractions with exponents like 12^{2}/6^{2} or a^{2}/b^{2}
-  latex = latex.replace(/([a-zA-Z0-9]+)\^{([^}]+)}\/([a-zA-Z0-9]+)\^{([^}]+)}/g, '\\frac{$1^{$2}}{$3^{$4}}');
-  
-  // Convert simple numeric fractions like 144/36
-  latex = latex.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
-  
-  // Convert simple variable fractions like a/b (not already converted)
-  latex = latex.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, (match, num, den) => {
-    // Don't convert if already in a frac
-    if (match.includes('\\frac')) {
-      return match;
+  for (const word of words) {
+    // If it's just whitespace, add a space in text mode
+    if (/^\s+$/.test(word)) {
+      result += '\\text{ }';
+      continue;
     }
-    return `\\frac{${num}}{${den}}`;
-  });
+    
+    // Check if the word contains math characters (superscripts, subscripts, operators)
+    const hasMath = /[⁰¹²³⁴⁵⁶⁷⁸⁹⁻₀₁₂₃₄₅₆₇₈₉×÷^_/]/.test(word) ||
+                    /\d+[⁰¹²³⁴⁵⁶⁷⁸⁹]/.test(word) ||
+                    /[a-z][⁰¹²³⁴⁵⁶⁷⁸⁹]/i.test(word);
+    
+    if (hasMath) {
+      // Process the word as math
+      let latex = word;
+      
+      // Handle negative exponents with Unicode superscripts (e.g., x⁻³ → x^{-3})
+      latex = latex.replace(/([a-zA-Z0-9\)\]]+)⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
+        const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');
+        return `${base}^{-${expDigits}}`;
+      });
+      
+      // Handle positive exponents with Unicode superscripts (e.g., x² → x^{2}, 5⁷ → 5^{7})
+      latex = latex.replace(/([a-zA-Z0-9\)\]]+)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, (match, base, exp) => {
+        const expDigits = exp.split('').map((c: string) => superscriptMap[c] || c).join('');
+        return `${base}^{${expDigits}}`;
+      });
+      
+      // Handle subscripts with Unicode (e.g., x₁ → x_{1})
+      latex = latex.replace(/([a-zA-Z])([₀₁₂₃₄₅₆₇₈₉]+)/g, (match, base, sub) => {
+        const subDigits = sub.split('').map((c: string) => subscriptMap[c] || c).join('');
+        return `${base}_{${subDigits}}`;
+      });
+      
+      // Convert caret superscripts with negative (e.g., x^-12 → x^{-12})
+      latex = latex.replace(/([a-zA-Z0-9\)\]]+)\^-([0-9]+)/g, '$1^{-$2}');
+      
+      // Convert caret superscripts (e.g., x^12 → x^{12})
+      latex = latex.replace(/([a-zA-Z0-9\)\]]+)\^([0-9]+)/g, '$1^{$2}');
+      
+      // Convert underscore subscripts
+      latex = latex.replace(/([a-zA-Z])_([0-9]+)/g, '$1_{$2}');
+      
+      // Convert fractions like 1/x³ to proper LaTeX fractions
+      latex = latex.replace(/1\/([a-zA-Z])\^{([^}]+)}/g, '\\frac{1}{$1^{$2}}');
+      
+      // Convert division symbol
+      latex = latex.replace(/÷/g, ' \\div ');
+      
+      // Handle fractions with parentheses like (a/b)
+      latex = latex.replace(/\(([^\/\)]+)\/([^\)]+)\)/g, '\\left(\\frac{$1}{$2}\\right)');
+      
+      // Convert fractions with exponents like 12^{2}/6^{2} or a^{2}/b^{2}
+      latex = latex.replace(/([a-zA-Z0-9]+)\^{([^}]+)}\/([a-zA-Z0-9]+)\^{([^}]+)}/g, '\\frac{$1^{$2}}{$3^{$4}}');
+      
+      // Convert simple numeric fractions like 144/36
+      latex = latex.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+      
+      // Convert simple variable fractions like a/b (not already converted)
+      latex = latex.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, (match, num, den) => {
+        if (match.includes('\\frac')) return match;
+        return `\\frac{${num}}{${den}}`;
+      });
+      
+      // Convert 1/x type fractions
+      latex = latex.replace(/1\/([a-zA-Z0-9]+)/g, '\\frac{1}{$1}');
+      
+      // Convert multiplication symbol
+      latex = latex.replace(/×/g, ' \\times ');
+      
+      result += latex;
+    } else {
+      // Regular text - wrap in \text{} for proper spacing
+      result += `\\text{${word}}`;
+    }
+  }
   
-  // Convert 1/x type fractions
-  latex = latex.replace(/1\/([a-zA-Z0-9]+)/g, '\\frac{1}{$1}');
+  // Clean up empty text blocks
+  result = result.replace(/\\text\{\}/g, '');
+  // Merge adjacent text blocks
+  result = result.replace(/\\text\{([^}]*)\}\\text\{ \}\\text\{([^}]*)\}/g, '\\text{$1 $2}');
   
-  // Convert multiplication symbol
-  latex = latex.replace(/×/g, ' \\times ');
-  
-  return latex;
+  return result;
 }
 
 /**
