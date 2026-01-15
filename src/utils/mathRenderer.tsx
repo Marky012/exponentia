@@ -30,14 +30,7 @@ const subscriptMap: Record<string, string> = {
 // Characters that indicate math content
 const superscriptChars = '⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱᵃᵇᶜᵈᵉᶠᵍʰʲᵏˡᵐᵒᵖʳˢᵗᵘᵛʷˣʸᶻ';
 const subscriptChars = '₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ';
-const mathSymbols = '×÷=+\\-*/()[]{}πΣ∏√';
-
-/**
- * Check if a character is a superscript
- */
-function isSuperscript(char: string): boolean {
-  return superscriptChars.includes(char);
-}
+const mathOperators = '×÷±∓·∗∘∙√∛∜∝∞≈≠≡≤≥≪≫∈∉⊂⊃⊆⊇∩∪∅∀∃∄∇∂∫∬∭∮∑∏πΣ∏';
 
 /**
  * Convert superscript characters to regular characters
@@ -54,122 +47,181 @@ function convertSubscripts(text: string): string {
 }
 
 /**
- * Converts common text representations of math to LaTeX
- * Preserves proper spacing in sentences while converting math notation
+ * Check if a token contains math characters that need KaTeX rendering
  */
-export function textToLatex(text: string): string {
-  // Split text preserving whitespace and punctuation
-  const tokens = text.split(/(\s+|(?<=[.,?!:;])|(?=[.,?!:;]))/);
-  let result = '';
+function containsMath(token: string): boolean {
+  // Check for superscripts (Unicode or caret notation)
+  if ([...token].some(c => superscriptChars.includes(c))) return true;
+  // Check for subscripts
+  if ([...token].some(c => subscriptChars.includes(c))) return true;
+  // Check for math operators
+  if ([...token].some(c => mathOperators.includes(c))) return true;
+  // Check for caret exponent notation like x^2
+  if (/\^/.test(token)) return true;
+  // Check for fractions like a/b when both are alphanumeric
+  if (/[a-zA-Z0-9]+\/[a-zA-Z0-9]+/.test(token)) return true;
+  
+  return false;
+}
+
+/**
+ * Convert a math token to LaTeX
+ */
+function tokenToLatex(token: string): string {
+  let latex = token;
+  
+  // Handle expressions with superscripts like 5ⁿ⁺² → 5^{n+2}
+  latex = latex.replace(/([a-zA-Z0-9\)\]]+)([⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱᵃᵇᶜᵈᵉᶠᵍʰʲᵏˡᵐᵒᵖʳˢᵗᵘᵛʷˣʸᶻ]+)/g, (match, base, exp) => {
+    const expConverted = convertSuperscripts(exp);
+    return `${base}^{${expConverted}}`;
+  });
+  
+  // Handle subscripts with Unicode (e.g., x₁ → x_{1})
+  latex = latex.replace(/([a-zA-Z])([₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ]+)/g, (match, base, sub) => {
+    const subConverted = convertSubscripts(sub);
+    return `${base}_{${subConverted}}`;
+  });
+  
+  // Convert caret superscripts with expressions (e.g., x^{n+2})
+  latex = latex.replace(/([a-zA-Z0-9\)\]]+)\^([a-zA-Z0-9+\-*/()]+)/g, '$1^{$2}');
+  
+  // Convert underscore subscripts
+  latex = latex.replace(/([a-zA-Z])_([a-zA-Z0-9]+)/g, '$1_{$2}');
+  
+  // Convert fractions like 1/x³ to proper LaTeX fractions
+  latex = latex.replace(/1\/([a-zA-Z])\^{([^}]+)}/g, '\\frac{1}{$1^{$2}}');
+  
+  // Convert division symbol
+  latex = latex.replace(/÷/g, '\\div');
+  
+  // Handle fractions with parentheses like (a/b)
+  latex = latex.replace(/\(([^\/\)]+)\/([^\)]+)\)/g, '\\left(\\frac{$1}{$2}\\right)');
+  
+  // Convert fractions with exponents
+  latex = latex.replace(/([a-zA-Z0-9]+)\^{([^}]+)}\/([a-zA-Z0-9]+)\^{([^}]+)}/g, '\\frac{$1^{$2}}{$3^{$4}}');
+  
+  // Convert simple numeric fractions like 144/36
+  latex = latex.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+  
+  // Convert simple variable fractions like a/b
+  latex = latex.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, (match, num, den) => {
+    if (match.includes('\\frac')) return match;
+    return `\\frac{${num}}{${den}}`;
+  });
+  
+  // Convert 1/x type fractions
+  latex = latex.replace(/1\/([a-zA-Z0-9]+)/g, '\\frac{1}{$1}');
+  
+  // Convert multiplication symbol
+  latex = latex.replace(/×/g, '\\times');
+  
+  return latex;
+}
+
+/**
+ * Renders a mathematical expression, mixing regular text with KaTeX-rendered math
+ * This preserves proper spacing between words
+ */
+export function renderMathMixed(text: string): string {
+  // Split into tokens: words, punctuation, and whitespace preserved
+  const parts: string[] = [];
+  let currentPart = '';
+  let inMath = false;
+  
+  // Simple tokenization: split by spaces while keeping spaces
+  const tokens = text.split(/(\s+)/);
   
   for (const token of tokens) {
-    if (!token) continue;
-    
-    // If it's just whitespace, add a space in text mode
+    // If it's just whitespace, add it directly
     if (/^\s+$/.test(token)) {
-      result += '\\text{ }';
+      parts.push(token);
       continue;
     }
     
-    // If it's just punctuation, add in text mode
-    if (/^[.,?!:;]$/.test(token)) {
-      result += `\\text{${token}}`;
-      continue;
+    // Check if this token contains math
+    if (containsMath(token)) {
+      // Handle punctuation attached to math (e.g., "5ⁿ,")
+      const punctuationMatch = token.match(/^(.+?)([.,?!:;]+)$/);
+      if (punctuationMatch) {
+        const [, mathPart, punctuation] = punctuationMatch;
+        try {
+          const latex = tokenToLatex(mathPart);
+          const html = katex.renderToString(latex, {
+            displayMode: false,
+            throwOnError: false,
+            output: 'html',
+          });
+          parts.push(html + punctuation);
+        } catch (error) {
+          parts.push(token);
+        }
+      } else {
+        try {
+          const latex = tokenToLatex(token);
+          const html = katex.renderToString(latex, {
+            displayMode: false,
+            throwOnError: false,
+            output: 'html',
+          });
+          parts.push(html);
+        } catch (error) {
+          parts.push(token);
+        }
+      }
+    } else {
+      // Regular text - just add it (preserve as-is including punctuation)
+      parts.push(token);
     }
-    
-    // Check if the token contains math characters
-    const hasSuperscript = [...token].some(c => isSuperscript(c));
-    const hasSubscript = [...token].some(c => subscriptChars.includes(c));
-    const hasMathSymbol = [...token].some(c => mathSymbols.includes(c));
-    const hasExponentNotation = /\d+[⁰¹²³⁴⁵⁶⁷⁸⁹ⁿ]/.test(token) || /[a-z][⁰¹²³⁴⁵⁶⁷⁸⁹ⁿ]/i.test(token);
-    
-    const hasMath = hasSuperscript || hasSubscript || hasMathSymbol || hasExponentNotation;
-    
-    if (hasMath) {
-      let latex = token;
+  }
+  
+  return parts.join('');
+}
+
+/**
+ * Renders a mathematical expression using KaTeX (for display mode - full equations)
+ */
+export function renderMath(expression: string, displayMode: boolean = false): string {
+  if (displayMode) {
+    // For display mode, convert entire expression to LaTeX
+    try {
+      let latex = expression;
       
-      // Handle expressions with superscripts like 5ⁿ⁺² → 5^{n+2}
+      // Handle expressions with superscripts
       latex = latex.replace(/([a-zA-Z0-9\)\]]+)([⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱᵃᵇᶜᵈᵉᶠᵍʰʲᵏˡᵐᵒᵖʳˢᵗᵘᵛʷˣʸᶻ]+)/g, (match, base, exp) => {
         const expConverted = convertSuperscripts(exp);
         return `${base}^{${expConverted}}`;
       });
       
-      // Handle subscripts with Unicode (e.g., x₁ → x_{1})
+      // Handle subscripts
       latex = latex.replace(/([a-zA-Z])([₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ]+)/g, (match, base, sub) => {
         const subConverted = convertSubscripts(sub);
         return `${base}_{${subConverted}}`;
       });
       
-      // Convert caret superscripts with expressions (e.g., x^{n+2})
-      latex = latex.replace(/([a-zA-Z0-9\)\]]+)\^([a-zA-Z0-9+\-*/()]+)/g, '$1^{$2}');
+      // Convert operators
+      latex = latex.replace(/×/g, '\\times');
+      latex = latex.replace(/÷/g, '\\div');
       
-      // Convert underscore subscripts
-      latex = latex.replace(/([a-zA-Z])_([a-zA-Z0-9]+)/g, '$1_{$2}');
-      
-      // Convert fractions like 1/x³ to proper LaTeX fractions
-      latex = latex.replace(/1\/([a-zA-Z])\^{([^}]+)}/g, '\\frac{1}{$1^{$2}}');
-      
-      // Convert division symbol
-      latex = latex.replace(/÷/g, ' \\div ');
-      
-      // Handle fractions with parentheses like (a/b)
-      latex = latex.replace(/\(([^\/\)]+)\/([^\)]+)\)/g, '\\left(\\frac{$1}{$2}\\right)');
-      
-      // Convert fractions with exponents
-      latex = latex.replace(/([a-zA-Z0-9]+)\^{([^}]+)}\/([a-zA-Z0-9]+)\^{([^}]+)}/g, '\\frac{$1^{$2}}{$3^{$4}}');
-      
-      // Convert simple numeric fractions like 144/36
-      latex = latex.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
-      
-      // Convert simple variable fractions like a/b
-      latex = latex.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, (match, num, den) => {
-        if (match.includes('\\frac')) return match;
-        return `\\frac{${num}}{${den}}`;
+      return katex.renderToString(latex, {
+        displayMode: true,
+        throwOnError: false,
+        output: 'html',
       });
-      
-      // Convert 1/x type fractions
-      latex = latex.replace(/1\/([a-zA-Z0-9]+)/g, '\\frac{1}{$1}');
-      
-      // Convert multiplication symbol
-      latex = latex.replace(/×/g, ' \\times ');
-      
-      result += latex;
-    } else {
-      // Regular text - wrap in \text{} for proper spacing
-      result += `\\text{${token}}`;
+    } catch (error) {
+      console.error('Error rendering math:', error);
+      return expression;
     }
   }
   
-  // Clean up empty text blocks
-  result = result.replace(/\\text\{\}/g, '');
-  // Merge adjacent text blocks for cleaner output
-  result = result.replace(/\\text\{([^}]*)\}\\text\{ \}\\text\{([^}]*)\}/g, '\\text{$1 $2}');
-  
-  return result;
+  // For inline mode, use the mixed renderer that preserves text spacing
+  return renderMathMixed(expression);
 }
 
 /**
- * Renders a mathematical expression using KaTeX
- */
-export function renderMath(expression: string, displayMode: boolean = false): string {
-  try {
-    const latex = textToLatex(expression);
-    return katex.renderToString(latex, {
-      displayMode,
-      throwOnError: false,
-      output: 'html',
-    });
-  } catch (error) {
-    console.error('Error rendering math:', error);
-    return expression;
-  }
-}
-
-/**
- * Component to render math inline
+ * Component to render math inline - preserves text spacing while rendering math expressions
  */
 export const MathText = ({ children, className = '' }: { children: string; className?: string }) => {
-  const html = renderMath(children, false);
+  const html = renderMathMixed(children);
   return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
 };
 
