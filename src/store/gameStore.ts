@@ -53,6 +53,9 @@ export interface GameState {
   needsAttention: boolean;
   attentionReason: string | null;
   
+  // Debug mode
+  debugMode: boolean;
+  
   // Actions
   setPlayerName: (name: string) => void;
   setPlayerGender: (gender: Gender) => void;
@@ -61,9 +64,11 @@ export interface GameState {
   completeLaw: (lawId: string) => void;
   earnGem: (lawId: string) => void;
   unlockQuizLevels: () => void;
+  unlockAllForTesting: () => void;
   completeQuizLevel: (levelId: string, score: number, missedLaws: string[]) => void;
   incrementLawMissed: (lawName: string) => void;
   resetGame: () => void;
+  toggleDebugMode: () => void;
   getStudentReport: () => StudentReport;
 }
 
@@ -212,6 +217,7 @@ export const useGameStore = create<GameState>()(
       lawMissedCount: {},
       needsAttention: false,
       attentionReason: null,
+      debugMode: false,
 
       // Actions
       setPlayerName: (name) => set({ playerName: name }),
@@ -251,6 +257,15 @@ export const useGameStore = create<GameState>()(
             index === 0 ? { ...level, unlocked: true } : level
           ),
         })),
+      
+      unlockAllForTesting: () =>
+        set((state) => ({
+          laws: state.laws.map((law) => ({ ...law, completed: true, gemEarned: true })),
+          quizLevels: state.quizLevels.map((level) => ({ ...level, unlocked: true })),
+        })),
+      
+      toggleDebugMode: () =>
+        set((state) => ({ debugMode: !state.debugMode })),
       
       completeQuizLevel: (levelId, score, missedLaws) =>
         set((state) => {
