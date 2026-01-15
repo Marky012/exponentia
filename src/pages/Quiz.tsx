@@ -31,6 +31,7 @@ export default function Quiz() {
   const { levelId } = useParams<{ levelId: 'easy' | 'medium' | 'hard' }>();
   const navigate = useNavigate();
   const quizLevels = useGameStore((state) => state.quizLevels);
+  const debugMode = useGameStore((state) => state.debugMode);
   
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -56,7 +57,8 @@ export default function Quiz() {
   };
 
   useEffect(() => {
-    if (!levelId || !currentLevel?.unlocked) {
+    // Allow access in debug mode even if level is not unlocked
+    if (!levelId || (!currentLevel?.unlocked && !debugMode)) {
       navigate('/quiz-arena');
       return;
     }

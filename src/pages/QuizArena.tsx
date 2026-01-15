@@ -1,20 +1,41 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/store/gameStore';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Swords, Trophy, Lock, Star, Target, Flame } from 'lucide-react';
+import { ArrowLeft, Swords, Trophy, Lock, Star, Target, Flame, Bug } from 'lucide-react';
 import { InstallButton } from '@/components/InstallButton';
+import { toast } from 'sonner';
 import exponentiaBg from '@/assets/exponentia-light.png';
 
 const QuizArena = () => {
   const navigate = useNavigate();
-  const { quizLevels, laws } = useGameStore();
+  const { quizLevels, laws, debugMode, toggleDebugMode, unlockAllForTesting } = useGameStore();
   
   const allGemsEarned = laws.every(law => law.gemEarned);
   
-  // If not all gems earned, redirect back
-  if (!allGemsEarned) {
+  // Debug mode keyboard shortcut (Ctrl+Shift+D)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        e.preventDefault();
+        toggleDebugMode();
+        toast.info(debugMode ? 'Debug mode disabled' : 'Debug mode enabled - Press unlock button to unlock all levels');
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [debugMode, toggleDebugMode]);
+
+  const handleUnlockAll = () => {
+    unlockAllForTesting();
+    toast.success('All levels and gems unlocked for testing!');
+  };
+  
+  // If not all gems earned and not in debug mode, show locked message
+  if (!allGemsEarned && !debugMode) {
     return (
       <motion.div
         className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center"
@@ -27,6 +48,9 @@ const QuizArena = () => {
           <h2 className="text-xl font-bold mb-2">Arena Locked</h2>
           <p className="text-muted-foreground mb-4">
             Complete all training and earn all gems to unlock the Battle Arena.
+          </p>
+          <p className="text-xs text-muted-foreground/50 mb-4">
+            Tip: Press Ctrl+Shift+D to enable debug mode
           </p>
           <Button onClick={() => navigate('/hub')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -91,6 +115,21 @@ const QuizArena = () => {
           <p className="text-muted-foreground">
             Defeat the Nullers and save Exponentia!
           </p>
+          
+          {/* Debug mode indicator and unlock button */}
+          {debugMode && (
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <div className="bg-yellow-500/20 border border-yellow-500/50 text-yellow-400 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                <Bug className="w-3 h-3" />
+                DEBUG MODE
+              </div>
+              {!allGemsEarned && (
+                <Button size="sm" variant="outline" onClick={handleUnlockAll} className="text-xs">
+                  Unlock All Levels
+                </Button>
+              )}
+            </div>
+          )}
         </motion.div>
 
         {/* Quiz Levels */}
