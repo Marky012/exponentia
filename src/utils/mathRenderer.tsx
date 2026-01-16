@@ -70,49 +70,66 @@ function containsMath(token: string): boolean {
 function tokenToLatex(token: string): string {
   let latex = token;
   
-  // Handle expressions with superscripts like 5ⁿ⁺² → 5^{n+2}
+  // Step 1: Handle expressions with Unicode superscripts like 5ⁿ⁺² → 5^{n+2}
+  // Also handle cases like a³/8 where the superscript is attached to the base
   latex = latex.replace(/([a-zA-Z0-9\)\]]+)([⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱᵃᵇᶜᵈᵉᶠᵍʰʲᵏˡᵐᵒᵖʳˢᵗᵘᵛʷˣʸᶻ]+)/g, (match, base, exp) => {
     const expConverted = convertSuperscripts(exp);
     return `${base}^{${expConverted}}`;
   });
   
-  // Handle subscripts with Unicode (e.g., x₁ → x_{1})
+  // Step 2: Handle subscripts with Unicode (e.g., x₁ → x_{1})
   latex = latex.replace(/([a-zA-Z])([₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ]+)/g, (match, base, sub) => {
     const subConverted = convertSubscripts(sub);
     return `${base}_{${subConverted}}`;
   });
   
-  // Convert caret superscripts with expressions (e.g., x^{n+2})
+  // Step 3: Convert caret superscripts with expressions (e.g., x^{n+2})
   latex = latex.replace(/([a-zA-Z0-9\)\]]+)\^([a-zA-Z0-9+\-*/()]+)/g, '$1^{$2}');
   
-  // Convert underscore subscripts
+  // Step 4: Convert underscore subscripts
   latex = latex.replace(/([a-zA-Z])_([a-zA-Z0-9]+)/g, '$1_{$2}');
   
-  // Convert fractions like 1/x³ to proper LaTeX fractions
-  latex = latex.replace(/1\/([a-zA-Z])\^{([^}]+)}/g, '\\frac{1}{$1^{$2}}');
-  
-  // Convert division symbol
+  // Step 5: Convert division symbol early
   latex = latex.replace(/÷/g, '\\div');
   
-  // Handle fractions with parentheses like (a/b)
-  latex = latex.replace(/\(([^\/\)]+)\/([^\)]+)\)/g, '\\left(\\frac{$1}{$2}\\right)');
-  
-  // Convert fractions with exponents
-  latex = latex.replace(/([a-zA-Z0-9]+)\^{([^}]+)}\/([a-zA-Z0-9]+)\^{([^}]+)}/g, '\\frac{$1^{$2}}{$3^{$4}}');
-  
-  // Convert simple numeric fractions like 144/36
-  latex = latex.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
-  
-  // Convert simple variable fractions like a/b
-  latex = latex.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, (match, num, den) => {
-    if (match.includes('\\frac')) return match;
-    return `\\frac{${num}}{${den}}`;
+  // Step 6: Handle fractions with parentheses like (a/b) or (6/2)³
+  // Must come before simple fraction conversion
+  latex = latex.replace(/\(([^\/\(\)]+)\/([^\(\)]+)\)(\^{[^}]+})?/g, (match, num, den, exp) => {
+    if (exp) {
+      return `\\left(\\frac{${num}}{${den}}\\right)${exp}`;
+    }
+    return `\\left(\\frac{${num}}{${den}}\\right)`;
   });
   
-  // Convert 1/x type fractions
-  latex = latex.replace(/1\/([a-zA-Z0-9]+)/g, '\\frac{1}{$1}');
+  // Step 7: Convert fractions where numerator has exponent like a³/8 or x²/y³
+  latex = latex.replace(/([a-zA-Z0-9]+)\^{([^}]+)}\/([a-zA-Z0-9]+)(\^{([^}]+)})?/g, (match, num, numExp, den, denWithExp, denExp) => {
+    if (denExp) {
+      return `\\frac{${num}^{${numExp}}}{${den}^{${denExp}}}`;
+    }
+    return `\\frac{${num}^{${numExp}}}{${den}}`;
+  });
   
-  // Convert multiplication symbol
+  // Step 8: Convert fractions where only denominator has exponent like 1/x³
+  latex = latex.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)\^{([^}]+)}/g, '\\frac{$1}{$2^{$3}}');
+  
+  // Step 9: Convert simple numeric fractions like 144/36 or 216/8
+  // But not if already converted to \frac
+  if (!latex.includes('\\frac')) {
+    latex = latex.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+  }
+  
+  // Step 10: Convert simple variable fractions like a/b, 1/m, 2a/b
+  // But not if already converted to \frac
+  if (!latex.includes('\\frac')) {
+    latex = latex.replace(/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/g, '\\frac{$1}{$2}');
+  }
+  
+  // Step 11: Handle remaining 1/x type fractions that weren't caught
+  if (!latex.includes('\\frac')) {
+    latex = latex.replace(/1\/([a-zA-Z0-9]+)/g, '\\frac{1}{$1}');
+  }
+  
+  // Step 12: Convert multiplication symbol
   latex = latex.replace(/×/g, '\\times');
   
   return latex;

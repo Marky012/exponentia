@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { soundEffects } from '@/utils/soundEffects';
 import exponentiaDark from '@/assets/exponentia-dark.png';
+import { isDevelopmentMode } from '@/utils/inputValidation';
 import {
   Dialog,
   DialogContent,
@@ -56,9 +57,11 @@ export default function Quiz() {
     return shuffled;
   };
 
+  const isDevMode = isDevelopmentMode();
+  
   useEffect(() => {
-    // Allow access in debug mode even if level is not unlocked
-    if (!levelId || (!currentLevel?.unlocked && !debugMode)) {
+    // Allow access in debug mode (dev only) even if level is not unlocked
+    if (!levelId || (!currentLevel?.unlocked && !(debugMode && isDevMode))) {
       navigate('/quiz-arena');
       return;
     }

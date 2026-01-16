@@ -8,6 +8,7 @@ import { ArrowLeft, Swords, Trophy, Lock, Star, Target, Flame, Bug } from 'lucid
 import { InstallButton } from '@/components/InstallButton';
 import { toast } from 'sonner';
 import exponentiaBg from '@/assets/exponentia-light.png';
+import { isDevelopmentMode } from '@/utils/inputValidation';
 
 const QuizArena = () => {
   const navigate = useNavigate();
@@ -15,8 +16,12 @@ const QuizArena = () => {
   
   const allGemsEarned = laws.every(law => law.gemEarned);
   
-  // Debug mode keyboard shortcut (Ctrl+Shift+D)
+  const isDevMode = isDevelopmentMode();
+  
+  // Debug mode keyboard shortcut (Ctrl+Shift+D) - only available in development
   useEffect(() => {
+    if (!isDevMode) return;
+    
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'D') {
         e.preventDefault();
@@ -27,7 +32,7 @@ const QuizArena = () => {
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [debugMode, toggleDebugMode]);
+  }, [debugMode, toggleDebugMode, isDevMode]);
 
   const handleUnlockAll = () => {
     unlockAllForTesting();
@@ -35,7 +40,7 @@ const QuizArena = () => {
   };
   
   // If not all gems earned and not in debug mode, show locked message
-  if (!allGemsEarned && !debugMode) {
+  if (!allGemsEarned && !(debugMode && isDevMode)) {
     return (
       <motion.div
         className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center"
@@ -49,9 +54,11 @@ const QuizArena = () => {
           <p className="text-muted-foreground mb-4">
             Complete all training and earn all gems to unlock the Battle Arena.
           </p>
-          <p className="text-xs text-muted-foreground/50 mb-4">
-            Tip: Press Ctrl+Shift+D to enable debug mode
-          </p>
+          {isDevMode && (
+            <p className="text-xs text-muted-foreground/50 mb-4">
+              Tip: Press Ctrl+Shift+D to enable debug mode
+            </p>
+          )}
           <Button onClick={() => navigate('/hub')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Return to Map
@@ -116,12 +123,12 @@ const QuizArena = () => {
             Defeat the Nullers and save Exponentia!
           </p>
           
-          {/* Debug mode indicator and unlock button */}
-          {debugMode && (
+          {/* Debug mode indicator and unlock button - only in development */}
+          {debugMode && isDevMode && (
             <div className="mt-4 flex items-center justify-center gap-2">
               <div className="bg-yellow-500/20 border border-yellow-500/50 text-yellow-400 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                 <Bug className="w-3 h-3" />
-                DEBUG MODE
+                DEBUG MODE (DEV ONLY)
               </div>
               {!allGemsEarned && (
                 <Button size="sm" variant="outline" onClick={handleUnlockAll} className="text-xs">

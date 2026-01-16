@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { isDevelopmentMode } from '@/utils/inputValidation';
 
 export type Gender = 'male' | 'female';
 
@@ -265,7 +266,13 @@ export const useGameStore = create<GameState>()(
         })),
       
       toggleDebugMode: () =>
-        set((state) => ({ debugMode: !state.debugMode })),
+        set((state) => {
+          // Only allow debug mode in development
+          if (!isDevelopmentMode()) {
+            return state;
+          }
+          return { debugMode: !state.debugMode };
+        }),
       
       completeQuizLevel: (levelId, score, missedLaws) =>
         set((state) => {
