@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { InstallButton } from '@/components/InstallButton';
 import { SettingsMenu } from '@/components/SettingsMenu';
-import { UserCircle2, Sparkles } from 'lucide-react';
+import { UserCircle2, Sparkles, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import warriorImage from '@/assets/warrior-character.png';
 import mageImage from '@/assets/mage-character.png';
 import SparkleEffect from '@/components/SparkleEffect';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
+import { validatePlayerName } from '@/utils/inputValidation';
 
 // Convert name to sentence case (first letter uppercase, rest lowercase)
 const toSentenceCase = (str: string): string => {
@@ -25,6 +26,7 @@ const Welcome = () => {
   const navigate = useNavigate();
   const { setPlayerName, setPlayerGender, startGame } = useGameStore();
   const [name, setName] = useState('');
+  const [nameError, setNameError] = useState<string | null>(null);
   const [selectedGender, setSelectedGender] = useState<'male' | 'female' | null>(null);
 
   // Preview theme based on selected gender
@@ -46,23 +48,51 @@ const Welcome = () => {
     };
   }, [selectedGender]);
 
+  // Validate name on change with debounce effect
+  const handleNameChange = (value: string) => {
+    setName(value);
+    
+    // Clear error immediately when typing
+    if (nameError) {
+      setNameError(null);
+    }
+  };
+
+  // Validate name on blur
+  const handleNameBlur = () => {
+    if (name.trim()) {
+      const validation = validatePlayerName(name);
+      if (!validation.success) {
+        setNameError(validation.error || 'Invalid name');
+      } else {
+        setNameError(null);
+      }
+    }
+  };
+
   const handleStart = () => {
-    if (!name.trim()) {
-      toast.error('Please enter your name');
+    // Validate name
+    const validation = validatePlayerName(name);
+    if (!validation.success) {
+      setNameError(validation.error || 'Invalid name');
+      toast.error(validation.error || 'Please enter a valid name');
       return;
     }
+    
     if (!selectedGender) {
       toast.error('Please select your character');
       return;
     }
 
     // Convert name to sentence case before saving
-    const formattedName = toSentenceCase(name.trim());
+    const formattedName = toSentenceCase(validation.data!.trim());
     setPlayerName(formattedName);
     setPlayerGender(selectedGender);
     startGame();
     navigate('/intro');
   };
+
+  const isNameValid = name.trim().length > 0 && !nameError;
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
@@ -113,10 +143,26 @@ const Welcome = () => {
                 type="text"
                 placeholder="Your name or nickname"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-background/50 border-primary/30 focus:border-primary text-lg"
-                maxLength={20}
+                onChange={(e) => handleNameChange(e.target.value)}
+                onBlur={handleNameBlur}
+                className={`bg-background/50 border-primary/30 focus:border-primary text-lg ${
+                  nameError ? 'border-destructive focus:border-destructive' : ''
+                }`}
+                maxLength={50}
               />
+              <AnimatePresence>
+                {nameError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                    exit={{ opacity: 0, y: -10, height: 0 }}
+                    className="flex items-center gap-2 text-destructive text-sm"
+                  >
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{nameError}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Gender Selection */}
@@ -220,7 +266,7 @@ const Welcome = () => {
                 onClick={handleStart}
                 size="lg"
                 className="w-full text-lg font-orbitron glow"
-                disabled={!name.trim() || !selectedGender}
+                disabled={!isNameValid || !selectedGender}
               >
                 Begin Your Journey
               </Button>
