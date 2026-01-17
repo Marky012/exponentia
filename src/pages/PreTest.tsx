@@ -5,13 +5,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { MathDisplay } from '@/utils/mathRenderer';
-import { ArrowLeft, Trophy, XCircle, Sparkles, CheckCircle2, X } from 'lucide-react';
+import { ArrowLeft, Trophy, XCircle, Sparkles, CheckCircle2, X, SkipForward, Bug } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import questionsData from '@/data/questions.json';
 import trainingArena from '@/assets/training-arena.png';
 import { soundEffects } from '@/utils/soundEffects';
+import { isDevelopmentMode } from '@/utils/inputValidation';
 
 interface Question {
   id: string;
@@ -24,7 +25,7 @@ interface Question {
 const PreTest = () => {
   const { lawId } = useParams();
   const navigate = useNavigate();
-  const { laws, earnGem } = useGameStore();
+  const { laws, earnGem, debugMode } = useGameStore();
   
   const law = laws.find((l) => l.id === lawId);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -35,6 +36,9 @@ const PreTest = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [testCompleted, setTestCompleted] = useState(false);
   const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null);
+  
+  // Check if debug mode should be active (only in development)
+  const isDevMode = isDevelopmentMode();
 
   // Map law IDs to preTest JSON keys
   const lawIdToPreTestKey: Record<string, string> = {
@@ -135,6 +139,31 @@ const PreTest = () => {
         }
       }
     }, 1500);
+  };
+
+  // Debug mode: Skip to victory screen
+  const handleDebugSkipToEnd = () => {
+    if (!debugMode || !isDevMode) return;
+    setCorrectAnswers(5);
+    setTestCompleted(true);
+    setShowResult(true);
+    soundEffects.playVictory();
+    toast.success('Debug: Skipped to victory!', { icon: <Bug className="w-4 h-4" /> });
+  };
+
+  // Debug mode: Skip current question (mark as correct)
+  const handleDebugSkipQuestion = () => {
+    if (!debugMode || !isDevMode || isAnswered) return;
+    setCorrectAnswers((prev) => prev + 1);
+    
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+      toast.success('Debug: Question skipped!', { icon: <SkipForward className="w-4 h-4" /> });
+    } else {
+      setTestCompleted(true);
+      setShowResult(true);
+      soundEffects.playVictory();
+    }
   };
 
   const handleComplete = () => {
@@ -317,9 +346,35 @@ const PreTest = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="flex justify-between text-sm text-muted-foreground mb-2">
+          <div className="flex justify-between items-center text-sm text-muted-foreground mb-2">
             <span>Question {currentQuestionIndex + 1} of {questions.length}</span>
-            <span>{Math.round(progress)}%</span>
+            <div className="flex items-center gap-2">
+              {/* Debug mode controls */}
+              {debugMode && isDevMode && (
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDebugSkipQuestion}
+                    disabled={isAnswered}
+                    className="h-6 px-2 text-xs border-green-500/50 text-green-400 hover:bg-green-500/20"
+                  >
+                    <SkipForward className="w-3 h-3 mr-1" />
+                    Skip
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDebugSkipToEnd}
+                    className="h-6 px-2 text-xs border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/20"
+                  >
+                    <Bug className="w-3 h-3 mr-1" />
+                    Win
+                  </Button>
+                </div>
+              )}
+              <span>{Math.round(progress)}%</span>
+            </div>
           </div>
           <Progress value={progress} className="h-2" />
         </motion.div>
@@ -345,11 +400,14 @@ const PreTest = () => {
                 </MathDisplay>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 {currentQuestion.options.map((option, index) => {
                   const isSelected = selectedAnswer === index;
                   const isCorrect = index === currentQuestion.correctIndex;
                   const showFeedback = isAnswered;
+                  
+                  // Debug mode: highlight correct answer with a subtle glow
+                  const isDebugHighlight = debugMode && isDevMode && isCorrect && !showFeedback;
 
                   return (
                     <motion.button
@@ -357,16 +415,25 @@ const PreTest = () => {
                       onClick={() => handleAnswerSelect(index)}
                       disabled={isAnswered}
                       className={cn(
-                        "p-3 sm:p-6 rounded-lg border-2 transition-all duration-300 text-left relative overflow-hidden",
+                        "p-3 sm:p-4 md:p-6 rounded-lg border-2 transition-all duration-300 text-left relative overflow-hidden min-h-[60px] sm:min-h-[80px]",
                         !isAnswered && "border-border hover:border-primary hover:bg-primary/10",
                         showFeedback && isSelected && isCorrect && "border-green-500 bg-green-500/20",
                         showFeedback && isSelected && !isCorrect && "border-red-500 bg-red-500/20",
                         showFeedback && !isSelected && isCorrect && "border-green-500/50 bg-green-500/10",
-                        showFeedback && !isSelected && !isCorrect && "opacity-50"
+                        showFeedback && !isSelected && !isCorrect && "opacity-50",
+                        // Debug mode highlighting for correct answer
+                        isDebugHighlight && "ring-2 ring-green-500/50 ring-offset-1 ring-offset-background border-green-500/30 bg-green-500/5"
                       )}
                       whileHover={!isAnswered ? { scale: 1.02 } : {}}
                       whileTap={!isAnswered ? { scale: 0.98 } : {}}
                     >
+                      {/* Debug mode indicator on correct answer */}
+                      {isDebugHighlight && (
+                        <div className="absolute top-1 right-1 bg-green-500 text-white text-[8px] px-1 rounded font-bold uppercase">
+                          ✓
+                        </div>
+                      )}
+                      
                       {/* Correct/Incorrect overlay animation */}
                       {showFeedback && isSelected && (
                         <motion.div
@@ -382,19 +449,20 @@ const PreTest = () => {
                       
                       <div className="flex items-center gap-2 sm:gap-3 relative z-10">
                         <div className={cn(
-                          "w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs sm:text-sm transition-all flex-shrink-0",
-                          !isAnswered && "border-border",
+                          "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs sm:text-sm transition-all flex-shrink-0",
+                          !isAnswered && !isDebugHighlight && "border-border",
+                          !isAnswered && isDebugHighlight && "bg-green-500/20 text-green-400 border-green-500/50",
                           showFeedback && isSelected && isCorrect && "border-green-500 bg-green-500 text-white",
                           showFeedback && isSelected && !isCorrect && "border-red-500 bg-red-500 text-white",
                           showFeedback && !isSelected && isCorrect && "border-green-500 text-green-500"
                         )}>
                           {showFeedback && isSelected ? (
-                            isCorrect ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                            isCorrect ? <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" /> : <X className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                           ) : (
                             String.fromCharCode(65 + index)
                           )}
                         </div>
-                        <MathDisplay className="text-sm sm:text-lg flex-1 break-words">
+                        <MathDisplay className="text-xs sm:text-sm md:text-lg flex-1 break-words leading-relaxed">
                           {option}
                         </MathDisplay>
                       </div>
