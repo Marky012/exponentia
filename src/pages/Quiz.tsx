@@ -345,6 +345,9 @@ export default function Quiz() {
                   const isCorrect = index === currentQuestion.correctIndex;
                   const showCorrect = showFeedback && isCorrect;
                   const showIncorrect = showFeedback && isSelected && !isCorrect;
+                  
+                  // Debug mode: highlight correct answer with a subtle glow
+                  const isDebugHighlight = debugMode && isDevMode && isCorrect && !showFeedback;
 
                       return (
                     <motion.button
@@ -356,11 +359,20 @@ export default function Quiz() {
                         showCorrect && "bg-green-500/20 border-green-500 text-green-400 font-bold",
                         showIncorrect && "bg-red-500/20 border-red-500 text-red-400",
                         !showFeedback && isSelected && "bg-primary/20 border-primary text-primary",
-                        !showFeedback && !isSelected && "bg-card border-border hover:border-primary/50 text-foreground"
+                        !showFeedback && !isSelected && "bg-card border-border hover:border-primary/50 text-foreground",
+                        // Debug mode highlighting for correct answer
+                        isDebugHighlight && "ring-2 ring-green-500/50 ring-offset-1 ring-offset-background border-green-500/30 bg-green-500/5"
                       )}
                       whileHover={!showFeedback ? { scale: 1.01 } : {}}
                       whileTap={!showFeedback ? { scale: 0.99 } : {}}
                     >
+                      {/* Debug mode indicator on correct answer */}
+                      {isDebugHighlight && (
+                        <div className="absolute top-1 right-1 bg-green-500 text-white text-[8px] px-1 rounded font-bold uppercase">
+                          ✓
+                        </div>
+                      )}
+                      
                       {/* Feedback overlay animation */}
                       {showFeedback && (showCorrect || showIncorrect) && (
                         <motion.div
@@ -379,7 +391,8 @@ export default function Quiz() {
                           "flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full font-bold transition-all text-xs sm:text-sm flex-shrink-0",
                           showCorrect && "bg-green-500 text-white",
                           showIncorrect && "bg-red-500 text-white",
-                          !showFeedback && "bg-background/50"
+                          !showFeedback && isDebugHighlight && "bg-green-500/20 text-green-400",
+                          !showFeedback && !isDebugHighlight && "bg-background/50"
                         )}>
                           {showFeedback && isSelected ? (
                             isCorrect ? <CheckCircle2 className="w-3 h-3 sm:w-5 sm:h-5" /> : <X className="w-3 h-3 sm:w-5 sm:h-5" />
