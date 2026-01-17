@@ -244,8 +244,10 @@ export const MathText = ({ children, className = '' }: { children: string; class
 
 /**
  * Component to render math in display mode (centered, larger)
+ * Uses mixed rendering to preserve sentence spacing while rendering math expressions
  */
 export const MathDisplay = ({ children, className = '' }: { children: string; className?: string }) => {
-  const html = renderMath(children, true);
+  // Use mixed rendering to preserve text spacing in sentences with embedded math
+  const html = renderMathMixed(children);
   return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />;
 };
