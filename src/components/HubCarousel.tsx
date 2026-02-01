@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
@@ -33,6 +33,9 @@ const HubCarousel = () => {
   const { introCompleted, laws, quizLevels, playerGender, unlockQuizLevels } = useGameStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartX = useRef(0);
+  const dragThreshold = 50; // Minimum drag distance to trigger navigation
   
   const isFemale = playerGender === 'female';
   
@@ -129,6 +132,46 @@ const HubCarousel = () => {
     }
     
     setTimeout(() => setIsAnimating(false), 500);
+  };
+
+  // Handle drag/swipe start
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    if (isAnimating) return;
+    setIsDragging(true);
+    
+    if ('touches' in e) {
+      dragStartX.current = e.touches[0].clientX;
+    } else {
+      dragStartX.current = e.clientX;
+    }
+  };
+
+  // Handle drag/swipe end
+  const handleDragEnd = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    
+    let endX: number;
+    if ('changedTouches' in e) {
+      endX = e.changedTouches[0].clientX;
+    } else {
+      endX = e.clientX;
+    }
+    
+    const deltaX = endX - dragStartX.current;
+    
+    if (Math.abs(deltaX) > dragThreshold) {
+      if (deltaX > 0) {
+        navigateTo('prev');
+      } else {
+        navigateTo('next');
+      }
+    }
+  };
+
+  // Handle mouse leave during drag
+  const handleDragCancel = () => {
+    setIsDragging(false);
   };
 
   const handleStageClick = (stage: Stage) => {
@@ -267,10 +310,15 @@ const HubCarousel = () => {
 
       {/* 3D Carousel Container */}
       <div 
-        className="absolute inset-0 flex items-center justify-center"
+        className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         style={{ perspective: '1200px' }}
+        onMouseDown={handleDragStart}
+        onMouseUp={handleDragEnd}
+        onMouseLeave={handleDragCancel}
+        onTouchStart={handleDragStart}
+        onTouchEnd={handleDragEnd}
       >
-        <div className="relative w-full max-w-md h-[65vh] flex items-center justify-center">
+        <div className="relative w-full max-w-md h-[65vh] flex items-center justify-center select-none">
           {stages.map((stage, index) => (
             <motion.div
               key={stage.id}
@@ -475,7 +523,7 @@ const HubCarousel = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
       >
-        Swipe or use arrows to navigate
+        Drag or swipe to navigate
       </motion.p>
     </div>
   );
