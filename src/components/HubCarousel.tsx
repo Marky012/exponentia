@@ -298,14 +298,96 @@ const HubCarousel = () => {
               <div className="relative cursor-pointer">
                 {/* Glow effect for active stage */}
                 {index === currentIndex && !stage.isLocked && (
-                  <motion.div
-                    className="absolute inset-0 rounded-full blur-3xl bg-primary/20"
-                    animate={{ 
-                      scale: [1, 1.1, 1],
-                      opacity: [0.3, 0.5, 0.3]
-                    }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  />
+                  <>
+                    {/* Radial glow aura */}
+                    <motion.div
+                      className="absolute inset-0 rounded-full blur-3xl bg-primary/30"
+                      animate={{ 
+                        scale: [1, 1.2, 1],
+                        opacity: [0.2, 0.4, 0.2]
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    />
+                    
+                    {/* Magical particles rising from island */}
+                    {[...Array(12)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 rounded-full bg-primary/80"
+                        style={{
+                          left: `${20 + Math.random() * 60}%`,
+                          bottom: `${30 + Math.random() * 20}%`,
+                          filter: 'blur(1px)',
+                        }}
+                        animate={{
+                          y: [0, -80 - Math.random() * 60],
+                          x: [0, (Math.random() - 0.5) * 40],
+                          opacity: [0, 0.8, 0],
+                          scale: [0.5, 1, 0.3],
+                        }}
+                        transition={{
+                          duration: 2.5 + Math.random() * 1.5,
+                          repeat: Infinity,
+                          delay: Math.random() * 2,
+                          ease: 'easeOut',
+                        }}
+                      />
+                    ))}
+                    
+                    {/* Sparkle particles */}
+                    {[...Array(8)].map((_, i) => (
+                      <motion.div
+                        key={`sparkle-${i}`}
+                        className="absolute w-1 h-1 rounded-full bg-white"
+                        style={{
+                          left: `${10 + Math.random() * 80}%`,
+                          top: `${10 + Math.random() * 60}%`,
+                          boxShadow: '0 0 6px 2px rgba(255,255,255,0.6)',
+                        }}
+                        animate={{
+                          opacity: [0, 1, 0],
+                          scale: [0, 1.2, 0],
+                        }}
+                        transition={{
+                          duration: 1.5 + Math.random(),
+                          repeat: Infinity,
+                          delay: Math.random() * 3,
+                        }}
+                      />
+                    ))}
+                    
+                    {/* Orbiting magical orbs */}
+                    {[...Array(3)].map((_, i) => (
+                      <motion.div
+                        key={`orb-${i}`}
+                        className="absolute w-3 h-3 rounded-full"
+                        style={{
+                          background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)',
+                          left: '50%',
+                          top: '50%',
+                          marginLeft: '-6px',
+                          marginTop: '-6px',
+                        }}
+                        animate={{
+                          x: [
+                            Math.cos((i * 120 * Math.PI) / 180) * 100,
+                            Math.cos(((i * 120 + 360) * Math.PI) / 180) * 100,
+                          ],
+                          y: [
+                            Math.sin((i * 120 * Math.PI) / 180) * 60,
+                            Math.sin(((i * 120 + 360) * Math.PI) / 180) * 60,
+                          ],
+                          opacity: [0.6, 0.9, 0.6],
+                        }}
+                        transition={{
+                          duration: 8,
+                          repeat: Infinity,
+                          ease: 'linear',
+                          delay: i * 0.3,
+                        }}
+                      />
+                    ))}
+                  </>
                 )}
                 
                 <motion.img
