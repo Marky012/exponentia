@@ -65,7 +65,7 @@ const Intro = () => {
 
   return (
     <motion.div 
-      className="relative min-h-screen flex flex-col items-center justify-between p-4 bg-cover bg-center bg-no-repeat overflow-hidden"
+      className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-between p-4 pb-safe bg-cover bg-center bg-no-repeat overflow-hidden"
       style={{ 
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${getBackgroundImage()})`
       }}
@@ -187,36 +187,36 @@ const Intro = () => {
 
             {/* Navigation Buttons */}
             <motion.div 
-              className="flex flex-col gap-3 pt-4"
+              className="flex flex-col gap-2 sm:gap-3 pt-3 sm:pt-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: isComplete ? 1 : 0.5 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="flex gap-3">
+              <div className="flex gap-2 sm:gap-3">
                 {storyStage > 0 && (
                   <Button
                     onClick={handleBack}
-                    size="lg"
+                    size="default"
                     variant="outline"
                     disabled={!isComplete}
-                    className="text-lg font-orbitron"
+                    className="text-sm sm:text-lg font-orbitron h-10 sm:h-11 px-3 sm:px-4"
                   >
-                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
                     Back
                   </Button>
                 )}
                 <Button
                   onClick={handleContinue}
-                  size="lg"
+                  size="default"
                   disabled={!isComplete}
-                  className="flex-1 text-lg font-orbitron glow"
+                  className="flex-1 text-sm sm:text-lg font-orbitron glow h-10 sm:h-11 px-3 sm:px-4"
                 >
-                  {storyStage === dialogues.length - 1 ? 'Begin My Training' : 'Continue'}
+                  {storyStage === dialogues.length - 1 ? 'Begin Training' : 'Continue'}
                 </Button>
               </div>
               
               {storyStage === dialogues.length - 1 && (
-                <InstallButton className="w-full" />
+                <InstallButton className="w-full h-10 sm:h-11 text-sm sm:text-base" />
               )}
             </motion.div>
           </div>

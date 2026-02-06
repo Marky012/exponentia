@@ -163,6 +163,7 @@ const HubCarousel = () => {
     
     const deltaX = endX - dragStartX.current;
     
+    // Only navigate if drag was significant (not a click)
     if (Math.abs(deltaX) > dragThreshold) {
       if (deltaX > 0) {
         navigateTo('prev');
@@ -177,6 +178,17 @@ const HubCarousel = () => {
     setIsDragging(false);
   };
 
+  // Check if a click was actually a click (not a drag)
+  const isClickNotDrag = (e: React.MouseEvent | React.TouchEvent) => {
+    let endX: number;
+    if ('changedTouches' in e) {
+      endX = (e as React.TouchEvent).changedTouches[0].clientX;
+    } else {
+      endX = (e as React.MouseEvent).clientX;
+    }
+    return Math.abs(endX - dragStartX.current) < 10; // Less than 10px = click
+  };
+
   // Cylinder carousel - true cylinder with back island behind front
   const getCardStyle = (index: number) => {
     const diff = index - currentIndex;
@@ -185,10 +197,11 @@ const HubCarousel = () => {
 
     // True cylinder: 4 items at 90 degrees apart (360/4)
     const angle = adjustedDiff * 90;
-    const radius = 200; // Distance from center
+    const radius = 220; // Distance from center
     const translateX = Math.sin((angle * Math.PI) / 180) * radius;
     const translateZ = Math.cos((angle * Math.PI) / 180) * radius - radius;
-    const rotateY = -angle;
+    // Increased tilt for side islands for better visibility
+    const rotateY = -angle * 0.6; // Less rotation so sides face more towards player
     
     // Scale and opacity: front = full, sides = reduced, back = hidden behind
     let scale = 1;
@@ -201,14 +214,14 @@ const HubCarousel = () => {
       opacity = 1;
       zIndex = 10;
     } else if (Math.abs(adjustedDiff) === 1) {
-      // Sides
-      scale = 0.7;
-      opacity = 0.5;
+      // Sides - more visible with better tilt
+      scale = 0.65;
+      opacity = 0.6;
       zIndex = 5;
     } else {
       // Back - directly behind, mostly hidden
-      scale = 0.5;
-      opacity = 0.15;
+      scale = 0.45;
+      opacity = 0.12;
       zIndex = 1;
     }
 
@@ -333,6 +346,14 @@ const HubCarousel = () => {
         onMouseLeave={handleDragCancel}
         onTouchStart={handleDragStart}
         onTouchEnd={handleDragEnd}
+        onClickCapture={(e) => {
+          // Prevent click if it was a significant drag
+          const target = e.target as HTMLElement;
+          if (target.tagName === 'IMG' && !target.classList.contains('grayscale')) {
+            // Let click through for unlocked stage images
+            return;
+          }
+        }}
       >
         <div 
           className="relative w-full h-[70vh] flex items-center justify-center select-none"
@@ -356,14 +377,23 @@ const HubCarousel = () => {
               >
                 {/* Position wrapper for carousel rotation */}
                 <motion.div
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center cursor-pointer"
                   animate={cardStyle}
                   transition={{ 
                     type: 'spring', 
                     stiffness: 300, 
                     damping: 30,
                   }}
-                  onClick={() => handleStageClick(stage)}
+                  onMouseUp={(e) => {
+                    if (isClickNotDrag(e)) {
+                      handleStageClick(stage);
+                    }
+                  }}
+                  onTouchEnd={(e) => {
+                    if (isClickNotDrag(e)) {
+                      handleStageClick(stage);
+                    }
+                  }}
                 >
                   {/* Stage Label - Above Image */}
                   <motion.h2
@@ -492,6 +522,12 @@ const HubCarousel = () => {
                       `}
                       whileHover={!stage.isLocked && index === currentIndex ? { scale: 1.05 } : {}}
                       whileTap={!stage.isLocked && index === currentIndex ? { scale: 0.98 } : {}}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (index === currentIndex) {
+                          handleStageClick(stage);
+                        }
+                      }}
                     />
 
                     {/* Lock overlay for locked stages */}
