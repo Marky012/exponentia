@@ -29,7 +29,7 @@ const HubCarousel = () => {
   const { introCompleted, laws, quizLevels, playerGender, unlockQuizLevels } = useGameStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const isDraggingRef = useRef(false);
   const [hasEntered, setHasEntered] = useState(false);
   const dragStartX = useRef(0);
   const dragThreshold = 50; // Minimum drag distance to trigger navigation
@@ -128,7 +128,16 @@ const HubCarousel = () => {
     setTimeout(() => setIsAnimating(false), 500);
   };
 
-  const handleStageClick = (stage: Stage) => {
+  const handleStageClick = (stage: Stage, index: number) => {
+    if (wasDrag.current) {
+      wasDrag.current = false;
+      return;
+    }
+    if (index !== currentIndex) {
+      soundEffects.playHover();
+      setCurrentIndex(index);
+      return;
+    }
     if (stage.isLocked) {
       soundEffects.playLocked();
       return;
@@ -137,11 +146,12 @@ const HubCarousel = () => {
     navigate(stage.route);
   };
 
-  // Handle drag/swipe start
+  const wasDrag = useRef(false);
+
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     if (isAnimating) return;
-    setIsDragging(true);
-    
+    wasDrag.current = false;
+    isDraggingRef.current = true;
     if ('touches' in e) {
       dragStartX.current = e.touches[0].clientX;
     } else {
@@ -149,10 +159,9 @@ const HubCarousel = () => {
     }
   };
 
-  // Handle drag/swipe end
   const handleDragEnd = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDragging) return;
-    setIsDragging(false);
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
     
     let endX: number;
     if ('changedTouches' in e) {
@@ -163,8 +172,8 @@ const HubCarousel = () => {
     
     const deltaX = endX - dragStartX.current;
     
-    // Only navigate if drag was significant (not a click)
     if (Math.abs(deltaX) > dragThreshold) {
+      wasDrag.current = true;
       if (deltaX > 0) {
         navigateTo('prev');
       } else {
@@ -173,20 +182,8 @@ const HubCarousel = () => {
     }
   };
 
-  // Handle mouse leave during drag
   const handleDragCancel = () => {
-    setIsDragging(false);
-  };
-
-  // Check if a click was actually a click (not a drag)
-  const isClickNotDrag = (e: React.MouseEvent | React.TouchEvent) => {
-    let endX: number;
-    if ('changedTouches' in e) {
-      endX = (e as React.TouchEvent).changedTouches[0].clientX;
-    } else {
-      endX = (e as React.MouseEvent).clientX;
-    }
-    return Math.abs(endX - dragStartX.current) < 10; // Less than 10px = click
+    isDraggingRef.current = false;
   };
 
   // Cylinder carousel - true cylinder with back island behind front
@@ -339,21 +336,13 @@ const HubCarousel = () => {
 
       {/* 3D Carousel Container */}
       <div 
-        className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        className="absolute inset-0 flex items-center justify-center cursor-grab"
         style={{ perspective: '1000px' }}
         onMouseDown={handleDragStart}
         onMouseUp={handleDragEnd}
         onMouseLeave={handleDragCancel}
         onTouchStart={handleDragStart}
         onTouchEnd={handleDragEnd}
-        onClickCapture={(e) => {
-          // Prevent click if it was a significant drag
-          const target = e.target as HTMLElement;
-          if (target.tagName === 'IMG' && !target.classList.contains('grayscale')) {
-            // Let click through for unlocked stage images
-            return;
-          }
-        }}
       >
         <div 
           className="relative w-full h-[70vh] flex items-center justify-center select-none"
@@ -373,6 +362,7 @@ const HubCarousel = () => {
                 animate={hasEntered ? "visible" : "hidden"}
                 style={{
                   transformStyle: 'preserve-3d',
+                  zIndex: cardStyle.zIndex,
                 }}
               >
                 {/* Position wrapper for carousel rotation */}
@@ -384,16 +374,7 @@ const HubCarousel = () => {
                     stiffness: 300, 
                     damping: 30,
                   }}
-                  onMouseUp={(e) => {
-                    if (isClickNotDrag(e)) {
-                      handleStageClick(stage);
-                    }
-                  }}
-                  onTouchEnd={(e) => {
-                    if (isClickNotDrag(e)) {
-                      handleStageClick(stage);
-                    }
-                  }}
+                  onClick={() => handleStageClick(stage, index)}
                 >
                   {/* Stage Label - Above Image */}
                   <motion.h2
@@ -522,16 +503,11 @@ const HubCarousel = () => {
                       `}
                       whileHover={!stage.isLocked && index === currentIndex ? { scale: 1.05 } : {}}
                       whileTap={!stage.isLocked && index === currentIndex ? { scale: 0.98 } : {}}
-                      onPointerUp={(e) => {
+                      onClick={(e) => {
                         e.stopPropagation();
-                        if (index === currentIndex && !stage.isLocked) {
-                          handleStageClick(stage);
-                        } else if (index !== currentIndex) {
-                          // Clicking a side island focuses it
-                          soundEffects.playHover();
-                          setCurrentIndex(index);
-                        }
+                        handleStageClick(stage, index);
                       }}
+                      style={{ pointerEvents: 'auto', position: 'relative', zIndex: 20 }}
                     />
 
                     {/* Lock overlay for locked stages */}
