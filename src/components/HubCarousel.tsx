@@ -517,15 +517,19 @@ const HubCarousel = () => {
                       alt={stage.name}
                       className={`
                         w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl
-                        transition-all duration-300 cursor-pointer
-                        ${stage.isLocked ? 'grayscale brightness-50 cursor-not-allowed' : 'hover:brightness-110'}
+                        transition-all duration-300
+                        ${stage.isLocked ? 'grayscale brightness-50 cursor-not-allowed' : 'cursor-pointer hover:brightness-110'}
                       `}
                       whileHover={!stage.isLocked && index === currentIndex ? { scale: 1.05 } : {}}
                       whileTap={!stage.isLocked && index === currentIndex ? { scale: 0.98 } : {}}
-                      onClick={(e) => {
+                      onPointerUp={(e) => {
                         e.stopPropagation();
-                        if (index === currentIndex) {
+                        if (index === currentIndex && !stage.isLocked) {
                           handleStageClick(stage);
+                        } else if (index !== currentIndex) {
+                          // Clicking a side island focuses it
+                          soundEffects.playHover();
+                          setCurrentIndex(index);
                         }
                       }}
                     />
