@@ -7,6 +7,7 @@ import { MathDisplay } from '@/utils/mathRenderer';
 import { ArrowLeft, Lightbulb, Play, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import ExponentiaBackground from '@/components/ExponentiaBackground';
 import { ProductOfPowersLesson } from '@/components/lessons/ProductOfPowersLesson';
 import { QuotientOfPowersLesson } from '@/components/lessons/QuotientOfPowersLesson';
 import { PowerOfPowerLesson } from '@/components/lessons/PowerOfPowerLesson';
@@ -142,8 +143,9 @@ const LawLearn = () => {
   };
 
   return (
-    <div className="min-h-screen p-3 sm:p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen p-3 sm:p-4 md:p-8 relative">
+      <ExponentiaBackground overlayOpacity={0.4} />
+      <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
         <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
           <Button
