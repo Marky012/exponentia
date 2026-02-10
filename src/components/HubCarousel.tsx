@@ -269,7 +269,7 @@ const HubCarousel = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background">
+    <div className="relative min-h-screen w-full overflow-hidden">
       {/* Exponentia Background */}
       <ExponentiaBackground />
 
