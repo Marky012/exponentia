@@ -103,7 +103,7 @@ const Welcome = () => {
       <AnimatedBackground theme={selectedGender} />
       
       {/* Settings button in top right */}
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-4 right-4 z-20">
         <SettingsMenu />
       </div>
       <motion.div
