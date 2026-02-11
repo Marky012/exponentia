@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useGameStore } from "@/store/gameStore";
+import { backgroundMusic } from "@/utils/backgroundMusic";
 import Index from "./pages/Index";
 import Welcome from "./pages/Welcome";
 import Intro from "./pages/Intro";
@@ -21,7 +22,7 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Component to apply theme on initial load
+// Component to apply theme and start background music
 const ThemeInitializer = ({ children }: { children: React.ReactNode }) => {
   const playerGender = useGameStore((state) => state.playerGender);
   
@@ -32,6 +33,25 @@ const ThemeInitializer = ({ children }: { children: React.ReactNode }) => {
       document.body.classList.remove('theme-female');
     }
   }, [playerGender]);
+
+  // Start background music on first user interaction
+  const handleFirstInteraction = useCallback(() => {
+    backgroundMusic.play();
+    document.removeEventListener('click', handleFirstInteraction);
+    document.removeEventListener('keydown', handleFirstInteraction);
+    document.removeEventListener('touchstart', handleFirstInteraction);
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('click', handleFirstInteraction);
+    document.addEventListener('keydown', handleFirstInteraction);
+    document.addEventListener('touchstart', handleFirstInteraction);
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('keydown', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, [handleFirstInteraction]);
   
   return <>{children}</>;
 };

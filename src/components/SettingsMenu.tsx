@@ -11,8 +11,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Settings, Volume2, VolumeX } from 'lucide-react';
+import { Settings, Volume2, VolumeX, Music, MusicIcon } from 'lucide-react';
 import { soundEffects } from '@/utils/soundEffects';
+import { backgroundMusic } from '@/utils/backgroundMusic';
 
 export const SettingsMenu = () => {
   const [soundEnabled, setSoundEnabled] = useState(() => {
@@ -25,6 +26,9 @@ export const SettingsMenu = () => {
     return saved !== null ? parseFloat(saved) : 0.5;
   });
 
+  const [musicEnabled, setMusicEnabled] = useState(() => backgroundMusic.isEnabled());
+  const [musicVolume, setMusicVolume] = useState(() => backgroundMusic.getVolume());
+
   useEffect(() => {
     localStorage.setItem('soundEnabled', String(soundEnabled));
     soundEffects.setEnabled(soundEnabled);
@@ -35,8 +39,20 @@ export const SettingsMenu = () => {
     soundEffects.setVolume(volume);
   }, [volume]);
 
+  useEffect(() => {
+    backgroundMusic.setEnabled(musicEnabled);
+  }, [musicEnabled]);
+
+  useEffect(() => {
+    backgroundMusic.setVolume(musicVolume);
+  }, [musicVolume]);
+
   const handleVolumeChange = (value: number[]) => {
     setVolume(value[0]);
+  };
+
+  const handleMusicVolumeChange = (value: number[]) => {
+    setMusicVolume(value[0]);
   };
 
   const testSound = () => {
@@ -59,6 +75,43 @@ export const SettingsMenu = () => {
         </SheetHeader>
         
         <div className="space-y-6 mt-6">
+          {/* Music Toggle */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {musicEnabled ? (
+                <Music className="w-5 h-5 text-primary" />
+              ) : (
+                <MusicIcon className="w-5 h-5 text-muted-foreground" />
+              )}
+              <Label htmlFor="music-toggle" className="font-medium">
+                Background Music
+              </Label>
+            </div>
+            <Switch
+              id="music-toggle"
+              checked={musicEnabled}
+              onCheckedChange={setMusicEnabled}
+            />
+          </div>
+
+          {/* Music Volume Slider */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="font-medium">Music Volume</Label>
+              <span className="text-sm text-muted-foreground">
+                {Math.round(musicVolume * 100)}%
+              </span>
+            </div>
+            <Slider
+              value={[musicVolume]}
+              onValueChange={handleMusicVolumeChange}
+              max={1}
+              step={0.1}
+              disabled={!musicEnabled}
+              className={!musicEnabled ? 'opacity-50' : ''}
+            />
+          </div>
+
           {/* Sound Toggle */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -78,10 +131,10 @@ export const SettingsMenu = () => {
             />
           </div>
 
-          {/* Volume Slider */}
+          {/* Sound Volume Slider */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="font-medium">Volume</Label>
+              <Label className="font-medium">SFX Volume</Label>
               <span className="text-sm text-muted-foreground">
                 {Math.round(volume * 100)}%
               </span>
