@@ -8,6 +8,7 @@ import { ArrowLeft, Lightbulb, Play, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
+import { SettingsMenu } from '@/components/SettingsMenu';
 import { ProductOfPowersLesson } from '@/components/lessons/ProductOfPowersLesson';
 import { QuotientOfPowersLesson } from '@/components/lessons/QuotientOfPowersLesson';
 import { PowerOfPowerLesson } from '@/components/lessons/PowerOfPowerLesson';
@@ -145,6 +146,12 @@ const LawLearn = () => {
   return (
     <div className="min-h-screen p-3 sm:p-4 md:p-8 relative">
       <ExponentiaBackground overlayOpacity={0.4} />
+      
+      {/* Settings button */}
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+        <SettingsMenu />
+      </div>
+
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
         <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">

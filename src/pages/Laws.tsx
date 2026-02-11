@@ -8,6 +8,7 @@ import { MathText } from '@/utils/mathRenderer';
 import { Lock, CheckCircle, Sparkles, ArrowLeft, Map } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
+import { SettingsMenu } from '@/components/SettingsMenu';
 
 const Laws = () => {
   const navigate = useNavigate();
@@ -36,6 +37,11 @@ const Laws = () => {
       {/* Background */}
       <ExponentiaBackground overlayOpacity={0.4} />
       
+      {/* Settings button */}
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+        <SettingsMenu />
+      </div>
+
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <motion.div
