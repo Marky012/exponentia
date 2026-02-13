@@ -26,7 +26,7 @@ interface Question {
 const PreTest = () => {
   const { lawId } = useParams();
   const navigate = useNavigate();
-  const { laws, earnGem, debugMode } = useGameStore();
+  const { laws, earnGem, debugMode, trackAnswer } = useGameStore();
   
   const law = laws.find((l) => l.id === lawId);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -112,6 +112,7 @@ const PreTest = () => {
     
     const isCorrect = answerIndex === currentQuestion.correctIndex;
     setLastAnswerCorrect(isCorrect);
+    trackAnswer(isCorrect);
     
     if (isCorrect) {
       setCorrectAnswers((prev) => prev + 1);

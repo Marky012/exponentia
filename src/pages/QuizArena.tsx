@@ -44,11 +44,14 @@ const QuizArena = () => {
   if (!allGemsEarned && !(debugMode && isDevMode)) {
     return (
       <motion.div
-        className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center"
+        className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center relative"
         style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url(${exponentiaBg})` }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+          <SettingsMenu />
+        </div>
         <Card className="p-8 text-center max-w-md bg-card/90 backdrop-blur-sm">
           <Lock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2">Arena Locked</h2>

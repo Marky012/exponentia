@@ -68,6 +68,7 @@ export interface GameState {
   unlockAllForTesting: () => void;
   completeQuizLevel: (levelId: string, score: number, missedLaws: string[]) => void;
   incrementLawMissed: (lawName: string) => void;
+  trackAnswer: (correct: boolean) => void;
   resetGame: () => void;
   toggleDebugMode: () => void;
   getStudentReport: () => StudentReport;
@@ -332,6 +333,12 @@ export const useGameStore = create<GameState>()(
             ...state.lawMissedCount,
             [lawName]: (state.lawMissedCount[lawName] || 0) + 1,
           },
+        })),
+
+      trackAnswer: (correct) =>
+        set((state) => ({
+          totalCorrectAnswers: state.totalCorrectAnswers + (correct ? 1 : 0),
+          totalIncorrectAnswers: state.totalIncorrectAnswers + (correct ? 0 : 1),
         })),
 
       resetGame: () => {
