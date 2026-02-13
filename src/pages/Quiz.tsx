@@ -34,6 +34,7 @@ export default function Quiz() {
   const navigate = useNavigate();
   const quizLevels = useGameStore((state) => state.quizLevels);
   const debugMode = useGameStore((state) => state.debugMode);
+  const trackAnswer = useGameStore((state) => state.trackAnswer);
   
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -100,6 +101,7 @@ export default function Quiz() {
 
     const isCorrect = selectedAnswer === currentQuestion.correctIndex;
     setLastAnswerCorrect(isCorrect);
+    trackAnswer(isCorrect);
     setAnswers([
       ...answers,
       {
