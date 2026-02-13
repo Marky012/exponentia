@@ -4,6 +4,7 @@ import { useGameStore } from '@/store/gameStore';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Trophy, XCircle, TrendingUp, RefreshCcw, ArrowRight, Target } from 'lucide-react';
+import { SettingsMenu } from '@/components/SettingsMenu';
 
 export default function QuizResult() {
   const { levelId } = useParams<{ levelId: 'easy' | 'medium' | 'hard' }>();
@@ -34,7 +35,10 @@ export default function QuizResult() {
   const allCompleted = quizLevels.every(l => l.completed);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 flex items-center justify-center p-4 relative">
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+        <SettingsMenu />
+      </div>
       <Card className="max-w-2xl w-full p-8 bg-card/80 backdrop-blur-sm border-2 border-primary/20">
         {/* Result Header */}
         <div className="text-center mb-8">

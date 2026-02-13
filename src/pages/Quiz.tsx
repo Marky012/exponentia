@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { soundEffects } from '@/utils/soundEffects';
 import exponentiaDark from '@/assets/exponentia-dark.png';
+import { SettingsMenu } from '@/components/SettingsMenu';
 import { isDevelopmentMode } from '@/utils/inputValidation';
 import {
   Dialog,
@@ -175,11 +176,14 @@ export default function Quiz() {
 
   return (
     <div 
-      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      className="min-h-screen bg-cover bg-center bg-no-repeat relative"
       style={{ 
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url(${exponentiaDark})`
       }}
     >
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+        <SettingsMenu />
+      </div>
       {/* Header */}
       <motion.div 
         className="border-b border-border/50 bg-card/50 backdrop-blur-sm"
