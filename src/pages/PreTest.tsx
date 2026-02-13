@@ -13,6 +13,7 @@ import questionsData from '@/data/questions.json';
 import trainingArena from '@/assets/training-arena.png';
 import { soundEffects } from '@/utils/soundEffects';
 import { isDevelopmentMode } from '@/utils/inputValidation';
+import { SettingsMenu } from '@/components/SettingsMenu';
 
 interface Question {
   id: string;
@@ -301,11 +302,14 @@ const PreTest = () => {
 
   return (
     <div 
-      className="min-h-screen p-3 sm:p-4 md:p-8 bg-cover bg-center bg-no-repeat"
+      className="min-h-screen p-3 sm:p-4 md:p-8 bg-cover bg-center bg-no-repeat relative"
       style={{ 
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url(${trainingArena})`
       }}
     >
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+        <SettingsMenu />
+      </div>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div 

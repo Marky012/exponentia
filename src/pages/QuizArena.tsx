@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Swords, Trophy, Lock, Star, Target, Flame, Bug } from 'lucide-react';
 import { InstallButton } from '@/components/InstallButton';
+import { SettingsMenu } from '@/components/SettingsMenu';
 import { toast } from 'sonner';
 import exponentiaBg from '@/assets/exponentia-light.png';
 import { isDevelopmentMode } from '@/utils/inputValidation';
@@ -105,7 +106,10 @@ const QuizArena = () => {
             <ArrowLeft className="w-4 h-4" />
             Map
           </Button>
-          <InstallButton />
+          <div className="flex items-center gap-2">
+            <SettingsMenu />
+            <InstallButton />
+          </div>
         </div>
 
         <motion.div
