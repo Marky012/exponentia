@@ -90,6 +90,15 @@ const Index = () => {
           The Realm of Exponential Power
         </motion.p>
 
+        <motion.p
+          className="text-sm text-muted-foreground/70 mt-2 italic"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+        >
+          by: Jeemark Naceel Calungsod Alojado
+        </motion.p>
+
         <motion.div
           className="mt-8 flex gap-2 justify-center"
           initial={{ opacity: 0 }}
