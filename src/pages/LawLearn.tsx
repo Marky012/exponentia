@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MathDisplay } from '@/utils/mathRenderer';
-import { ArrowLeft, Lightbulb, Play, Loader2 } from 'lucide-react';
+import { ArrowLeft, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
@@ -48,82 +48,25 @@ const lawHints: Record<string, string> = {
   identity: "Any base raised to the power of 1 is simply itself - the identity property!",
 };
 
-// Lazy loading video component
+// Direct video component - preloads and plays instantly
 const LazyVideo = ({ src, className }: { src: string; className?: string }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showVideo, setShowVideo] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const handlePlay = () => {
-    setShowVideo(true);
-  };
-
   return (
-    <div 
-      ref={containerRef} 
-      className={`relative bg-muted/30 rounded-lg overflow-hidden ${className}`}
-    >
-      {!showVideo ? (
-        <motion.div 
-          className="aspect-video flex items-center justify-center cursor-pointer group"
-          onClick={handlePlay}
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20" />
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-          <motion.div
-            className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-lg"
-            whileHover={{ scale: 1.1 }}
-          >
-            <Play className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-white ml-1" fill="white" />
-          </motion.div>
-          <p className="absolute bottom-3 sm:bottom-4 left-0 right-0 text-center text-white/80 text-xs sm:text-sm font-medium">
-            Click to play tutorial video
-          </p>
-        </motion.div>
-      ) : (
-        <div className="aspect-video relative">
-          {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-muted/30">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-          )}
-          {isVisible && (
-            <video 
-              src={src}
-              autoPlay 
-              loop 
-              muted 
-              playsInline
-              className="w-full h-full object-cover"
-              onLoadedData={() => setIsLoading(false)}
-            />
-          )}
-        </div>
-      )}
+    <div className={`relative bg-muted/30 rounded-lg overflow-hidden ${className}`}>
+      <div className="aspect-video">
+        <video 
+          src={src}
+          autoPlay 
+          loop 
+          muted 
+          playsInline
+          preload="auto"
+          className="w-full h-full object-cover"
+        />
+      </div>
     </div>
   );
 };
+
 
 const LawLearn = () => {
   const { lawId } = useParams();
