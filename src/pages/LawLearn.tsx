@@ -66,12 +66,7 @@ const LazyVideo = ({ src, className }: { src: string; className?: string }) => {
     </div>
   );
 };
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
+
 
 const LawLearn = () => {
   const { lawId } = useParams();
