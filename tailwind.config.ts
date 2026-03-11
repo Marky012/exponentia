@@ -54,7 +54,7 @@ export default {
         warning: "hsl(var(--warning-yellow))",
       },
       fontFamily: {
-        orbitron: ['Orbitron', 'sans-serif'],
+        orbitron: ['Inter', 'sans-serif'],
         sans: ['Inter', 'sans-serif'],
       },
       borderRadius: {
