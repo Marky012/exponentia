@@ -4,7 +4,7 @@ import { useGameStore } from '@/store/gameStore';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MathDisplay } from '@/utils/mathRenderer';
-import { ArrowLeft, Lightbulb, Play, Loader2 } from 'lucide-react';
+import { ArrowLeft, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
