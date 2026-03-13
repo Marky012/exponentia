@@ -287,6 +287,9 @@ const Welcome = () => {
           </motion.div>
         </Card>
       </motion.div>
+
+      {/* Install help button */}
+      <InstallHelpButton />
     </div>
   );
 };
