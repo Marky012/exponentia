@@ -349,6 +349,8 @@ const Index = () => {
           )}
         </AnimatePresence>
       </motion.div>
+
+      <InstallHelpButton />
     </div>
   );
 };
