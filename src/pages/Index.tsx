@@ -4,6 +4,7 @@ import { useGameStore } from '@/store/gameStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Zap, Download, Wifi, WifiOff } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import InstallHelpButton from '@/components/InstallHelpButton';
 
 type BootPhase = 'boot' | 'downloading' | 'ready';
 
