@@ -14,6 +14,7 @@ import mageImage from '@/assets/mage-character.png';
 import SparkleEffect from '@/components/SparkleEffect';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
+import InstallHelpButton from '@/components/InstallHelpButton';
 import { validatePlayerName } from '@/utils/inputValidation';
 
 // Convert name to sentence case (first letter uppercase, rest lowercase)
@@ -286,6 +287,9 @@ const Welcome = () => {
           </motion.div>
         </Card>
       </motion.div>
+
+      {/* Install help button */}
+      <InstallHelpButton />
     </div>
   );
 };
