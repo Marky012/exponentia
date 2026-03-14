@@ -20,6 +20,10 @@ const InstallHelpButton = ({ showFloatingButton = true, externalOpen, onExternal
       setInternalOpen(val);
     }
   };
+
+  if (!showFloatingButton && !isOpen) return null;
+
+  return (
     <>
       {/* Help button */}
       <motion.button
