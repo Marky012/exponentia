@@ -3,10 +3,23 @@ import { HelpCircle, X, Smartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
-const InstallHelpButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface InstallHelpButtonProps {
+  showFloatingButton?: boolean;
+  externalOpen?: boolean;
+  onExternalClose?: () => void;
+}
 
-  return (
+const InstallHelpButton = ({ showFloatingButton = true, externalOpen, onExternalClose }: InstallHelpButtonProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  
+  const isOpen = externalOpen !== undefined ? externalOpen : internalOpen;
+  const setIsOpen = (val: boolean) => {
+    if (externalOpen !== undefined) {
+      if (!val && onExternalClose) onExternalClose();
+    } else {
+      setInternalOpen(val);
+    }
+  };
     <>
       {/* Help button */}
       <motion.button
