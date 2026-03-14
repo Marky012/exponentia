@@ -48,8 +48,37 @@ const Index = () => {
     let cancelled = false;
 
     const trackCaching = async () => {
+      // Timeout fallback - never hang more than 10 seconds
+      const timeoutId = setTimeout(() => {
+        if (!cancelled) {
+          console.warn('SW caching timed out, proceeding to game');
+          cancelled = true;
+          setDownloadProgress(100);
+          setStatusText('Ready to play!');
+          setPhase('ready');
+          setTimeout(() => navigateToGame(), 500);
+        }
+      }, 10000);
+
       try {
-        const registration = await navigator.serviceWorker.ready;
+        // Race SW ready against a shorter timeout
+        const registration = await Promise.race([
+          navigator.serviceWorker.ready,
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000))
+        ]);
+
+        if (!registration) {
+          // SW didn't become ready in time, just proceed
+          clearTimeout(timeoutId);
+          if (!cancelled) {
+            setDownloadProgress(100);
+            setStatusText('Ready to play!');
+            setPhase('ready');
+            await new Promise(r => setTimeout(r, 500));
+            navigateToGame();
+          }
+          return;
+        }
 
         // Check if SW is already active and controlling
         if (navigator.serviceWorker.controller) {
@@ -89,18 +118,22 @@ const Index = () => {
           if (registration.installing || registration.waiting) {
             const sw = registration.installing || registration.waiting;
             if (sw) {
-              await new Promise<void>((resolve) => {
-                sw.addEventListener('statechange', () => {
+              await Promise.race([
+                new Promise<void>((resolve) => {
+                  sw.addEventListener('statechange', () => {
+                    if (sw.state === 'activated') resolve();
+                  });
                   if (sw.state === 'activated') resolve();
-                });
-                if (sw.state === 'activated') resolve();
-              });
+                }),
+                new Promise<void>((resolve) => setTimeout(resolve, 5000))
+              ]);
             }
           }
 
           await waitForPrecaching(cancelled);
         }
 
+        clearTimeout(timeoutId);
         if (!cancelled) {
           setPhase('ready');
           await new Promise(r => setTimeout(r, 800));
@@ -108,8 +141,8 @@ const Index = () => {
         }
       } catch (err) {
         console.warn('SW caching check failed, proceeding anyway:', err);
+        clearTimeout(timeoutId);
         if (!cancelled) {
-          // Still proceed even if caching check fails
           setDownloadProgress(100);
           setStatusText('Ready to play!');
           setPhase('ready');
