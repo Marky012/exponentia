@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { HelpCircle, X, Smartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+
 
 interface InstallHelpButtonProps {
   showFloatingButton?: boolean;
