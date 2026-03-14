@@ -25,16 +25,18 @@ const InstallHelpButton = ({ showFloatingButton = true, externalOpen, onExternal
 
   return (
     <>
-      {/* Help button */}
-      <motion.button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-primary/20 border border-primary/30 backdrop-blur-md flex items-center justify-center text-primary hover:bg-primary/30 transition-colors"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Installation help"
-      >
-        <HelpCircle className="w-6 h-6" />
-      </motion.button>
+      {/* Help button - only shown when showFloatingButton is true */}
+      {showFloatingButton && (
+        <motion.button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-primary/20 border border-primary/30 backdrop-blur-md flex items-center justify-center text-primary hover:bg-primary/30 transition-colors"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Installation help"
+        >
+          <HelpCircle className="w-6 h-6" />
+        </motion.button>
+      )}
 
       {/* Modal overlay */}
       <AnimatePresence>

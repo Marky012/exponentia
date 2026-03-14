@@ -17,6 +17,7 @@ import { backgroundMusic } from '@/utils/backgroundMusic';
 import InstallHelpButton from '@/components/InstallHelpButton';
 
 export const SettingsMenu = () => {
+  const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     const saved = localStorage.getItem('soundEnabled');
     return saved !== null ? saved === 'true' : true;
