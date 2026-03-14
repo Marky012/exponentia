@@ -11,9 +11,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Settings, Volume2, VolumeX, Music, MusicIcon } from 'lucide-react';
+import { Settings, Volume2, VolumeX, Music, MusicIcon, Smartphone } from 'lucide-react';
 import { soundEffects } from '@/utils/soundEffects';
 import { backgroundMusic } from '@/utils/backgroundMusic';
+import InstallHelpButton from '@/components/InstallHelpButton';
 
 export const SettingsMenu = () => {
   const [soundEnabled, setSoundEnabled] = useState(() => {
