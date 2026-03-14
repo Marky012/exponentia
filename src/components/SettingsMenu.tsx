@@ -11,11 +11,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Settings, Volume2, VolumeX, Music, MusicIcon } from 'lucide-react';
+import { Settings, Volume2, VolumeX, Music, MusicIcon, Smartphone } from 'lucide-react';
 import { soundEffects } from '@/utils/soundEffects';
 import { backgroundMusic } from '@/utils/backgroundMusic';
+import InstallHelpButton from '@/components/InstallHelpButton';
 
 export const SettingsMenu = () => {
+  const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     const saved = localStorage.getItem('soundEnabled');
     return saved !== null ? saved === 'true' : true;
@@ -158,8 +160,23 @@ export const SettingsMenu = () => {
           >
             Test Sound
           </Button>
+
+          {/* Install Help */}
+          <div className="pt-4 border-t border-border/50">
+            <Button
+              variant="outline"
+              className="w-full gap-2"
+              onClick={() => setShowInstallHelp(true)}
+            >
+              <Smartphone className="w-4 h-4" />
+              How to Install on Phone
+            </Button>
+          </div>
         </div>
       </SheetContent>
+
+      {/* Install help modal triggered from settings */}
+      <InstallHelpButton showFloatingButton={false} externalOpen={showInstallHelp} onExternalClose={() => setShowInstallHelp(false)} />
     </Sheet>
   );
 };
