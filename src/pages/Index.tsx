@@ -47,8 +47,46 @@ const Index = () => {
 
     let cancelled = false;
 
+    // Critical assets that MUST be cached for offline play
+    const criticalAssets = [
+      '/index.html',
+    ];
+
+    const verifyCriticalAssets = async (): Promise<boolean> => {
+      try {
+        const cacheNames = await caches.keys();
+        for (const asset of criticalAssets) {
+          let found = false;
+          for (const name of cacheNames) {
+            const cache = await caches.open(name);
+            const match = await cache.match(asset);
+            if (match) { found = true; break; }
+          }
+          if (!found) return false;
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    const getTotalCachedCount = async (): Promise<number> => {
+      try {
+        const cacheNames = await caches.keys();
+        let total = 0;
+        for (const name of cacheNames) {
+          const cache = await caches.open(name);
+          const keys = await cache.keys();
+          total += keys.length;
+        }
+        return total;
+      } catch {
+        return 0;
+      }
+    };
+
     const trackCaching = async () => {
-      // Timeout fallback - never hang more than 10 seconds
+      // Longer timeout for slower devices (20 seconds)
       const timeoutId = setTimeout(() => {
         if (!cancelled) {
           console.warn('SW caching timed out, proceeding to game');
@@ -58,17 +96,15 @@ const Index = () => {
           setPhase('ready');
           setTimeout(() => navigateToGame(), 500);
         }
-      }, 10000);
+      }, 20000);
 
       try {
-        // Race SW ready against a shorter timeout
         const registration = await Promise.race([
           navigator.serviceWorker.ready,
-          new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000))
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 8000))
         ]);
 
         if (!registration) {
-          // SW didn't become ready in time, just proceed
           clearTimeout(timeoutId);
           if (!cancelled) {
             setDownloadProgress(100);
@@ -80,41 +116,57 @@ const Index = () => {
           return;
         }
 
-        // Check if SW is already active and controlling
         if (navigator.serviceWorker.controller) {
-          // SW already controlling - assets likely cached
-          // Quick verification scan
+          // SW already controlling - verify assets are actually cached
           setStatusText('Verifying game files...');
-          setDownloadProgress(30);
+          setDownloadProgress(10);
 
-          // Check cache for key assets
-          const cacheNames = await caches.keys();
-          if (cacheNames.length > 0) {
-            // Cache exists, do a quick progress animation
-            const steps = [
-              { progress: 50, text: 'Loading audio assets...' },
-              { progress: 70, text: 'Loading video lessons...' },
-              { progress: 85, text: 'Loading game images...' },
-              { progress: 95, text: 'Preparing Exponentia...' },
-              { progress: 100, text: 'Ready to play!' },
-            ];
+          // Poll cache until we have enough assets or timeout
+          let attempts = 0;
+          const maxAttempts = 15;
+          let lastCount = 0;
+          let stableCount = 0;
 
-            for (let i = 0; i < steps.length; i++) {
-              if (cancelled) return;
-              await new Promise(r => setTimeout(r, 400));
-              setDownloadProgress(steps[i].progress);
-              setStatusText(steps[i].text);
+          while (attempts < maxAttempts && !cancelled) {
+            const cachedCount = await getTotalCachedCount();
+            const progress = Math.min(10 + (cachedCount / 40) * 85, 95);
+            setDownloadProgress(Math.round(progress));
+
+            if (cachedCount < 10) {
+              setStatusText('Caching game assets...');
+            } else if (cachedCount < 20) {
+              setStatusText('Loading character assets...');
+            } else if (cachedCount < 30) {
+              setStatusText('Loading video lessons...');
+            } else if (cachedCount < 40) {
+              setStatusText('Finalizing resources...');
+            } else {
+              setStatusText('Almost ready...');
             }
-          } else {
-            // No cache yet, wait for precaching
-            await waitForPrecaching(cancelled);
+
+            // If cache count stabilized, assets are done
+            if (cachedCount === lastCount && cachedCount > 15) {
+              stableCount++;
+              if (stableCount >= 3) break;
+            } else {
+              stableCount = 0;
+            }
+            lastCount = cachedCount;
+
+            attempts++;
+            await new Promise(r => setTimeout(r, 800));
+          }
+
+          // Final verification of critical assets
+          const criticalReady = await verifyCriticalAssets();
+          if (!criticalReady && !cancelled) {
+            console.warn('Critical assets not fully cached, but proceeding');
           }
         } else {
-          // SW not yet controlling - first install, wait for full caching
-          setStatusText('Downloading game resources...');
+          // First install - wait for SW activation then cache
+          setStatusText('Installing game resources...');
           setDownloadProgress(5);
 
-          // Listen for the SW to become active
           if (registration.installing || registration.waiting) {
             const sw = registration.installing || registration.waiting;
             if (sw) {
@@ -125,16 +177,51 @@ const Index = () => {
                   });
                   if (sw.state === 'activated') resolve();
                 }),
-                new Promise<void>((resolve) => setTimeout(resolve, 5000))
+                new Promise<void>((resolve) => setTimeout(resolve, 8000))
               ]);
             }
           }
 
-          await waitForPrecaching(cancelled);
+          // Wait for precaching with real progress tracking
+          let attempts = 0;
+          const maxAttempts = 20;
+          let lastCount = 0;
+          let stableCount = 0;
+
+          while (attempts < maxAttempts && !cancelled) {
+            const cachedCount = await getTotalCachedCount();
+            const progress = Math.min(5 + (cachedCount / 45) * 90, 95);
+            setDownloadProgress(Math.round(progress));
+
+            if (cachedCount < 5) {
+              setStatusText('Downloading core files...');
+            } else if (cachedCount < 15) {
+              setStatusText('Downloading character assets...');
+            } else if (cachedCount < 25) {
+              setStatusText('Downloading map images...');
+            } else if (cachedCount < 35) {
+              setStatusText('Downloading video lessons...');
+            } else {
+              setStatusText('Downloading audio & fonts...');
+            }
+
+            if (cachedCount === lastCount && cachedCount > 20) {
+              stableCount++;
+              if (stableCount >= 3) break;
+            } else {
+              stableCount = 0;
+            }
+            lastCount = cachedCount;
+
+            attempts++;
+            await new Promise(r => setTimeout(r, 1000));
+          }
         }
 
         clearTimeout(timeoutId);
         if (!cancelled) {
+          setDownloadProgress(100);
+          setStatusText('All resources ready!');
           setPhase('ready');
           await new Promise(r => setTimeout(r, 800));
           navigateToGame();
@@ -149,56 +236,6 @@ const Index = () => {
           await new Promise(r => setTimeout(r, 500));
           navigateToGame();
         }
-      }
-    };
-
-    const waitForPrecaching = async (isCancelled: boolean) => {
-      // Simulate progress based on expected asset count
-      // We know we have ~20+ images, 8 videos, 1 audio file
-      const expectedAssets = 35;
-      let cachedCount = 0;
-
-      const downloadStages = [
-        { progress: 10, text: 'Downloading core game files...' },
-        { progress: 25, text: 'Downloading character assets...' },
-        { progress: 40, text: 'Downloading map illustrations...' },
-        { progress: 55, text: 'Downloading audio tracks...' },
-        { progress: 70, text: 'Downloading video lessons...' },
-        { progress: 85, text: 'Downloading UI resources...' },
-        { progress: 92, text: 'Finalizing installation...' },
-      ];
-
-      for (let i = 0; i < downloadStages.length; i++) {
-        if (isCancelled) return;
-        await new Promise(r => setTimeout(r, 1200 + Math.random() * 800));
-
-        // Check actual cache progress
-        try {
-          const cacheNames = await caches.keys();
-          let totalCached = 0;
-          for (const name of cacheNames) {
-            const cache = await caches.open(name);
-            const keys = await cache.keys();
-            totalCached += keys.length;
-          }
-          cachedCount = totalCached;
-
-          // Blend simulated progress with actual cache count
-          const cacheProgress = Math.min((cachedCount / expectedAssets) * 100, 95);
-          const stageProgress = downloadStages[i].progress;
-          const blended = Math.max(cacheProgress, stageProgress);
-
-          setDownloadProgress(Math.round(blended));
-        } catch {
-          setDownloadProgress(downloadStages[i].progress);
-        }
-
-        setStatusText(downloadStages[i].text);
-      }
-
-      if (!isCancelled) {
-        setDownloadProgress(100);
-        setStatusText('All resources downloaded!');
       }
     };
 
