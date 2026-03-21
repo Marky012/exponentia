@@ -2,11 +2,20 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Zap, Download, Wifi, WifiOff } from 'lucide-react';
+import { Sparkles, Zap, Download, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import InstallHelpButton from '@/components/InstallHelpButton';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from '@/components/ui/alert-dialog';
 
 type BootPhase = 'boot' | 'downloading' | 'ready';
+
+const MINIMUM_CACHED_FOR_OFFLINE = 25;
 
 const Index = () => {
   const navigate = useNavigate();
@@ -14,6 +23,8 @@ const Index = () => {
   const [phase, setPhase] = useState<BootPhase>('boot');
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [statusText, setStatusText] = useState('Initializing...');
+  const [showOfflineModal, setShowOfflineModal] = useState(false);
+  const [offlineCacheProgress, setOfflineCacheProgress] = useState(0);
   const [isStandalone] = useState(() =>
     window.matchMedia('(display-mode: standalone)').matches ||
     (navigator as any).standalone === true
@@ -27,13 +38,50 @@ const Index = () => {
     }
   }, [hasStarted, navigate]);
 
+  const getTotalCachedCount = useCallback(async (): Promise<number> => {
+    try {
+      const cacheNames = await caches.keys();
+      let total = 0;
+      for (const name of cacheNames) {
+        const cache = await caches.open(name);
+        const keys = await cache.keys();
+        total += keys.length;
+      }
+      return total;
+    } catch {
+      return 0;
+    }
+  }, []);
+
+  // Check if offline with incomplete cache — show modal
   useEffect(() => {
-    // After boot animation, check if we need to download resources
+    const checkOfflineReadiness = async () => {
+      const isOffline = !navigator.onLine;
+      if (isOffline) {
+        const cachedCount = await getTotalCachedCount();
+        if (cachedCount < MINIMUM_CACHED_FOR_OFFLINE) {
+          setShowOfflineModal(true);
+          // Start polling — when back online, caching will resume
+          const pollInterval = setInterval(async () => {
+            const count = await getTotalCachedCount();
+            setOfflineCacheProgress(Math.min(Math.round((count / 45) * 100), 100));
+            if (navigator.onLine || count >= MINIMUM_CACHED_FOR_OFFLINE) {
+              clearInterval(pollInterval);
+              setShowOfflineModal(false);
+            }
+          }, 1500);
+          return () => clearInterval(pollInterval);
+        }
+      }
+    };
+    checkOfflineReadiness();
+  }, [getTotalCachedCount]);
+
+  useEffect(() => {
     const bootTimer = setTimeout(() => {
       if ('serviceWorker' in navigator) {
         setPhase('downloading');
       } else {
-        // No SW support, just proceed
         navigateToGame();
       }
     }, 2000);
@@ -47,10 +95,7 @@ const Index = () => {
 
     let cancelled = false;
 
-    // Critical assets that MUST be cached for offline play
-    const criticalAssets = [
-      '/index.html',
-    ];
+    const criticalAssets = ['/index.html'];
 
     const verifyCriticalAssets = async (): Promise<boolean> => {
       try {
@@ -70,23 +115,7 @@ const Index = () => {
       }
     };
 
-    const getTotalCachedCount = async (): Promise<number> => {
-      try {
-        const cacheNames = await caches.keys();
-        let total = 0;
-        for (const name of cacheNames) {
-          const cache = await caches.open(name);
-          const keys = await cache.keys();
-          total += keys.length;
-        }
-        return total;
-      } catch {
-        return 0;
-      }
-    };
-
     const trackCaching = async () => {
-      // Longer timeout for slower devices (20 seconds)
       const timeoutId = setTimeout(() => {
         if (!cancelled) {
           console.warn('SW caching timed out, proceeding to game');
@@ -117,11 +146,9 @@ const Index = () => {
         }
 
         if (navigator.serviceWorker.controller) {
-          // SW already controlling - verify assets are actually cached
           setStatusText('Verifying game files...');
           setDownloadProgress(10);
 
-          // Poll cache until we have enough assets or timeout
           let attempts = 0;
           const maxAttempts = 15;
           let lastCount = 0;
@@ -144,7 +171,6 @@ const Index = () => {
               setStatusText('Almost ready...');
             }
 
-            // If cache count stabilized, assets are done
             if (cachedCount === lastCount && cachedCount > 15) {
               stableCount++;
               if (stableCount >= 3) break;
@@ -157,13 +183,11 @@ const Index = () => {
             await new Promise(r => setTimeout(r, 800));
           }
 
-          // Final verification of critical assets
           const criticalReady = await verifyCriticalAssets();
           if (!criticalReady && !cancelled) {
             console.warn('Critical assets not fully cached, but proceeding');
           }
         } else {
-          // First install - wait for SW activation then cache
           setStatusText('Installing game resources...');
           setDownloadProgress(5);
 
@@ -182,7 +206,6 @@ const Index = () => {
             }
           }
 
-          // Wait for precaching with real progress tracking
           let attempts = 0;
           const maxAttempts = 20;
           let lastCount = 0;
@@ -244,10 +267,42 @@ const Index = () => {
     return () => {
       cancelled = true;
     };
-  }, [phase, navigateToGame]);
+  }, [phase, navigateToGame, getTotalCachedCount]);
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      {/* Offline / incomplete cache modal */}
+      <AlertDialog open={showOfflineModal}>
+        <AlertDialogContent className="max-w-sm mx-4 border-destructive/50 bg-background">
+          <AlertDialogHeader className="items-center text-center">
+            <motion.div
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <WifiOff className="w-12 h-12 text-destructive mb-2" />
+            </motion.div>
+            <AlertDialogTitle className="font-orbitron text-lg">
+              Internet Connection Required
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground space-y-3">
+              <p>
+                Exponentia needs an internet connection for a moment to download all game resources. Once fully downloaded, you can play completely offline!
+              </p>
+              <div className="space-y-2 pt-2">
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground/80">
+                  <AlertTriangle className="w-3 h-3" />
+                  <span>Please connect to Wi-Fi or mobile data</span>
+                </div>
+                <Progress value={offlineCacheProgress} className="h-2 bg-muted/50" />
+                <p className="text-xs text-muted-foreground/60">
+                  {offlineCacheProgress}% of game files cached
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Animated background particles */}
       <div className="absolute inset-0">
         {Array.from({ length: 20 }).map((_, i) => (
@@ -280,19 +335,10 @@ const Index = () => {
       >
         <motion.div
           className="relative inline-block mb-6"
-          animate={{
-            rotateY: [0, 360],
-          }}
-          transition={{
-            duration: 2,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatDelay: 1,
-          }}
+          animate={{ rotateY: [0, 360] }}
+          transition={{ duration: 2, ease: "easeInOut", repeat: Infinity, repeatDelay: 1 }}
         >
-          <div className="text-8xl font-orbitron font-black text-primary glow-strong">
-            E
-          </div>
+          <div className="text-8xl font-orbitron font-black text-primary glow-strong">E</div>
           <Sparkles className="absolute -top-4 -right-4 w-8 h-8 text-secondary animate-pulse" />
           <Zap className="absolute -bottom-4 -left-4 w-8 h-8 text-accent animate-pulse" />
         </motion.div>
@@ -339,15 +385,8 @@ const Index = () => {
                 <motion.div
                   key={i}
                   className="w-3 h-3 rounded-full bg-primary"
-                  animate={{
-                    scale: [1, 1.5, 1],
-                    opacity: [0.5, 1, 0.5],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    delay: i * 0.2,
-                  }}
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
                 />
               ))}
             </motion.div>
@@ -361,7 +400,6 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              {/* Status icon */}
               <motion.div
                 className="flex items-center justify-center gap-2 text-primary"
                 animate={{ opacity: [0.7, 1, 0.7] }}
@@ -372,12 +410,9 @@ const Index = () => {
                 ) : (
                   <Download className="w-5 h-5 animate-bounce" />
                 )}
-                <span className="text-sm font-medium font-orbitron">
-                  {statusText}
-                </span>
+                <span className="text-sm font-medium font-orbitron">{statusText}</span>
               </motion.div>
 
-              {/* Progress bar */}
               <div className="relative">
                 <Progress value={downloadProgress} className="h-3 bg-muted/50" />
                 <motion.div
@@ -389,12 +424,10 @@ const Index = () => {
                 </motion.div>
               </div>
 
-              {/* Percentage */}
               <p className="text-xs text-muted-foreground font-orbitron">
                 {Math.round(downloadProgress)}%
               </p>
 
-              {/* Offline indicator for standalone mode */}
               {isStandalone && (
                 <motion.div
                   className="flex items-center justify-center gap-1 text-xs text-muted-foreground/60"
