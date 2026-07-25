@@ -413,29 +413,33 @@ const HubCarousel = () => {
                           transition={{ duration: 3, repeat: Infinity }}
                         />
                         
-                        {/* Magical particles rising from island */}
-                        {[...Array(12)].map((_, i) => (
+                        {/* Rising math symbols */}
+                        {['+', '−', '×', '÷', '²', '³', '√', 'π', '=', '±', '∞', '∑'].map((sym, i) => (
                           <motion.div
-                            key={i}
-                            className="absolute w-2 h-2 rounded-full bg-primary/80"
+                            key={`sym-${i}`}
+                            className="absolute text-primary/80 font-bold select-none pointer-events-none"
                             style={{
-                              left: `${20 + Math.random() * 60}%`,
-                              bottom: `${30 + Math.random() * 20}%`,
-                              filter: 'blur(1px)',
+                              left: `${20 + ((i * 5.5) % 60)}%`,
+                              bottom: `${30 + ((i * 3.7) % 20)}%`,
+                              fontSize: `${10 + (i % 3) * 4}px`,
+                              textShadow: '0 0 8px hsl(var(--primary) / 0.5)',
                             }}
                             animate={{
-                              y: [0, -80 - Math.random() * 60],
-                              x: [0, (Math.random() - 0.5) * 40],
+                              y: [0, -80 - (i * 7)],
+                              x: [0, ((i % 2 === 0 ? 1 : -1) * (10 + (i % 4) * 8))],
                               opacity: [0, 0.8, 0],
                               scale: [0.5, 1, 0.3],
+                              rotate: [0, (i % 2 === 0 ? 180 : -180)],
                             }}
                             transition={{
-                              duration: 2.5 + Math.random() * 1.5,
+                              duration: 2.5 + (i % 3) * 0.5,
                               repeat: Infinity,
-                              delay: Math.random() * 2,
+                              delay: i * 0.2,
                               ease: 'easeOut',
                             }}
-                          />
+                          >
+                            {sym}
+                          </motion.div>
                         ))}
                         
                         {/* Sparkle particles */}
@@ -460,17 +464,18 @@ const HubCarousel = () => {
                           />
                         ))}
                         
-                        {/* Orbiting magical orbs */}
-                        {[...Array(3)].map((_, i) => (
+                        {/* Orbiting math symbols */}
+                        {['aᵐ', 'aⁿ', 'xᵏ'].map((sym, i) => (
                           <motion.div
                             key={`orb-${i}`}
-                            className="absolute w-3 h-3 rounded-full"
+                            className="absolute text-primary font-orbitron font-bold select-none pointer-events-none"
                             style={{
-                              background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)',
                               left: '50%',
                               top: '50%',
-                              marginLeft: '-6px',
-                              marginTop: '-6px',
+                              marginLeft: '-16px',
+                              marginTop: '-10px',
+                              fontSize: '12px',
+                              textShadow: '0 0 12px hsl(var(--primary) / 0.7), 0 0 24px hsl(var(--primary) / 0.3)',
                             }}
                             animate={{
                               x: [
@@ -489,7 +494,9 @@ const HubCarousel = () => {
                               ease: 'linear',
                               delay: i * 0.3,
                             }}
-                          />
+                          >
+                            {sym}
+                          </motion.div>
                         ))}
                       </>
                     )}
