@@ -281,12 +281,6 @@ const Index = () => {
         if (!cancelled) {
           setDownloadProgress(100);
           setPhase('saving');
-          setTimeout(() => {
-            if (!cancelled) {
-              setDownloadProgress(100);
-              setPhase('ready');
-            }
-          }, 600);
         }
       }, 25000);
 
@@ -309,11 +303,6 @@ const Index = () => {
           if (!cancelled) {
             setDownloadProgress(100);
             setPhase('saving');
-            setTimeout(() => {
-              if (!cancelled) {
-                setPhase('ready');
-              }
-            }, 800);
           }
         }
       }, 600);
@@ -330,6 +319,15 @@ const Index = () => {
       cleanup.then(fn => fn());
     };
   }, [phase, getTotalCachedCount, milestone25, milestone50, milestone75]);
+
+  // Saving → Ready transition (separate effect to avoid cancelled=true bug)
+  useEffect(() => {
+    if (phase !== 'saving') return;
+    const t = setTimeout(() => {
+      setPhase('ready');
+    }, 800);
+    return () => clearTimeout(t);
+  }, [phase]);
 
   const getStatusMessage = () => {
     if (phase === 'boot') return PHASE_MESSAGES.boot;
