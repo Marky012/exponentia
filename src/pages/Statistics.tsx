@@ -364,7 +364,7 @@ const Statistics = () => {
                       <Card
                         className={`p-4 transition-all duration-300 ${
                           achievement.earned
-                            ? 'bg-card border-2 border-primary/50 card-glow-primary card-hover-lift'
+                            ? 'bg-primary/20 border-2 border-primary/70 card-learning card-hover-lift shadow-[0_0_24px_hsl(var(--primary)/0.2)]'
                             : 'bg-muted/30 border border-border opacity-60 hover:opacity-70'
                         }`}
                       >
