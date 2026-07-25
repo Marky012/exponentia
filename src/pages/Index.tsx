@@ -8,6 +8,7 @@ import {
   Shield, Sword, PackageCheck, Save
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { backgroundMusic } from '@/utils/backgroundMusic';
 import InstallHelpButton from '@/components/InstallHelpButton';
 import exponentiaDark from '@/assets/exponentia-dark.png';
 import exponentiaLight from '@/assets/exponentia-light.png';
@@ -32,6 +33,8 @@ const ALL_IMAGES = [
   warriorCharacter, mageCharacter, helperPet, nullers, trainingArena,
 ];
 
+const MUSIC_URL = '/audio/Crystal_Theorems.mp3';
+
 function preloadImages(urls: string[]): Promise<void[]> {
   return Promise.all(
     urls.map(
@@ -46,6 +49,23 @@ function preloadImages(urls: string[]): Promise<void[]> {
         })
     )
   );
+}
+
+function preloadAudio(url: string): Promise<void> {
+  return new Promise((resolve) => {
+    const audio = new Audio();
+    audio.preload = 'auto';
+    audio.oncanplaythrough = () => resolve();
+    audio.onerror = () => resolve();
+    audio.src = url;
+  });
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((resolve) => setTimeout(() => resolve(undefined as T), ms)),
+  ]);
 }
 import {
   AlertDialog,
@@ -90,6 +110,7 @@ const Index = () => {
   phaseRef.current = phase;
 
   const navigateToGame = useCallback(() => {
+    backgroundMusic.play();
     if (hasStarted) {
       navigate('/hub');
     } else {
@@ -179,12 +200,15 @@ const Index = () => {
         setIsReturningUser(true);
         setPhase('saving');
         setDownloadProgress(95);
-        preloadImages(ALL_IMAGES).then(() => {
-          if (!cancelled) {
-            setDownloadProgress(100);
-            setPhase('ready');
-          }
-        });
+        // Preload images + audio with timeout so boot never hangs
+        await Promise.all([
+          withTimeout(preloadImages(ALL_IMAGES), 5000),
+          withTimeout(preloadAudio(MUSIC_URL), 3000),
+        ]);
+        if (!cancelled) {
+          setDownloadProgress(100);
+          setPhase('ready');
+        }
       } else if ('serviceWorker' in navigator) {
         setPhase('connecting');
       } else {
@@ -250,6 +274,7 @@ const Index = () => {
     let pollCount = 0;
 
     preloadImages(ALL_IMAGES);
+    preloadAudio(MUSIC_URL);
 
     const trackDownload = async () => {
       const timeoutId = setTimeout(() => {
