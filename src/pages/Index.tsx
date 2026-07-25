@@ -709,8 +709,8 @@ const Index = () => {
                   transition={{ delay: 0.3 }}
                 >
                   {isReturningUser
-                    ? 'Your progress has been saved. Ready to continue your adventure!'
-                    : 'All resources loaded! Install to play offline anytime.'}
+                    ? 'Welcome back, warrior. The realm awaits your return.'
+                    : 'The Laws of Exponents await. Your journey begins now.'}
                 </motion.p>
 
                 {/* Install button */}
