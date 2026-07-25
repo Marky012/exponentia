@@ -343,6 +343,7 @@ const HubCarousel = () => {
         onMouseLeave={handleDragCancel}
         onTouchStart={handleDragStart}
         onTouchEnd={handleDragEnd}
+        onDragStart={(e) => e.preventDefault()}
       >
         <div 
           className="relative w-full h-[70vh] flex items-center justify-center select-none"
@@ -496,6 +497,7 @@ const HubCarousel = () => {
                     <motion.img
                       src={stage.icon}
                       alt={stage.name}
+                      draggable={false}
                       className={`
                         w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl
                         transition-all duration-300
