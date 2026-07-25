@@ -687,31 +687,19 @@ const Index = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4 }}
               >
-                <motion.div
-                  className="flex items-center justify-center gap-2 text-gem"
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Sword className="w-5 h-5" />
-                  <span className="text-base font-bold font-orbitron text-glow-gold">{getStatusMessage()}</span>
-                </motion.div>
-
-                <div className="flex justify-center">
-                  <Progress value={100} className="h-3.5 bg-muted/40" />
-                </div>
-
-                {/* Confirmation message */}
                 <motion.p
                   className="text-xs text-muted-foreground/70 text-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
                 >
                   {isReturningUser
                     ? 'Welcome back, warrior. The realm awaits your return.'
                     : 'The Laws of Exponents await. Your journey begins now.'}
                 </motion.p>
+
+                <div className="flex justify-center">
+                  <Progress value={100} className="h-3.5 bg-muted/40" />
+                </div>
 
                 {/* Install button */}
                 {installPrompt && !installDismissed && !isStandalone && (
