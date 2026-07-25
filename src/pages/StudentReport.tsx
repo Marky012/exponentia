@@ -405,7 +405,7 @@ function printReport(report: ReportType, playerName: string) {
 
 export default function StudentReport() {
   const navigate = useNavigate();
-  const report = useGameStore(state => state.getStudentReport());
+  const [report, setReport] = useState<ReportType>(() => useGameStore.getState().getStudentReport());
   const { playerName } = report;
   const [downloading, setDownloading] = useState(false);
   const [showDownloadSuccess, setShowDownloadSuccess] = useState(false);
