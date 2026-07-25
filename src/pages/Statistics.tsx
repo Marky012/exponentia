@@ -418,7 +418,7 @@ const Statistics = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1 + index * 0.1 }}
-                      className="p-4 bg-card border border-border rounded-lg"
+                      className="p-4 bg-primary/10 border border-primary/40 rounded-lg card-learning"
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-4">
@@ -457,19 +457,19 @@ const Statistics = () => {
                       
                       {attemptsCount > 0 && (
                         <div className="mt-3 pt-3 border-t border-border/50 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                          <div className="bg-muted/30 p-2 rounded">
+                          <div className="bg-primary/5 p-2 rounded">
                             <p className="text-muted-foreground text-xs">Best Score</p>
                             <p className="font-bold text-primary">{level.score || 0}%</p>
                           </div>
-                          <div className="bg-muted/30 p-2 rounded">
+                          <div className="bg-primary/5 p-2 rounded">
                             <p className="text-muted-foreground text-xs">Correct</p>
                             <p className="font-bold text-green-500">{correctCount}/{totalQuestions}</p>
                           </div>
-                          <div className="bg-muted/30 p-2 rounded">
+                          <div className="bg-primary/5 p-2 rounded">
                             <p className="text-muted-foreground text-xs">Mistakes</p>
                             <p className="font-bold text-red-500">{mistakesCount}/{totalQuestions}</p>
                           </div>
-                          <div className="bg-muted/30 p-2 rounded">
+                          <div className="bg-primary/5 p-2 rounded">
                             <p className="text-muted-foreground text-xs">Average</p>
                             <p className="font-bold">{level.averageScore || level.score || 0}%</p>
                           </div>
