@@ -85,7 +85,7 @@ const Laws = () => {
                 className={cn(
                   "p-3 sm:p-4 md:p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border-2 h-full relative overflow-hidden",
                     law.gemEarned
-                    ? "bg-gradient-to-br from-gem/10 to-gem-dark/5 border-gem/60 card-completed shadow-[0_0_24px_hsl(45_95%_58%/0.2)]"
+                    ? "bg-primary/20 border-primary/70 card-learning shadow-[0_0_24px_hsl(var(--primary)/0.2)]"
                     : law.completed
                     ? "bg-primary/15 border-primary/60 card-learning"
                     : "bg-card/15 border-primary/30 card-locked"
@@ -97,8 +97,8 @@ const Laws = () => {
                   <div className="text-3xl sm:text-4xl">
                     {law.gemEarned ? (
                       <div className="relative">
-                        <Sparkles className="w-7 h-7 sm:w-10 sm:h-10 text-gem animate-pulse-glow" style={{ filter: 'drop-shadow(0 0 8px hsl(45 95% 58% / 0.8))' }} />
-                        <div className="absolute inset-0 bg-gem/20 rounded-full blur-xl" />
+                        <Sparkles className="w-7 h-7 sm:w-10 sm:h-10 text-primary animate-pulse-glow" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.8))' }} />
+                        <div className="absolute inset-0 bg-primary/15 rounded-full blur-xl" />
                       </div>
                     ) : law.completed ? (
                       <CheckCircle className="w-7 h-7 sm:w-10 sm:h-10 text-primary" />
@@ -121,7 +121,7 @@ const Laws = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-xs sm:text-sm h-8 sm:h-9 gap-1.5 border-gem/40 text-gem hover:bg-gem/10"
+                    className="w-full text-xs sm:text-sm h-8 sm:h-9 gap-1.5 border-primary/40 text-primary hover:bg-primary/10"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     Review
