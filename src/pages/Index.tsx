@@ -10,7 +10,43 @@ import {
 import { Progress } from '@/components/ui/progress';
 import InstallHelpButton from '@/components/InstallHelpButton';
 import exponentiaDark from '@/assets/exponentia-dark.png';
+import exponentiaLight from '@/assets/exponentia-light.png';
+import hubBeginning from '@/assets/hub-beginning.png';
+import hubTraining from '@/assets/hub-training.png';
+import hubArena from '@/assets/hub-arena.png';
+import hubVictory from '@/assets/hub-victory.png';
+import elexiaIntro from '@/assets/elexia-intro.png';
+import elexiaHopeful from '@/assets/elexia-hopeful.png';
+import elexiaWorried from '@/assets/elexia-worried.png';
+import warriorCharacter from '@/assets/warrior-character.png';
+import mageCharacter from '@/assets/mage-character.png';
+import helperPet from '@/assets/helper-pet.png';
+import nullers from '@/assets/nullers.png';
+import trainingArena from '@/assets/training-arena.png';
 import { BeforeInstallPromptEvent } from '@/types/game';
+
+const ALL_IMAGES = [
+  exponentiaDark, exponentiaLight,
+  hubBeginning, hubTraining, hubArena, hubVictory,
+  elexiaIntro, elexiaHopeful, elexiaWorried,
+  warriorCharacter, mageCharacter, helperPet, nullers, trainingArena,
+];
+
+function preloadImages(urls: string[]): Promise<void[]> {
+  return Promise.all(
+    urls.map(
+      (src) =>
+        new Promise<void>((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            img.decode?.().then(() => resolve()).catch(() => resolve());
+          };
+          img.onerror = () => resolve();
+          img.src = src;
+        })
+    )
+  );
+}
 import {
   AlertDialog,
   AlertDialogContent,
@@ -136,16 +172,19 @@ const Index = () => {
 
   // Main boot sequence
   useEffect(() => {
+    let cancelled = false;
     const bootTimer = setTimeout(async () => {
       const cached = await isFullyCached();
       if (cached) {
         setIsReturningUser(true);
         setPhase('saving');
         setDownloadProgress(95);
-        setTimeout(() => {
-          setDownloadProgress(100);
-          setPhase('ready');
-        }, 400);
+        preloadImages(ALL_IMAGES).then(() => {
+          if (!cancelled) {
+            setDownloadProgress(100);
+            setPhase('ready');
+          }
+        });
       } else if ('serviceWorker' in navigator) {
         setPhase('connecting');
       } else {
@@ -153,7 +192,7 @@ const Index = () => {
       }
     }, 1200);
 
-    return () => clearTimeout(bootTimer);
+    return () => { cancelled = true; clearTimeout(bootTimer); };
   }, [isFullyCached]);
 
   // Connecting phase
@@ -209,6 +248,8 @@ const Index = () => {
 
     let cancelled = false;
     let pollCount = 0;
+
+    preloadImages(ALL_IMAGES);
 
     const trackDownload = async () => {
       const timeoutId = setTimeout(() => {
