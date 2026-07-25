@@ -5,6 +5,10 @@ import { ArrowLeft, Download, Trophy, BookOpen, Star, AlertTriangle, TrendingUp 
 import { useGameStore } from '../store/gameStore';
 import { DIFFICULTY_CONFIG } from '../constants/quizConfig';
 import { Button } from '../components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../components/ui/dialog';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import exponentiaDark from '../assets/exponentia-dark.png';
 import type { StudentReport as ReportType } from '../store/gameStore';
 
 const GRADE_SCALE: Record<string, { grade: string; label: string }> = {
@@ -405,10 +409,13 @@ function printReport(report: ReportType, playerName: string) {
 
 export default function StudentReport() {
   const navigate = useNavigate();
-  const [report, setReport] = useState<ReportType>(() => useGameStore.getState().getStudentReport());
+  const [report] = useState<ReportType>(() => useGameStore.getState().getStudentReport());
   const { playerName } = report;
   const [downloading, setDownloading] = useState(false);
   const [showDownloadSuccess, setShowDownloadSuccess] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [nameError, setNameError] = useState('');
 
   useEffect(() => {
     document.title = `Student Report - ${playerName || 'Student'}`;
@@ -417,11 +424,22 @@ export default function StudentReport() {
   const gradeInfo = GRADE_SCALE[report.overallPerformance] || GRADE_SCALE.not_assessed;
   const perfColor = PERFORMANCE_COLORS[report.overallPerformance] || 'text-gray-400';
 
-  const handlePrint = async () => {
+  const handlePrintClick = () => {
+    setFullName('');
+    setNameError('');
+    setShowNameModal(true);
+  };
+
+  const handleConfirmPrint = async () => {
+    if (!fullName.trim()) {
+      setNameError('Please enter the student\'s full name');
+      return;
+    }
+    setShowNameModal(false);
     setDownloading(true);
     setShowDownloadSuccess(false);
     try {
-      printReport(report, playerName);
+      printReport(report, fullName.trim());
       await new Promise(resolve => setTimeout(resolve, 800));
       setShowDownloadSuccess(true);
       setTimeout(() => setShowDownloadSuccess(false), 2000);
@@ -437,7 +455,41 @@ export default function StudentReport() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div
+      className="min-h-screen text-white bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url(${exponentiaDark})` }}
+    >
+      {/* Full Name Modal */}
+      <Dialog open={showNameModal} onOpenChange={setShowNameModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-orbitron">Student Full Name</DialogTitle>
+            <DialogDescription>
+              Enter the student's full name to be displayed on the printed report.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input
+              id="fullName"
+              value={fullName}
+              onChange={(e) => { setFullName(e.target.value); setNameError(''); }}
+              placeholder="e.g. Juan Dela Cruz"
+              className="text-base"
+              autoFocus
+              onKeyDown={(e) => { if (e.key === 'Enter') handleConfirmPrint(); }}
+            />
+            {nameError && <p className="text-sm text-destructive">{nameError}</p>}
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowNameModal(false)}>Cancel</Button>
+            <Button onClick={handleConfirmPrint}>
+              <Download className="w-4 h-4 mr-1" /> Print Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Header */}
       <div className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/50">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -453,7 +505,7 @@ export default function StudentReport() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={handlePrint}
+            onClick={handlePrintClick}
             disabled={downloading}
             className="text-indigo-400 hover:text-indigo-300 gap-1"
           >
