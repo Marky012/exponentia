@@ -105,7 +105,7 @@ const Welcome = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <Card className="p-8 bg-card/80 backdrop-blur-md border-2 border-primary/20 shadow-2xl">
+        <Card className="p-8 bg-primary/15 border-primary/60 card-learning shadow-2xl">
           <motion.div
             className="text-center mb-8 flex flex-col items-center justify-center w-full mx-auto"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -169,8 +169,8 @@ const Welcome = () => {
                   onClick={() => setSelectedGender('male')}
                   className={`relative p-4 rounded-lg border-2 overflow-hidden ${
                     selectedGender === 'male'
-                      ? 'border-[hsl(202,60%,65%)] bg-[hsl(202,60%,65%,0.1)] shadow-[0_0_16px_hsl(202,60%,75%,0.6)]'
-                      : 'border-border hover:border-[hsl(202,60%,65%,0.5)]'
+                      ? 'border-[hsl(202,60%,65%)] bg-[hsl(202,60%,65%,0.15)] shadow-[0_0_16px_hsl(202,60%,75%,0.6)]'
+                      : 'bg-primary/15 border-primary/60 hover:border-primary/80'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -221,8 +221,8 @@ const Welcome = () => {
                   onClick={() => setSelectedGender('female')}
                   className={`relative p-4 rounded-lg border-2 overflow-hidden ${
                     selectedGender === 'female'
-                      ? 'border-[hsl(330,85%,65%)] bg-[hsl(330,85%,65%,0.1)] shadow-[0_0_16px_hsl(330,90%,75%,0.6)]'
-                      : 'border-border hover:border-[hsl(330,85%,65%,0.5)]'
+                      ? 'border-[hsl(330,85%,65%)] bg-[hsl(330,85%,65%,0.15)] shadow-[0_0_16px_hsl(330,90%,75%,0.6)]'
+                      : 'bg-primary/15 border-primary/60 hover:border-primary/80'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
