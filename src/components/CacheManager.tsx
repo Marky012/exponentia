@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Trash2, HardDrive } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Trash2, HardDrive, AlertTriangle } from 'lucide-react';
 
 interface CacheStats {
   entryCount: number;
@@ -44,6 +45,7 @@ function formatBytes(bytes: number): string {
 export function CacheManager() {
   const [stats, setStats] = useState<CacheStats | null>(null);
   const [clearing, setClearing] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const refresh = useCallback(async () => {
     const s = await getCacheStats();
@@ -83,13 +85,47 @@ export function CacheManager() {
       <Button
         variant="destructive"
         size="sm"
-        onClick={handleClear}
+        onClick={() => setShowConfirm(true)}
         disabled={clearing}
         className="w-full gap-2"
       >
         <Trash2 className="w-4 h-4" />
-        {clearing ? 'Clearing...' : 'Clear Cache & Reload'}
+        Clear Cache & Reload
       </Button>
+
+      <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <DialogContent className="sm:max-w-md bg-primary/15 backdrop-blur-sm border-2 border-primary/60 card-learning">
+          <DialogHeader>
+            <DialogTitle className="font-orbitron flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-warning" />
+              Clear Cache?
+            </DialogTitle>
+            <DialogDescription>
+              This will remove all cached game data and unregister the service worker. The app will need to re-download resources on next visit.
+            </DialogDescription>
+          </DialogHeader>
+          {stats && (
+            <p className="text-sm text-muted-foreground">
+              Currently cached: <strong className="text-foreground">{stats.entryCount} files ({stats.estimatedSize})</strong>
+            </p>
+          )}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowConfirm(false)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                setShowConfirm(false);
+                await handleClear();
+              }}
+              disabled={clearing}
+              className="gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              {clearing ? 'Clearing...' : 'Yes, Clear Everything'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
