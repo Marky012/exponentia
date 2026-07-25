@@ -245,10 +245,10 @@ export default function Quiz() {
             transition={{ duration: 0.3 }}
           >
             <Card className={cn(
-              "p-4 sm:p-6 bg-card/80 backdrop-blur-sm border-2 transition-all duration-300",
+              "p-4 sm:p-6 bg-primary/15 backdrop-blur-sm border-2 transition-all duration-300 card-learning",
               lastAnswerCorrect === true && "border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.3)]",
               lastAnswerCorrect === false && "border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-shake",
-              lastAnswerCorrect === null && "border-primary/20"
+              lastAnswerCorrect === null && "border-primary/60"
             )}>
               <div className="mb-4 sm:mb-6">
                 <div className="relative">

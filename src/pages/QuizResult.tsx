@@ -58,7 +58,7 @@ export default function QuizResult() {
       <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
         <SettingsMenu />
       </div>
-      <Card className="max-w-2xl w-full p-8 bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-2xl">
+      <Card className="max-w-2xl w-full p-8 bg-primary/15 backdrop-blur-sm border-2 border-primary/60 card-learning shadow-2xl">
         {/* Result Header */}
         <div className="text-center mb-8">
           {passed ? (

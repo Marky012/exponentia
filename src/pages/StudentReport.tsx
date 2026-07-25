@@ -43,7 +43,7 @@ function LevelCard({ title, icon, level, passed, accentClass }: {
 }) {
   if (!level) {
     return (
-      <Card className="border-2 border-muted/50">
+      <Card className="bg-primary/15 border-2 border-muted/60 card-learning">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
             <span className={accentClass}>{icon}</span>
@@ -61,7 +61,7 @@ function LevelCard({ title, icon, level, passed, accentClass }: {
   const best = level.scores.length > 0 ? Math.max(...level.scores) : 0;
 
   return (
-    <Card className={`border-2 ${passed ? 'border-primary/50 card-glow-primary' : 'border-muted/50 opacity-80'}`}>
+    <Card className={`bg-primary/15 border-2 ${passed ? 'border-primary/60 card-glow-primary' : 'border-muted/60 opacity-80'} card-learning`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -381,7 +381,7 @@ export default function StudentReport() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="border-2 border-primary/50 card-glow-primary mb-8">
+          <Card className="bg-primary/15 border-2 border-primary/60 card-glow-primary card-learning mb-8">
             <CardContent className="py-6">
               <div className="flex flex-col md:flex-row items-center justify-center gap-6">
                 <div className="text-center">
@@ -465,7 +465,7 @@ export default function StudentReport() {
             className="mb-8"
           >
             <h2 className="text-2xl font-orbitron font-bold mb-4 text-glow">Laws to Focus On</h2>
-            <Card className="border-2 border-destructive/30 card-glow-danger">
+            <Card className="bg-primary/15 border-2 border-destructive/40 card-glow-danger card-learning">
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-2">
                   {report.lawsToFocus.map(law => (
@@ -487,7 +487,7 @@ export default function StudentReport() {
             transition={{ delay: 0.6 }}
           >
             <h2 className="text-2xl font-orbitron font-bold mb-4 text-glow">Recommendations</h2>
-            <Card className="border-2 border-primary/30 card-accent-top-primary">
+            <Card className="bg-primary/15 border-2 border-primary/60 card-accent-top-primary card-learning">
               <CardContent className="pt-6 space-y-3">
                 {report.recommendations.map((rec, i) => (
                   <div key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
