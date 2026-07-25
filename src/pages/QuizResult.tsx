@@ -58,30 +58,30 @@ export default function QuizResult() {
       <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
         <SettingsMenu />
       </div>
-      <Card className="max-w-2xl w-full p-8 bg-primary/15 backdrop-blur-sm border-2 border-primary/60 card-learning shadow-2xl">
+      <Card className="max-w-2xl w-full p-4 sm:p-6 md:p-8 bg-primary/15 backdrop-blur-sm border-2 border-primary/60 card-learning shadow-2xl">
         {/* Result Header */}
         <div className="text-center mb-8">
           {passed ? (
             <>
               <div className="flex justify-center mb-4">
                 <div className="relative">
-                  <Trophy className="w-20 h-20 text-gem animate-float" style={{ filter: 'drop-shadow(0 0 16px hsl(45 95% 58% / 0.9))' }} />
+                  <Trophy className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 text-gem animate-float" style={{ filter: 'drop-shadow(0 0 16px hsl(45 95% 58% / 0.9))' }} />
                   <div className="absolute inset-0 bg-gem/20 rounded-full blur-xl animate-pulse" />
                 </div>
               </div>
-              <h1 className="text-4xl font-orbitron font-bold text-glow-gold mb-2">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-glow-gold mb-2">
                 Victory!
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-muted-foreground break-words">
                 You defeated the {currentLevel.name} Level Nuller!
               </p>
             </>
           ) : (
             <>
               <div className="flex justify-center mb-4">
-                <XCircle className="w-20 h-20 text-destructive" style={{ filter: 'drop-shadow(0 0 12px hsl(var(--destructive) / 0.6))' }} />
+                <XCircle className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 text-destructive" style={{ filter: 'drop-shadow(0 0 12px hsl(var(--destructive) / 0.6))' }} />
               </div>
-              <h1 className="text-4xl font-orbitron font-bold text-destructive mb-2">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-destructive mb-2">
                 Not Quite...
               </h1>
               <p className="text-lg text-muted-foreground">
@@ -92,13 +92,13 @@ export default function QuizResult() {
         </div>
 
         {/* Score Display */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <Card className="p-6 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30 text-center card-glow-primary">
-            <div className={`text-5xl font-bold font-orbitron mb-2 ${passed ? 'text-glow-gold' : 'text-primary'}`}>{score}%</div>
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-8">
+          <Card className="p-3 sm:p-4 md:p-6 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30 text-center card-glow-primary">
+            <div className={`text-3xl sm:text-4xl md:text-5xl font-bold font-orbitron mb-2 ${passed ? 'text-glow-gold' : 'text-primary'}`}>{score}%</div>
             <p className="text-sm text-muted-foreground">Final Score</p>
           </Card>
-          <Card className="p-6 bg-gradient-to-br from-card/80 to-card/50 text-center card-hover-lift">
-            <div className="text-5xl font-bold font-orbitron text-foreground mb-2">
+          <Card className="p-3 sm:p-4 md:p-6 bg-gradient-to-br from-card/80 to-card/50 text-center card-hover-lift">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold font-orbitron text-foreground mb-2">
               {correctCount}/{totalQuestions}
             </div>
             <p className="text-sm text-muted-foreground">Correct Answers</p>
@@ -110,7 +110,7 @@ export default function QuizResult() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Target className="w-5 h-5 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Passing Score: {PASSING_SCORE}%</span>
+              <span className="text-sm text-muted-foreground min-w-0">Passing Score: {PASSING_SCORE}%</span>
             </div>
             <div className={`font-bold ${passed ? 'text-success' : 'text-destructive'}`}>
               {passed ? '✓ PASSED' : '✗ FAILED'}

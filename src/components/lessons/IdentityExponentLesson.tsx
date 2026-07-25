@@ -58,26 +58,26 @@ export const IdentityExponentLesson = ({ onComplete }: { onComplete: () => void 
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <motion.div
         key={step}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         className="text-center"
       >
-        <h3 className="text-2xl font-orbitron font-bold mb-4">{currentStep.title}</h3>
-        <p className="text-lg text-muted-foreground mb-6">{currentStep.content}</p>
+        <h3 className="text-lg sm:text-xl md:text-2xl font-orbitron font-bold mb-2 sm:mb-4">{currentStep.title}</h3>
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-4 sm:mb-6">{currentStep.content}</p>
 
         {currentStep.visual && (
-          <div className="flex justify-center items-center gap-8 my-8 relative min-h-[200px]">
+          <div className="flex justify-center items-center gap-4 sm:gap-8 my-4 sm:my-8 relative min-h-[150px] sm:min-h-[200px]">
             {step === 1 && (
               <motion.div
                 className="relative"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               >
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-gem/30 border-4 border-primary flex items-center justify-center glow-strong">
-                  <MathText className="text-4xl font-bold">7</MathText>
+                <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-primary/30 to-gem/30 border-2 sm:border-4 border-primary flex items-center justify-center glow-strong">
+                  <MathText className="text-lg sm:text-2xl font-bold">7</MathText>
                 </div>
                 <motion.div
                   className="absolute inset-0 rounded-full border-2 border-gem/40"
@@ -95,7 +95,7 @@ export const IdentityExponentLesson = ({ onComplete }: { onComplete: () => void 
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  <MathText className="text-3xl font-bold text-primary">¹</MathText>
+                  <MathText className="text-xl sm:text-3xl font-bold text-primary">¹</MathText>
                 </motion.div>
                 
                 <motion.div
@@ -103,8 +103,8 @@ export const IdentityExponentLesson = ({ onComplete }: { onComplete: () => void 
                   animate={revealed ? { scale: [1, 1.2, 1] } : { rotate: 360 }}
                   transition={revealed ? { duration: 1 } : { duration: 8, repeat: Infinity, ease: "linear" }}
                 >
-                  <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary/30 to-gem/30 border-4 border-primary flex items-center justify-center glow-strong">
-                    <MathText className="text-4xl font-bold">7</MathText>
+                  <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-primary/30 to-gem/30 border-2 sm:border-4 border-primary flex items-center justify-center glow-strong">
+                    <MathText className="text-lg sm:text-2xl font-bold">7</MathText>
                   </div>
                   {!revealed && (
                     <motion.div
@@ -118,7 +118,7 @@ export const IdentityExponentLesson = ({ onComplete }: { onComplete: () => void 
 
                 {revealed && (
                   <motion.div
-                    className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-2xl font-bold text-gem"
+                    className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-2xl sm:text-4xl font-bold text-gem"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                   >
@@ -130,33 +130,33 @@ export const IdentityExponentLesson = ({ onComplete }: { onComplete: () => void 
 
             {step === 3 && (
               <motion.div
-                className="w-40 h-40 rounded-full bg-gradient-to-br from-primary/30 to-gem/30 border-4 border-gem flex items-center justify-center glow-strong"
+                className="w-28 h-28 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-primary/30 to-gem/30 border-2 sm:border-4 border-gem flex items-center justify-center glow-strong"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1, rotate: 360 }}
                 transition={{ duration: 1 }}
               >
-                <MathText className="text-5xl font-bold">7</MathText>
+                <MathText className="text-2xl sm:text-4xl font-bold">7</MathText>
               </motion.div>
             )}
           </div>
         )}
 
-        <div className="bg-muted/30 border border-primary/20 rounded-lg p-4">
+        <div className="bg-muted/30 border border-primary/20 rounded-lg p-3 sm:p-4">
           {step === 3 && (
             <MathDisplay>7¹ = 7</MathDisplay>
           )}
         </div>
       </motion.div>
 
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-center gap-2 sm:gap-4">
         {currentStep.action === "interact" && !revealed ? (
-          <Button onClick={handleReveal} size="lg" className="glow">
+          <Button onClick={handleReveal} size="lg" className="glow text-sm sm:text-base h-10 sm:h-11 px-4 sm:px-6">
             Apply Power of One
           </Button>
         ) : (
-          <Button onClick={handleNext} size="lg" disabled={revealed && step === 2}>
+          <Button onClick={handleNext} size="lg" disabled={revealed && step === 2} className="text-sm sm:text-base h-10 sm:h-11 px-4 sm:px-6">
             {step < steps.length - 1 ? "Continue" : "Complete Lesson"}
-            <ArrowRight className="w-5 h-5 ml-2" />
+            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />
           </Button>
         )}
       </div>

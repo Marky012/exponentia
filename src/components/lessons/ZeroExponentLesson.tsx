@@ -66,24 +66,24 @@ export const ZeroExponentLesson = ({ onComplete }: { onComplete: () => void }) =
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <motion.div
         key={step}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         className="text-center"
       >
-        <h3 className="text-2xl font-orbitron font-bold mb-4">{currentStep.title}</h3>
-        <p className="text-lg text-muted-foreground mb-6">{currentStep.content}</p>
+        <h3 className="text-lg sm:text-xl md:text-2xl font-orbitron font-bold mb-2 sm:mb-4">{currentStep.title}</h3>
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-4 sm:mb-6">{currentStep.content}</p>
 
         {currentStep.visual && (
-          <div className="flex justify-center items-center gap-8 my-8 relative min-h-[200px]">
+          <div className="flex justify-center items-center gap-4 sm:gap-8 my-4 sm:my-8 relative min-h-[150px] sm:min-h-[200px]">
             {(step === 1 || step === 2) && (
               <div className="relative">
                 {[2, 1, 0].map((i) => (
                   <motion.div
                     key={i}
-                    className="absolute inset-0 rounded-full border-4 border-primary/40"
+                    className="absolute inset-0 rounded-full border-2 sm:border-4 border-primary/40"
                     style={{
                       width: 160 - i * 30,
                       height: 160 - i * 30,
@@ -97,21 +97,21 @@ export const ZeroExponentLesson = ({ onComplete }: { onComplete: () => void }) =
                   />
                 ))}
                 <motion.div
-                  className="w-24 h-24 rounded-full bg-primary/20 border-4 border-primary flex items-center justify-center relative z-10"
+                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-primary/20 border-2 sm:border-4 border-primary flex items-center justify-center relative z-10"
                   animate={{
                     scale: layersRemoved >= 3 ? 0 : 1,
                     opacity: layersRemoved >= 3 ? 0 : 1,
                   }}
                 >
-                  <MathText className="text-2xl font-bold">5</MathText>
+                  <MathText className="text-lg sm:text-xl font-bold">5</MathText>
                 </motion.div>
                 {layersRemoved >= 3 && (
                   <motion.div
-                    className="w-16 h-16 rounded-full bg-gem/40 border-4 border-gem flex items-center justify-center absolute inset-0 m-auto"
+                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gem/40 border-2 sm:border-4 border-gem flex items-center justify-center absolute inset-0 m-auto"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                   >
-                    <MathText className="text-3xl font-bold">1</MathText>
+                    <MathText className="text-base sm:text-lg font-bold">1</MathText>
                   </motion.div>
                 )}
               </div>
@@ -119,32 +119,32 @@ export const ZeroExponentLesson = ({ onComplete }: { onComplete: () => void }) =
 
             {step === 3 && (
               <motion.div
-                className="w-32 h-32 rounded-full bg-gem/20 border-4 border-gem flex items-center justify-center glow-strong"
+                className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gem/20 border-2 sm:border-4 border-gem flex items-center justify-center glow-strong"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
               >
-                <MathText className="text-5xl font-bold">1</MathText>
+                <MathText className="text-xl sm:text-2xl font-bold">1</MathText>
               </motion.div>
             )}
           </div>
         )}
 
-        <div className="bg-muted/30 border border-primary/20 rounded-lg p-4">
+        <div className="bg-muted/30 border border-primary/20 rounded-lg p-3 sm:p-4">
           {step === 3 && (
             <MathDisplay>5⁰ = 1</MathDisplay>
           )}
         </div>
       </motion.div>
 
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-center gap-2 sm:gap-4">
         {currentStep.action === "interact" && layersRemoved === 0 ? (
-          <Button onClick={handleRemoveLayers} size="lg" className="glow">
+          <Button onClick={handleRemoveLayers} size="lg" className="glow text-sm sm:text-base h-10 sm:h-11 px-4 sm:px-6">
             Remove All Layers
           </Button>
         ) : (
-          <Button onClick={handleNext} size="lg" disabled={layersRemoved > 0 && layersRemoved < 3}>
+          <Button onClick={handleNext} size="lg" disabled={layersRemoved > 0 && layersRemoved < 3} className="text-sm sm:text-base h-10 sm:h-11 px-4 sm:px-6">
             {step < steps.length - 1 ? "Continue" : "Complete Lesson"}
-            <ArrowRight className="w-5 h-5 ml-2" />
+            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />
           </Button>
         )}
       </div>

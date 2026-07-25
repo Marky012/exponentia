@@ -106,7 +106,7 @@ const LawLearn = () => {
             <Button
               variant="outline"
               size="icon"
-              className="w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0"
+              className="w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0"
               onClick={() => navigate('/laws')}
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />

@@ -192,10 +192,6 @@ export default function Quiz() {
       <a href="#quiz-options" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded">
         Skip to answer options
       </a>
-      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-        <SettingsMenu />
-      </div>
-
       <motion.div 
         className="border-b border-border/50 bg-card/50 backdrop-blur-sm"
         initial={{ opacity: 0, y: -20 }}
@@ -204,7 +200,7 @@ export default function Quiz() {
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-              <Button variant="ghost" size="icon" onClick={() => navigate('/quiz-arena')} className="flex-shrink-0" aria-label="Back to Quiz Arena">
+              <Button variant="ghost" size="icon" onClick={() => navigate('/quiz-arena')} className="flex-shrink-0 w-11 h-11" aria-label="Back to Quiz Arena">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <Swords className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" aria-hidden="true" />
@@ -224,6 +220,7 @@ export default function Quiz() {
                 <Skull className="w-5 h-5 text-red-500" aria-hidden="true" />
                 <span className="font-bold text-red-500">{answers.filter(a => !a.correct).length}</span>
               </motion.div>
+              <SettingsMenu />
             </div>
           </div>
           <div className="mt-3">

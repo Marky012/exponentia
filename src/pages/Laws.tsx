@@ -36,11 +36,6 @@ const Laws = () => {
     >
       {/* Background */}
       <ExponentiaBackground overlayOpacity={0.4} />
-      
-      {/* Settings button */}
-      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-        <SettingsMenu />
-      </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
@@ -60,6 +55,7 @@ const Laws = () => {
               <span className="xs:hidden">Back</span>
             </Button>
             <GemDisplay />
+            <SettingsMenu />
           </div>
           
           <div className="text-center">

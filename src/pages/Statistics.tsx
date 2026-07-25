@@ -146,7 +146,7 @@ const Statistics = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/hub')}
-            className="mb-4"
+            className="mb-4 min-h-11"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Map
@@ -154,7 +154,7 @@ const Statistics = () => {
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-4xl md:text-5xl font-orbitron font-black mb-2 text-glow">
+              <h1 className="text-4xl md:text-5xl font-orbitron font-black mb-2 text-glow truncate">
                 {playerName}'s Statistics
               </h1>
               <p className="text-muted-foreground text-lg">

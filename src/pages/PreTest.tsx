@@ -221,7 +221,7 @@ const PreTest = () => {
       <div className="max-w-4xl mx-auto">
         <motion.div className="flex items-center justify-between mb-4 sm:mb-6 gap-2" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-            <Button variant="outline" size="icon" className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10" onClick={() => navigate('/laws')} aria-label="Back to Laws">
+            <Button variant="outline" size="icon" className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11" onClick={() => navigate('/laws')} aria-label="Back to Laws">
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
             <div className="min-w-0">

@@ -28,7 +28,7 @@ export function OfflineIndicator() {
           className="fixed top-0 left-0 right-0 z-[200] bg-amber-600/95 backdrop-blur-sm text-white px-4 py-2 flex items-center justify-center gap-2 text-sm font-medium shadow-lg"
         >
           <WifiOff className="w-4 h-4" />
-          <span>You're offline. Quiz results will sync when reconnected.</span>
+          <span className="text-xs sm:text-sm">You're offline. Quiz results will sync when reconnected.</span>
           {pendingCount > 0 && (
             <span className="bg-amber-800/60 text-amber-100 text-xs px-2 py-0.5 rounded-full ml-1">
               {pendingCount} pending

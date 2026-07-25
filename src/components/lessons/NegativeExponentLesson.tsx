@@ -58,23 +58,23 @@ export const NegativeExponentLesson = ({ onComplete }: { onComplete: () => void 
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <motion.div
         key={step}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         className="text-center"
       >
-        <h3 className="text-2xl font-orbitron font-bold mb-4">{currentStep.title}</h3>
-        <p className="text-lg text-muted-foreground mb-6">{currentStep.content}</p>
+        <h3 className="text-lg sm:text-xl md:text-2xl font-orbitron font-bold mb-2 sm:mb-4">{currentStep.title}</h3>
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-4 sm:mb-6">{currentStep.content}</p>
 
         {currentStep.visual && (
-          <div className="flex justify-center items-center gap-8 my-8 relative min-h-[200px]">
+          <div className="flex justify-center items-center gap-4 sm:gap-8 my-4 sm:my-8 relative min-h-[150px] sm:min-h-[200px] overflow-hidden">
             {step === 1 && (
               <motion.div
-                className="w-32 h-32 rounded-full bg-secondary/20 border-4 border-secondary flex items-center justify-center glow"
+                className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-secondary/20 border-2 sm:border-4 border-secondary flex items-center justify-center glow"
               >
-                <MathText className="text-3xl font-bold">2⁻³</MathText>
+                <MathText className="text-lg sm:text-2xl font-bold">2⁻³</MathText>
               </motion.div>
             )}
 
@@ -86,11 +86,11 @@ export const NegativeExponentLesson = ({ onComplete }: { onComplete: () => void 
                 {/* Original expression - hide after flip */}
                 {!flipped && (
                   <motion.div
-                    className="w-28 h-28 rounded-full bg-secondary/20 border-4 border-secondary flex items-center justify-center absolute"
+                    className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-secondary/20 border-2 sm:border-4 border-secondary flex items-center justify-center absolute"
                     animate={{ x: -100 }}
                     style={{ transformStyle: 'preserve-3d' }}
                   >
-                    <MathText className="text-2xl font-bold">2⁻³</MathText>
+                    <MathText className="text-lg sm:text-2xl font-bold">2⁻³</MathText>
                   </motion.div>
                 )}
 
@@ -99,23 +99,23 @@ export const NegativeExponentLesson = ({ onComplete }: { onComplete: () => void 
                   <>
                     {/* Orb moving through portal and fading */}
                     <motion.div
-                      className="w-28 h-28 rounded-full bg-secondary/20 border-4 border-secondary flex items-center justify-center absolute"
+                      className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-secondary/20 border-2 sm:border-4 border-secondary flex items-center justify-center absolute"
                       initial={{ x: -100, opacity: 1 }}
                       animate={{ x: 0, opacity: 0, scale: 0.5 }}
                       transition={{ duration: 0.5 }}
                       style={{ transformStyle: 'preserve-3d' }}
                     >
-                      <MathText className="text-2xl font-bold">2⁻³</MathText>
+                      <MathText className="text-lg sm:text-2xl font-bold">2⁻³</MathText>
                     </motion.div>
 
                     {/* Result appearing on the other side */}
                     <motion.div
-                      className="w-28 h-28 rounded-full bg-gem/20 border-4 border-gem flex items-center justify-center absolute"
+                      className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-gem/20 border-2 sm:border-4 border-gem flex items-center justify-center absolute"
                       initial={{ x: 0, scale: 0, opacity: 0 }}
                       animate={{ x: 100, scale: 1, opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.3 }}
                     >
-                      <MathText className="text-xl font-bold">1/2³</MathText>
+                      <MathText className="text-xl sm:text-3xl font-bold">1/2³</MathText>
                     </motion.div>
                   </>
                 )}
@@ -124,32 +124,32 @@ export const NegativeExponentLesson = ({ onComplete }: { onComplete: () => void 
 
             {step === 3 && (
               <motion.div
-                className="w-40 h-40 rounded-full bg-gem/20 border-4 border-gem flex items-center justify-center glow-strong"
+                className="w-28 h-28 sm:w-40 sm:h-40 rounded-full bg-gem/20 border-2 sm:border-4 border-gem flex items-center justify-center glow-strong"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
               >
-                <MathText className="text-3xl font-bold">1/2³</MathText>
+                <MathText className="text-xl sm:text-3xl font-bold">1/2³</MathText>
               </motion.div>
             )}
           </div>
         )}
 
-        <div className="bg-muted/30 border border-primary/20 rounded-lg p-4">
+        <div className="bg-muted/30 border border-primary/20 rounded-lg p-3 sm:p-4">
           {step === 3 && (
             <MathDisplay>2⁻³ = 1/2³ = 1/8</MathDisplay>
           )}
         </div>
       </motion.div>
 
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-center gap-2 sm:gap-4">
         {currentStep.action === "interact" && !flipped ? (
-          <Button onClick={handleFlip} size="lg" className="glow">
+          <Button onClick={handleFlip} size="lg" className="glow text-sm sm:text-base h-10 sm:h-11 px-4 sm:px-6">
             Flip Through Mirror
           </Button>
         ) : (
-          <Button onClick={handleNext} size="lg" disabled={flipped && step === 2}>
+          <Button onClick={handleNext} size="lg" disabled={flipped && step === 2} className="text-sm sm:text-base h-10 sm:h-11 px-4 sm:px-6">
             {step < steps.length - 1 ? "Continue" : "Complete Lesson"}
-            <ArrowRight className="w-5 h-5 ml-2" />
+            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />
           </Button>
         )}
       </div>

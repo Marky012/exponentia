@@ -344,7 +344,7 @@ export default function StudentReport() {
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-4xl md:text-5xl font-orbitron font-black mb-2 text-glow">
+              <h1 className="text-4xl md:text-5xl font-orbitron font-black mb-2 text-glow truncate">
                 {playerName}'s Report
               </h1>
               <p className="text-muted-foreground text-lg">
@@ -386,17 +386,17 @@ export default function StudentReport() {
               <div className="flex flex-col md:flex-row items-center justify-center gap-6">
                 <div className="text-center">
                   <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Overall Grade</p>
-                  <div className={`text-6xl font-orbitron font-black ${gradeInfo.color}`}>
+                  <div className={`text-4xl sm:text-5xl md:text-6xl font-orbitron font-black ${gradeInfo.color}`}>
                     {gradeInfo.grade}
                   </div>
                   <p className={`text-sm font-semibold mt-1 ${gradeInfo.color}`}>{gradeInfo.label}</p>
                 </div>
                 <div className="hidden md:block h-16 w-px bg-border" />
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-3 gap-3 sm:gap-6">
                   <div className="text-center">
                     <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Average</p>
-                    <p className="text-2xl font-bold text-gem">
+                    <p className="text-xl sm:text-2xl font-bold text-gem">
                       {report.averageScore !== null ? `${report.averageScore}%` : 'N/A'}
                     </p>
                   </div>

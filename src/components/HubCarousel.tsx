@@ -30,6 +30,7 @@ const HubCarousel = () => {
   const { introCompleted, laws, quizLevels, playerGender, unlockQuizLevels } = useGameStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [radius, setRadius] = useState(220);
   const isDraggingRef = useRef(false);
   const [hasEntered, setHasEntered] = useState(false);
   const dragStartX = useRef(0);
@@ -45,6 +46,16 @@ const HubCarousel = () => {
       unlockQuizLevels();
     }
   }, [allGemsEarned, quizLevels, unlockQuizLevels]);
+
+  // Responsive carousel radius
+  useEffect(() => {
+    const updateRadius = () => {
+      setRadius(window.innerWidth < 480 ? 140 : window.innerWidth < 768 ? 180 : 220);
+    };
+    updateRadius();
+    window.addEventListener('resize', updateRadius);
+    return () => window.removeEventListener('resize', updateRadius);
+  }, []);
 
   // Trigger entrance animation after mount
   useEffect(() => {
@@ -195,7 +206,6 @@ const HubCarousel = () => {
 
     // True cylinder: 4 items at 90 degrees apart (360/4)
     const angle = adjustedDiff * 90;
-    const radius = 220; // Distance from center
     const translateX = Math.sin((angle * Math.PI) / 180) * radius;
     const translateZ = Math.cos((angle * Math.PI) / 180) * radius - radius;
     // Increased tilt for side islands for better visibility
@@ -300,7 +310,7 @@ const HubCarousel = () => {
               soundEffects.playClick();
               navigate('/statistics');
             }}
-            className="w-9 h-9 rounded-full bg-card/50 backdrop-blur-sm text-foreground hover:bg-card/70 border border-border/50"
+            className="w-11 h-11 rounded-full bg-card/50 backdrop-blur-sm text-foreground hover:bg-card/70 border border-border/50"
           >
             <BarChart3 className="w-4 h-4" />
           </Button>
@@ -324,14 +334,18 @@ const HubCarousel = () => {
                 setCurrentIndex(index);
               }
             }}
-            className={`
-              h-2.5 rounded-full transition-all duration-300
-              ${index === currentIndex 
-                ? 'w-10 bg-primary shadow-lg shadow-primary/30' 
-                : 'w-2.5 bg-muted-foreground/40 hover:bg-muted-foreground/60'
-              }
-            `}
-          />
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
+          >
+            <span
+              className={`
+                h-2.5 rounded-full transition-all duration-300
+                ${index === currentIndex 
+                  ? 'w-10 bg-primary shadow-lg shadow-primary/30' 
+                  : 'w-2.5 bg-muted-foreground/40 hover:bg-muted-foreground/60'
+                }
+              `}
+            />
+          </button>
         ))}
       </motion.div>
 
