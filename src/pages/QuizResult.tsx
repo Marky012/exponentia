@@ -58,7 +58,7 @@ export default function QuizResult() {
       <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
         <SettingsMenu />
       </div>
-      <Card className="max-w-2xl w-full p-8 bg-card/80 backdrop-blur-sm border-2 border-primary/20">
+      <Card className="max-w-2xl w-full p-8 bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-2xl">
         {/* Result Header */}
         <div className="text-center mb-8">
           {passed ? (
@@ -93,11 +93,11 @@ export default function QuizResult() {
 
         {/* Score Display */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <Card className="p-6 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30 text-center">
+          <Card className="p-6 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30 text-center card-glow-primary">
             <div className={`text-5xl font-bold font-orbitron mb-2 ${passed ? 'text-glow-gold' : 'text-primary'}`}>{score}%</div>
             <p className="text-sm text-muted-foreground">Final Score</p>
           </Card>
-          <Card className="p-6 bg-gradient-to-br from-card/80 to-card/50 text-center">
+          <Card className="p-6 bg-gradient-to-br from-card/80 to-card/50 text-center card-hover-lift">
             <div className="text-5xl font-bold font-orbitron text-foreground mb-2">
               {correctCount}/{totalQuestions}
             </div>
@@ -106,7 +106,7 @@ export default function QuizResult() {
         </div>
 
         {/* Pass/Fail Threshold */}
-        <Card className="p-4 bg-background/30 mb-6">
+        <Card className="p-4 bg-background/30 border border-border/30 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Target className="w-5 h-5 text-muted-foreground" />
@@ -120,7 +120,7 @@ export default function QuizResult() {
 
         {/* Missed Laws Breakdown */}
         {missedLaws.length > 0 && (
-          <Card className="p-6 bg-warning/10 border-warning/30 mb-6">
+          <Card className="p-6 bg-warning/10 border-warning/30 card-glow-danger mb-6">
             <div className="flex items-start gap-3">
               <TrendingUp className="w-5 h-5 text-warning mt-0.5" />
               <div className="flex-1">

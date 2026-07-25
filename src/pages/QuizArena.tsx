@@ -53,7 +53,7 @@ const QuizArena = () => {
         <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
           <SettingsMenu />
         </div>
-        <Card className="p-8 text-center max-w-md bg-card/90 backdrop-blur-sm">
+        <Card className="p-8 text-center max-w-md bg-card/90 backdrop-blur-sm border border-border/50">
           <Lock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2">Arena Locked</h2>
           <p className="text-muted-foreground mb-4">
@@ -165,8 +165,8 @@ const QuizArena = () => {
                   relative overflow-hidden transition-all duration-300 border
                   ${level.unlocked 
                     ? level.completed
-                      ? 'hover:shadow-lg hover:scale-[1.02] border-gem/40 shadow-[0_0_16px_hsl(45_95%_58%/0.1)]'
-                      : 'hover:shadow-lg hover:scale-[1.02] border-border hover:border-primary/40'
+                      ? 'hover:shadow-lg hover:scale-[1.02] border-gem/40 card-glow-gem'
+                      : 'hover:shadow-lg hover:scale-[1.02] border-border hover:border-primary/40 card-hover-lift'
                     : 'opacity-60 border-border'
                   }
                 `}>
@@ -278,7 +278,7 @@ const QuizArena = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <Card className="p-6 bg-gradient-to-br from-gem/20 to-primary/20 border-gem/50">
+              <Card className="p-6 bg-gradient-to-br from-gem/20 to-primary/20 border-gem/50 card-glow-gem">
                 <Trophy className="w-12 h-12 text-gem mx-auto mb-3" />
                 <h2 className="text-xl font-bold mb-2">🎉 All Battles Won!</h2>
                 <p className="text-muted-foreground mb-4">

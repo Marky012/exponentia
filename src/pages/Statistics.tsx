@@ -178,7 +178,7 @@ const Statistics = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="border-2 border-primary/50">
+            <Card className="border-2 border-primary/50 card-glow-primary card-hover-lift">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <Trophy className="w-4 h-4" />
@@ -198,7 +198,7 @@ const Statistics = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="border-2 border-accent/50">
+            <Card className="border-2 border-accent/50 card-accent-top-primary card-hover-lift">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <Target className="w-4 h-4" />
@@ -220,7 +220,7 @@ const Statistics = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="border-2 border-primary/50">
+            <Card className="border-2 border-primary/50 card-glow-primary card-hover-lift">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <TrendingUp className="w-4 h-4" />
@@ -240,7 +240,7 @@ const Statistics = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="border-2 border-gem/50">
+            <Card className="border-2 border-gem/50 card-glow-gem card-hover-lift">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
@@ -264,7 +264,7 @@ const Statistics = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <Card>
+            <Card className="card-accent-top-primary card-hover-lift">
               <CardHeader>
                 <CardTitle>Law Completion Progress</CardTitle>
                 <CardDescription>Your progress through the 8 Laws</CardDescription>
@@ -307,7 +307,7 @@ const Statistics = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <Card>
+            <Card className="card-accent-top-primary card-hover-lift">
               <CardHeader>
                 <CardTitle>Quiz Battle Scores</CardTitle>
                 <CardDescription>Best scores for each difficulty level</CardDescription>
@@ -340,7 +340,7 @@ const Statistics = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
-          <Card className="border-2 border-accent/50">
+          <Card className="border-2 border-accent/50 card-accent-top-primary card-hover-lift">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Award className="w-6 h-6 text-accent" />
@@ -364,8 +364,8 @@ const Statistics = () => {
                       <Card
                         className={`p-4 transition-all duration-300 ${
                           achievement.earned
-                            ? 'bg-card border-2 border-primary/50 shadow-lg'
-                            : 'bg-muted/30 border border-border opacity-60'
+                            ? 'bg-card border-2 border-primary/50 card-glow-primary card-hover-lift'
+                            : 'bg-muted/30 border border-border opacity-60 hover:opacity-70'
                         }`}
                       >
                         <div className="flex items-start gap-3">
@@ -398,7 +398,7 @@ const Statistics = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
         >
-          <Card>
+          <Card className="card-accent-top-primary card-hover-lift">
             <CardHeader>
               <CardTitle>Quiz Battle History</CardTitle>
               <CardDescription>Your performance in each quiz level</CardDescription>

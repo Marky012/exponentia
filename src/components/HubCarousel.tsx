@@ -566,7 +566,7 @@ const HubCarousel = () => {
           size="icon"
           onClick={() => navigateTo('prev')}
           disabled={isAnimating}
-          className="w-14 h-14 rounded-full bg-card/60 backdrop-blur-md border-border/50 hover:bg-card/80 shadow-lg"
+          className="w-14 h-14 rounded-full bg-card/60 backdrop-blur-md border-border/50 hover:bg-card/80 hover:border-primary/40 hover:shadow-primary/20 shadow-lg transition-all duration-300"
         >
           <ChevronLeft className="w-6 h-6" />
         </Button>
@@ -576,7 +576,7 @@ const HubCarousel = () => {
           size="icon"
           onClick={() => navigateTo('next')}
           disabled={isAnimating}
-          className="w-14 h-14 rounded-full bg-card/60 backdrop-blur-md border-border/50 hover:bg-card/80 shadow-lg"
+          className="w-14 h-14 rounded-full bg-card/60 backdrop-blur-md border-border/50 hover:bg-card/80 hover:border-primary/40 hover:shadow-primary/20 shadow-lg transition-all duration-300"
         >
           <ChevronRight className="w-6 h-6" />
         </Button>

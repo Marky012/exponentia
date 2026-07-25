@@ -355,4 +355,42 @@
       transform: scale(1.08);
     }
   }
+
+  /* ── Gamified card utilities ── */
+  .card-glow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.12), 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .card-glow-gem {
+    box-shadow: 0 0 20px hsl(var(--gem-glow) / 0.15), 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .card-glow-danger {
+    box-shadow: 0 0 16px hsl(var(--destructive) / 0.15), 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .card-glow-success {
+    box-shadow: 0 0 16px hsl(var(--success-green) / 0.15), 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .card-hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 24px hsl(var(--primary) / 0.18), 0 4px 12px rgba(0,0,0,0.35);
+  }
+
+  .card-accent-top-primary {
+    border-top: 3px solid hsl(var(--primary) / 0.6);
+  }
+
+  .card-accent-top-gem {
+    border-top: 3px solid hsl(var(--gem-glow) / 0.6);
+  }
+
+  .card-accent-top-danger {
+    border-top: 3px solid hsl(var(--destructive) / 0.5);
+  }
 }
