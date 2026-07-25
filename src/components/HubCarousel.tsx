@@ -368,7 +368,7 @@ const HubCarousel = () => {
               >
                 {/* Position wrapper for carousel rotation */}
                 <motion.div
-                  className="flex flex-col items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer p-4"
                   animate={cardStyle}
                   transition={{ 
                     type: 'spring', 
@@ -500,16 +500,11 @@ const HubCarousel = () => {
                       draggable={false}
                       className={`
                         w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl
-                        transition-all duration-300
-                        ${stage.isLocked ? 'grayscale brightness-50 cursor-not-allowed' : 'cursor-pointer hover:brightness-110'}
+                        transition-all duration-300 pointer-events-none
+                        ${stage.isLocked ? 'grayscale brightness-50' : 'hover:brightness-110'}
                       `}
                       whileHover={!stage.isLocked && index === currentIndex ? { scale: 1.05 } : {}}
-                      whileTap={!stage.isLocked && index === currentIndex ? { scale: 0.98 } : {}}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleStageClick(stage, index);
-                      }}
-                      style={{ pointerEvents: 'auto', position: 'relative', zIndex: 20 }}
+                      style={{ position: 'relative' }}
                     />
 
                     {/* Lock overlay for locked stages */}
