@@ -10,6 +10,7 @@ import { SettingsMenu } from '@/components/SettingsMenu';
 import { toast } from 'sonner';
 import exponentiaBg from '@/assets/exponentia-light.png';
 import { isDevelopmentMode } from '@/utils/inputValidation';
+import { PASSING_SCORE, MAX_ATTEMPTS } from '@/constants/gameConfig';
 
 const QuizArena = () => {
   const navigate = useNavigate();
@@ -83,9 +84,9 @@ const QuizArena = () => {
 
   const getDifficultyColor = (levelId: string) => {
     switch (levelId) {
-      case 'easy': return 'from-green-500 to-emerald-600';
-      case 'medium': return 'from-yellow-500 to-orange-600';
-      case 'hard': return 'from-red-500 to-rose-600';
+      case 'easy': return 'from-diff-easy to-emerald-700';
+      case 'medium': return 'from-diff-medium to-amber-700';
+      case 'hard': return 'from-diff-hard to-rose-800';
       default: return 'from-primary to-primary/80';
     }
   };
@@ -161,10 +162,12 @@ const QuizArena = () => {
                 transition={{ delay: 0.3 + index * 0.1 }}
               >
                 <Card className={`
-                  relative overflow-hidden transition-all duration-300
+                  relative overflow-hidden transition-all duration-300 border
                   ${level.unlocked 
-                    ? 'hover:shadow-lg hover:scale-[1.02]' 
-                    : 'opacity-60'
+                    ? level.completed
+                      ? 'hover:shadow-lg hover:scale-[1.02] border-gem/40 shadow-[0_0_16px_hsl(45_95%_58%/0.1)]'
+                      : 'hover:shadow-lg hover:scale-[1.02] border-border hover:border-primary/40'
+                    : 'opacity-60 border-border'
                   }
                 `}>
                   {/* Gradient background */}
@@ -204,7 +207,9 @@ const QuizArena = () => {
                           {level.unlocked
                             ? level.completed
                               ? `Best Score: ${bestScore}% • ${level.attempts.length} attempt(s)`
-                              : `${level.attempts.length}/3 attempts used`
+                              : level.attempts.length >= 3
+                                ? `${MAX_ATTEMPTS}/${MAX_ATTEMPTS} attempts used — Average below ${PASSING_SCORE}%`
+                                : `${level.attempts.length}/${MAX_ATTEMPTS} attempts used`
                             : 'Complete previous level to unlock'
                           }
                         </p>
@@ -229,7 +234,7 @@ const QuizArena = () => {
                       {/* Action Button */}
                       <Button
                         onClick={() => navigate(`/quiz/${level.id}`)}
-                        disabled={!level.unlocked}
+                        disabled={!level.unlocked || (level.attempts.length >= 3 && !level.completed)}
                         className={`
                           shrink-0
                           ${level.completed 
@@ -240,7 +245,7 @@ const QuizArena = () => {
                           }
                         `}
                       >
-                        {level.completed ? 'Retry' : level.unlocked ? 'Battle!' : 'Locked'}
+                        {level.completed ? 'Retry' : level.attempts.length >= 3 ? 'Max Attempts' : level.unlocked ? 'Battle!' : 'Locked'}
                       </Button>
                     </div>
                   </div>
@@ -254,9 +259,7 @@ const QuizArena = () => {
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ type: 'spring', stiffness: 500 }}
                       >
-                        <div className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                          CLEARED
-                        </div>
+                        <span className="badge-gem">CLEARED</span>
                       </motion.div>
                     )}
                   </AnimatePresence>

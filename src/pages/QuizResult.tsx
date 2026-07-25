@@ -1,33 +1,49 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Trophy, XCircle, TrendingUp, RefreshCcw, ArrowRight, Target } from 'lucide-react';
 import { SettingsMenu } from '@/components/SettingsMenu';
+import exponentiaDark from '@/assets/exponentia-dark.png';
+import { PASSING_SCORE } from '@/constants/gameConfig';
 
 export default function QuizResult() {
   const { levelId } = useParams<{ levelId: 'easy' | 'medium' | 'hard' }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { completeQuizLevel, quizLevels } = useGameStore();
+  const { completeQuizLevel, quizLevels, addPendingSyncResults } = useGameStore();
 
   const { score, correctCount, totalQuestions, missedLaws } = location.state || {};
 
-  const passed = score >= 75;
+  const passed = score >= PASSING_SCORE;
   const currentLevel = quizLevels.find(l => l.id === levelId);
 
+  const savedRef = useRef(false);
+
   useEffect(() => {
-    if (!score || !levelId) {
+    if (score == null || !levelId) {
       navigate('/quiz-arena');
       return;
     }
 
-    // Update game store
-    completeQuizLevel(levelId, score, missedLaws);
-  }, [score, levelId, missedLaws, completeQuizLevel, navigate]);
+    if (!savedRef.current) {
+      savedRef.current = true;
+      completeQuizLevel(levelId, score, missedLaws);
 
-  if (!score || !currentLevel) {
+      if (!navigator.onLine) {
+        addPendingSyncResults({
+          id: `${levelId}-${Date.now()}`,
+          levelId,
+          score,
+          missedLaws: missedLaws || [],
+          completedAt: new Date().toISOString(),
+        });
+      }
+    }
+  }, [score, levelId, missedLaws, completeQuizLevel, navigate, addPendingSyncResults]);
+
+  if (score == null || !currentLevel) {
     return null;
   }
 
@@ -35,7 +51,10 @@ export default function QuizResult() {
   const allCompleted = quizLevels.every(l => l.completed);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 flex items-center justify-center p-4 relative">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 relative bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url(${exponentiaDark})` }}
+    >
       <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
         <SettingsMenu />
       </div>
@@ -46,11 +65,11 @@ export default function QuizResult() {
             <>
               <div className="flex justify-center mb-4">
                 <div className="relative">
-                  <Trophy className="w-20 h-20 text-gem animate-float" />
-                  <div className="absolute inset-0 bg-gem/20 rounded-full blur-xl animate-pulseGlow"></div>
+                  <Trophy className="w-20 h-20 text-gem animate-float" style={{ filter: 'drop-shadow(0 0 16px hsl(45 95% 58% / 0.9))' }} />
+                  <div className="absolute inset-0 bg-gem/20 rounded-full blur-xl animate-pulse" />
                 </div>
               </div>
-              <h1 className="text-4xl font-orbitron font-bold text-success mb-2">
+              <h1 className="text-4xl font-orbitron font-bold text-glow-gold mb-2">
                 Victory!
               </h1>
               <p className="text-lg text-muted-foreground">
@@ -60,7 +79,7 @@ export default function QuizResult() {
           ) : (
             <>
               <div className="flex justify-center mb-4">
-                <XCircle className="w-20 h-20 text-destructive" />
+                <XCircle className="w-20 h-20 text-destructive" style={{ filter: 'drop-shadow(0 0 12px hsl(var(--destructive) / 0.6))' }} />
               </div>
               <h1 className="text-4xl font-orbitron font-bold text-destructive mb-2">
                 Not Quite...
@@ -74,12 +93,12 @@ export default function QuizResult() {
 
         {/* Score Display */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <Card className="p-6 bg-background/50 text-center">
-            <div className="text-5xl font-bold text-primary mb-2">{score}%</div>
+          <Card className="p-6 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30 text-center">
+            <div className={`text-5xl font-bold font-orbitron mb-2 ${passed ? 'text-glow-gold' : 'text-primary'}`}>{score}%</div>
             <p className="text-sm text-muted-foreground">Final Score</p>
           </Card>
-          <Card className="p-6 bg-background/50 text-center">
-            <div className="text-5xl font-bold text-foreground mb-2">
+          <Card className="p-6 bg-gradient-to-br from-card/80 to-card/50 text-center">
+            <div className="text-5xl font-bold font-orbitron text-foreground mb-2">
               {correctCount}/{totalQuestions}
             </div>
             <p className="text-sm text-muted-foreground">Correct Answers</p>
@@ -91,7 +110,7 @@ export default function QuizResult() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Target className="w-5 h-5 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Passing Score: 75%</span>
+              <span className="text-sm text-muted-foreground">Passing Score: {PASSING_SCORE}%</span>
             </div>
             <div className={`font-bold ${passed ? 'text-success' : 'text-destructive'}`}>
               {passed ? '✓ PASSED' : '✗ FAILED'}

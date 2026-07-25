@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { InstallButton } from '@/components/InstallButton';
 import { SettingsMenu } from '@/components/SettingsMenu';
-import { UserCircle2, Sparkles, AlertCircle } from 'lucide-react';
+import { UserCircle2, Sparkles, AlertCircle, Sword } from 'lucide-react';
 import { toast } from 'sonner';
 import warriorImage from '@/assets/warrior-character.png';
 import mageImage from '@/assets/mage-character.png';
@@ -16,6 +16,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
 import InstallHelpButton from '@/components/InstallHelpButton';
 import { validatePlayerName } from '@/utils/inputValidation';
+import { applyGenderTheme } from '@/utils/theme';
 
 // Convert name to sentence case (first letter uppercase, rest lowercase)
 const toSentenceCase = (str: string): string => {
@@ -32,20 +33,11 @@ const Welcome = () => {
 
   // Preview theme based on selected gender
   useEffect(() => {
-    if (selectedGender === 'female') {
-      document.body.classList.add('theme-female');
-    } else {
-      document.body.classList.remove('theme-female');
-    }
+    applyGenderTheme(selectedGender);
     
-    // Cleanup on unmount - restore based on actual game state
     return () => {
       const storedGender = useGameStore.getState().playerGender;
-      if (storedGender === 'female') {
-        document.body.classList.add('theme-female');
-      } else {
-        document.body.classList.remove('theme-female');
-      }
+      applyGenderTheme(storedGender);
     };
   }, [selectedGender]);
 
@@ -115,15 +107,15 @@ const Welcome = () => {
       >
         <Card className="p-8 bg-card/80 backdrop-blur-md border-2 border-primary/20 shadow-2xl">
           <motion.div
-            className="text-center mb-8"
+            className="text-center mb-8 flex flex-col items-center justify-center w-full mx-auto"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <h1 className="text-5xl font-orbitron font-black mb-3 text-glow text-primary">
+            <h1 className="text-4xl sm:text-5xl font-orbitron font-black mb-3 text-glow text-primary text-center w-full">
               Welcome to Exponentia
             </h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-base sm:text-lg text-muted-foreground text-center w-full max-w-md mx-auto">
               A realm in danger needs your mathematical prowess
             </p>
           </motion.div>
@@ -194,15 +186,24 @@ const Welcome = () => {
                           src={warriorImage} 
                           alt="Warrior character" 
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       </motion.div>
                       <SparkleEffect isActive={selectedGender === 'male'} color="blue" />
                     </div>
                     <div className="text-center">
                       <h3 className="font-orbitron font-bold text-lg">Warrior</h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Blue & Cyan Theme
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Blue & Cyan Theme</p>
+                      <div className="mt-3 flex flex-col items-center justify-center gap-1.5 w-full max-w-[140px] mx-auto text-center">
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Strength</span>
+                          <span className="text-[hsl(202,60%,65%)] text-xs">★★★★☆</span>
+                        </div>
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Defense</span>
+                          <span className="text-[hsl(202,60%,65%)] text-xs">★★★★★</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   {selectedGender === 'male' && (
@@ -237,15 +238,24 @@ const Welcome = () => {
                           src={mageImage} 
                           alt="Mage character" 
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       </motion.div>
                       <SparkleEffect isActive={selectedGender === 'female'} color="pink" />
                     </div>
                     <div className="text-center">
                       <h3 className="font-orbitron font-bold text-lg">Mage</h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Pink & Magenta Theme
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Pink & Magenta Theme</p>
+                      <div className="mt-3 flex flex-col items-center justify-center gap-1.5 w-full max-w-[140px] mx-auto text-center">
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Magic</span>
+                          <span className="text-[hsl(330,85%,65%)] text-xs">★★★★★</span>
+                        </div>
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Speed</span>
+                          <span className="text-[hsl(330,85%,65%)] text-xs">★★★★☆</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   {selectedGender === 'female' && (
@@ -266,9 +276,10 @@ const Welcome = () => {
               <Button
                 onClick={handleStart}
                 size="lg"
-                className="w-full text-lg font-orbitron glow"
+                className="w-full text-lg font-orbitron glow gap-2"
                 disabled={!isNameValid || !selectedGender}
               >
+                <Sword className="w-5 h-5" />
                 Begin Your Journey
               </Button>
               

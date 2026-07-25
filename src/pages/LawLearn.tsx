@@ -1,22 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MathDisplay } from '@/utils/mathRenderer';
-import { ArrowLeft, Lightbulb } from 'lucide-react';
+import { ArrowLeft, Lightbulb, Film } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
 import { SettingsMenu } from '@/components/SettingsMenu';
-import { ProductOfPowersLesson } from '@/components/lessons/ProductOfPowersLesson';
-import { QuotientOfPowersLesson } from '@/components/lessons/QuotientOfPowersLesson';
-import { PowerOfPowerLesson } from '@/components/lessons/PowerOfPowerLesson';
-import { ZeroExponentLesson } from '@/components/lessons/ZeroExponentLesson';
-import { NegativeExponentLesson } from '@/components/lessons/NegativeExponentLesson';
-import { PowerOfProductLesson } from '@/components/lessons/PowerOfProductLesson';
-import { PowerOfQuotientLesson } from '@/components/lessons/PowerOfQuotientLesson';
-import { IdentityExponentLesson } from '@/components/lessons/IdentityExponentLesson';
+import { LAW_HINTS_BY_ID } from '@/constants/lawHints';
 import productOfPowersVideo from '@/assets/videos/product-of-powers.mp4';
 import quotientOfPowersVideo from '@/assets/videos/quotient-of-powers.mp4';
 import powerOfPowerVideo from '@/assets/videos/power-of-power.mp4';
@@ -25,6 +18,15 @@ import negativeExponentVideo from '@/assets/videos/negative-exponent.mp4';
 import powerOfProductVideo from '@/assets/videos/power-of-product.mp4';
 import powerOfQuotientVideo from '@/assets/videos/power-of-quotient.mp4';
 import identityExponentVideo from '@/assets/videos/identity-exponent.mp4';
+
+const ProductOfPowersLesson = lazy(() => import('@/components/lessons/ProductOfPowersLesson').then(m => ({ default: m.ProductOfPowersLesson })));
+const QuotientOfPowersLesson = lazy(() => import('@/components/lessons/QuotientOfPowersLesson').then(m => ({ default: m.QuotientOfPowersLesson })));
+const PowerOfPowerLesson = lazy(() => import('@/components/lessons/PowerOfPowerLesson').then(m => ({ default: m.PowerOfPowerLesson })));
+const ZeroExponentLesson = lazy(() => import('@/components/lessons/ZeroExponentLesson').then(m => ({ default: m.ZeroExponentLesson })));
+const NegativeExponentLesson = lazy(() => import('@/components/lessons/NegativeExponentLesson').then(m => ({ default: m.NegativeExponentLesson })));
+const PowerOfProductLesson = lazy(() => import('@/components/lessons/PowerOfProductLesson').then(m => ({ default: m.PowerOfProductLesson })));
+const PowerOfQuotientLesson = lazy(() => import('@/components/lessons/PowerOfQuotientLesson').then(m => ({ default: m.PowerOfQuotientLesson })));
+const IdentityExponentLesson = lazy(() => import('@/components/lessons/IdentityExponentLesson').then(m => ({ default: m.IdentityExponentLesson })));
 
 const lawVideos: Record<string, string> = {
   product: productOfPowersVideo,
@@ -37,22 +39,23 @@ const lawVideos: Record<string, string> = {
   identity: identityExponentVideo,
 };
 
-const lawHints: Record<string, string> = {
-  product: "When multiplying powers with the same base, keep the base and add the exponents together!",
-  quotient: "When dividing powers with the same base, keep the base and subtract the exponents!",
-  power: "When raising a power to another power, keep the base and multiply the exponents!",
-  zero: "Any non-zero base raised to the power of 0 equals 1 - it's the unity property!",
-  negative: "A negative exponent means 'flip it' - move the base to the denominator and make the exponent positive!",
-  'product-power': "When raising a product to a power, distribute that power to each factor in the product!",
-  'quotient-power': "When raising a quotient to a power, distribute that power to both the numerator and denominator!",
-  identity: "Any base raised to the power of 1 is simply itself - the identity property!",
-};
+const lawHints = LAW_HINTS_BY_ID;
 
-// Direct video component - preloads and plays instantly
+// Video with loading skeleton
 const LazyVideo = ({ src, className }: { src: string; className?: string }) => {
+  const [loaded, setLoaded] = useState(false);
+
   return (
     <div className={`relative bg-muted/30 rounded-lg overflow-hidden ${className}`}>
       <div className="aspect-video">
+        {!loaded && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-muted/20">
+            <div className="animate-pulse">
+              <Film className="w-10 h-10 text-primary/40" />
+            </div>
+            <div className="h-2 w-32 rounded-full bg-muted/40 animate-pulse" />
+          </div>
+        )}
         <video 
           src={src}
           autoPlay 
@@ -60,7 +63,8 @@ const LazyVideo = ({ src, className }: { src: string; className?: string }) => {
           muted 
           playsInline
           preload="auto"
-          className="w-full h-full object-cover"
+          onLoadedData={() => setLoaded(true)}
+          className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         />
       </div>
     </div>
@@ -75,8 +79,13 @@ const LawLearn = () => {
   
   const law = laws.find((l) => l.id === lawId);
 
+  useEffect(() => {
+    if (!law) {
+      navigate('/laws');
+    }
+  }, [law, navigate]);
+
   if (!law) {
-    navigate('/laws');
     return null;
   }
 
@@ -114,15 +123,16 @@ const LawLearn = () => {
 
         <Card className="p-3 sm:p-4 md:p-6 lg:p-8 bg-card/80 backdrop-blur-sm border-2 border-primary/20">
           {/* Law Formula */}
-          <div className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/30 rounded-lg p-3 sm:p-4 md:p-6 mb-4 sm:mb-6 md:mb-8 text-center">
-            <MathDisplay className="text-xl sm:text-2xl md:text-3xl">{law.formula}</MathDisplay>
+          <div className="relative overflow-hidden bg-gradient-to-r from-primary/15 via-primary/8 to-secondary/15 border border-primary/40 rounded-lg p-3 sm:p-4 md:p-6 mb-4 sm:mb-6 md:mb-8 text-center">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+            <MathDisplay className="text-xl sm:text-2xl md:text-3xl relative z-10">{law.formula}</MathDisplay>
           </div>
 
           {/* Elexia's Guidance */}
-          <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 md:mb-8 bg-muted/20 border border-border rounded-lg p-3 sm:p-4">
-            <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0 mt-0.5" />
+          <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 md:mb-8 bg-primary/10 border border-primary/30 rounded-lg p-3 sm:p-4 shadow-[inset_0_1px_0_hsl(var(--primary)/0.2)]">
+            <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-gem flex-shrink-0 mt-0.5 animate-orb-pulse" style={{ filter: 'drop-shadow(0 0 6px hsl(45 95% 58% / 0.7))' }} />
             <div className="min-w-0">
-              <p className="font-semibold text-primary mb-1 text-sm sm:text-base">Elexia's Hint:</p>
+              <p className="font-semibold text-primary mb-1 text-sm sm:text-base font-orbitron">✨ Elexia's Hint:</p>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 {lawHints[law.id]}
               </p>
@@ -141,14 +151,27 @@ const LawLearn = () => {
 
           {/* Interactive Lessons */}
           <div className="lesson-container">
-            {law.id === 'product' && <ProductOfPowersLesson onComplete={handleComplete} />}
-            {law.id === 'quotient' && <QuotientOfPowersLesson onComplete={handleComplete} />}
-            {law.id === 'power' && <PowerOfPowerLesson onComplete={handleComplete} />}
-            {law.id === 'zero' && <ZeroExponentLesson onComplete={handleComplete} />}
-            {law.id === 'negative' && <NegativeExponentLesson onComplete={handleComplete} />}
-            {law.id === 'product-power' && <PowerOfProductLesson onComplete={handleComplete} />}
-            {law.id === 'quotient-power' && <PowerOfQuotientLesson onComplete={handleComplete} />}
-            {law.id === 'identity' && <IdentityExponentLesson onComplete={handleComplete} />}
+            <Suspense fallback={
+              <div className="space-y-4 py-8">
+                <div className="h-6 w-48 bg-muted/40 rounded animate-pulse mx-auto" />
+                <div className="h-4 w-full bg-muted/30 rounded animate-pulse" />
+                <div className="h-4 w-3/4 bg-muted/30 rounded animate-pulse mx-auto" />
+                <div className="flex justify-center gap-2 pt-4">
+                  {[0, 1, 2].map(i => (
+                    <div key={i} className="w-2 h-2 rounded-full bg-primary/30 animate-pulse" />
+                  ))}
+                </div>
+              </div>
+            }>
+              {law.id === 'product' && <ProductOfPowersLesson onComplete={handleComplete} />}
+              {law.id === 'quotient' && <QuotientOfPowersLesson onComplete={handleComplete} />}
+              {law.id === 'power' && <PowerOfPowerLesson onComplete={handleComplete} />}
+              {law.id === 'zero' && <ZeroExponentLesson onComplete={handleComplete} />}
+              {law.id === 'negative' && <NegativeExponentLesson onComplete={handleComplete} />}
+              {law.id === 'product-power' && <PowerOfProductLesson onComplete={handleComplete} />}
+              {law.id === 'quotient-power' && <PowerOfQuotientLesson onComplete={handleComplete} />}
+              {law.id === 'identity' && <IdentityExponentLesson onComplete={handleComplete} />}
+            </Suspense>
           </div>
         </Card>
       </div>

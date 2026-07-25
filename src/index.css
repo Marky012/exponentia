@@ -56,8 +56,8 @@
 
     --radius: 0.75rem;
 
-    /* Game-specific colors */
-    --gem-glow: 120 100% 50%;
+    /* Game-specific colors — gem is now warm gold, not raw green */
+    --gem-glow: 45 95% 58%;
     --enemy-red: 0 85% 55%;
     --success-green: 142 76% 36%;
     --warning-yellow: 45 93% 47%;
@@ -66,6 +66,54 @@
     --gradient-magic: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
     --gradient-dark: linear-gradient(180deg, hsl(207 85% 8%) 0%, hsl(207 85% 4%) 100%);
     --gradient-card: linear-gradient(135deg, hsl(210 95% 22%) 0%, hsl(210 95% 18%) 100%);
+  }
+
+  /* Light Mode */
+  .light {
+    --background: 210 20% 98%;
+    --foreground: 210 40% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 40% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 40% 15%;
+    --muted: 210 20% 92%;
+    --muted-foreground: 210 15% 50%;
+    --border: 210 15% 88%;
+    --input: 210 15% 90%;
+    --ring: 202 60% 55%;
+    --primary: 202 60% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 85%;
+    --accent: 202 50% 90%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --gem-glow: 45 90% 50%;
+    --enemy-red: 0 72% 50%;
+    --success-green: 142 70% 40%;
+    --warning-yellow: 45 85% 42%;
+    --gradient-magic: linear-gradient(135deg, hsl(202 60% 50%) 0%, hsl(210 40% 85%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(210 15% 95%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 20% 96%) 100%);
+  }
+
+  .light .theme-female {
+    --background: 330 20% 97%;
+    --foreground: 330 25% 18%;
+    --card: 330 30% 99%;
+    --card-foreground: 330 25% 18%;
+    --popover: 330 30% 99%;
+    --popover-foreground: 330 25% 18%;
+    --muted: 330 15% 93%;
+    --muted-foreground: 330 15% 55%;
+    --border: 330 15% 89%;
+    --input: 330 15% 91%;
+    --ring: 330 60% 55%;
+    --primary: 330 60% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 330 40% 88%;
+    --accent: 330 50% 92%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
   }
 
   /* Female Theme Override - Pink Dominant */
@@ -106,23 +154,17 @@
     background: linear-gradient(180deg, hsl(330 40% 8%) 0%, hsl(330 35% 5%) 100%);
   }
 
-  /* Smooth theme transition for all themed elements */
-  body *,
-  body *::before,
-  body *::after {
-    transition-property: background-color, border-color, box-shadow, color, fill, stroke, filter;
-    transition-duration: 0.4s;
-    transition-timing-function: ease-in-out;
-  }
-  
-  /* Exclude animations from transition interference */
-  body [class*="animate-"],
-  body .transition-transform {
-    transition-property: transform, opacity;
+  .light body {
+    background: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(210 15% 95%) 100%);
   }
 
+  .light.theme-female body {
+    background: linear-gradient(180deg, hsl(330 20% 97%) 0%, hsl(330 15% 94%) 100%);
+  }
+
+  /* Orbitron for all game headings */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Orbitron', 'Inter', sans-serif;
   }
 
   .katex {
@@ -150,9 +192,18 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--primary) / 0.5);
   }
+
+  .light .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.2);
+  }
+
+  .light .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.35);
+  }
 }
 
 @layer utilities {
+  /* ── Glow utilities ── */
   .glow {
     filter: drop-shadow(0 0 8px hsl(var(--theme-glow) / 0.6));
   }
@@ -165,6 +216,59 @@
     text-shadow: 0 0 20px hsl(var(--theme-glow) / 0.6);
   }
 
+  .text-glow-gold {
+    text-shadow: 0 0 16px hsl(45 95% 58% / 0.7), 0 0 32px hsl(45 95% 58% / 0.3);
+  }
+
+  /* ── RPG Game UI panels ── */
+  .panel-game {
+    background: linear-gradient(135deg, hsl(var(--card) / 0.9) 0%, hsl(var(--card) / 0.7) 100%);
+    border: 1px solid hsl(var(--primary) / 0.25);
+    backdrop-filter: blur(8px);
+  }
+
+  /* ── Gem / Gold badge ── */
+  .badge-gem {
+    background: linear-gradient(135deg, hsl(45 95% 58%) 0%, hsl(38 90% 48%) 100%);
+    color: hsl(207 85% 8%);
+    font-family: 'Orbitron', 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 8px hsl(45 95% 58% / 0.5);
+  }
+
+  /* ── RPG law number badge ── */
+  .badge-law-number {
+    background: hsl(var(--primary) / 0.15);
+    border: 1px solid hsl(var(--primary) / 0.4);
+    color: hsl(var(--primary));
+    font-family: 'Orbitron', 'Inter', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Card state left-accent borders ── */
+  .card-locked {
+    border-left: 3px solid hsl(var(--muted-foreground) / 0.3) !important;
+  }
+
+  .card-learning {
+    border-left: 3px solid hsl(var(--primary)) !important;
+  }
+
+  .card-completed {
+    border-left: 3px solid hsl(45 95% 58%) !important;
+    box-shadow: 0 0 20px hsl(45 95% 58% / 0.12);
+  }
+
+  /* ── Animations ── */
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
@@ -187,6 +291,14 @@
   
   .animate-incorrect-flash {
     animation: incorrectFlash 0.5s ease-out;
+  }
+
+  .animate-shimmer {
+    animation: shimmerMove 2.5s ease-in-out infinite;
+  }
+
+  .animate-orb-pulse {
+    animation: orbPulse 3s ease-in-out infinite;
   }
 
   @keyframes float {
@@ -227,14 +339,20 @@
     0%, 100% { box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
     50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.6); }
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
+  @keyframes shimmerMove {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
   }
 
-  body {
-    @apply bg-background text-foreground;
+  @keyframes orbPulse {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.08);
+    }
   }
 }

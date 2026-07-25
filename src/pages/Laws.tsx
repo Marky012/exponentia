@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { GemDisplay } from '@/components/GemDisplay';
 import { MathText } from '@/utils/mathRenderer';
-import { Lock, CheckCircle, Sparkles, ArrowLeft, Map } from 'lucide-react';
+import { Lock, CheckCircle, Sparkles, ArrowLeft, Map, BookOpen, RefreshCcw, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
 import { SettingsMenu } from '@/components/SettingsMenu';
@@ -83,12 +83,12 @@ const Laws = () => {
             >
               <Card
                 className={cn(
-                  "p-3 sm:p-4 md:p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border-2 h-full",
+                  "p-3 sm:p-4 md:p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border-2 h-full relative overflow-hidden",
                   law.gemEarned
-                    ? "bg-gem/10 border-gem shadow-[0_0_20px_hsl(var(--gem-glow)/0.3)]"
+                    ? "bg-gradient-to-br from-gem/10 to-gem-dark/5 border-gem/60 card-completed shadow-[0_0_24px_hsl(45_95%_58%/0.2)]"
                     : law.completed
-                    ? "bg-primary/10 border-primary/50"
-                    : "bg-card border-border hover:border-primary/50"
+                    ? "bg-primary/10 border-primary/50 card-learning"
+                    : "bg-card border-border hover:border-primary/50 card-locked"
                 )}
                 onClick={() => handleLawClick(law.id, law.completed, law.gemEarned)}
               >
@@ -97,18 +97,16 @@ const Laws = () => {
                   <div className="text-3xl sm:text-4xl">
                     {law.gemEarned ? (
                       <div className="relative">
-                        <Sparkles className="w-7 h-7 sm:w-10 sm:h-10 text-gem animate-pulse" />
+                        <Sparkles className="w-7 h-7 sm:w-10 sm:h-10 text-gem animate-pulse-glow" style={{ filter: 'drop-shadow(0 0 8px hsl(45 95% 58% / 0.8))' }} />
                         <div className="absolute inset-0 bg-gem/20 rounded-full blur-xl" />
                       </div>
                     ) : law.completed ? (
                       <CheckCircle className="w-7 h-7 sm:w-10 sm:h-10 text-primary" />
                     ) : (
-                      <Lock className="w-7 h-7 sm:w-10 sm:h-10 text-muted-foreground" />
+                      <Lock className="w-7 h-7 sm:w-10 sm:h-10 text-muted-foreground/60" />
                     )}
                   </div>
-                  <div className="text-[10px] sm:text-xs font-orbitron text-muted-foreground">
-                    #{index + 1}
-                  </div>
+                  <span className="badge-law-number">#{index + 1}</span>
                 </div>
 
                 {/* Law Details */}
@@ -123,22 +121,25 @@ const Laws = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                    className="w-full text-xs sm:text-sm h-8 sm:h-9 gap-1.5 border-gem/40 text-gem hover:bg-gem/10"
                   >
+                    <Eye className="w-3.5 h-3.5" />
                     Review
                   </Button>
                 ) : law.completed ? (
                   <Button
                     size="sm"
-                    className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                    className="w-full text-xs sm:text-sm h-8 sm:h-9 gap-1.5 glow"
                   >
+                    <RefreshCcw className="w-3.5 h-3.5" />
                     Take Pre-Test
                   </Button>
                 ) : (
                   <Button
                     size="sm"
-                    className="w-full text-xs sm:text-sm h-8 sm:h-9"
+                    className="w-full text-xs sm:text-sm h-8 sm:h-9 gap-1.5"
                   >
+                    <BookOpen className="w-3.5 h-3.5" />
                     Start Learning
                   </Button>
                 )}
@@ -154,15 +155,18 @@ const Laws = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center mt-8"
           >
-            <Card className="p-6 bg-gradient-to-br from-gem/20 to-primary/20 border-gem/50">
-              <Sparkles className="w-12 h-12 text-gem mx-auto mb-3" />
-              <h2 className="text-xl font-bold mb-2">All Gems Collected!</h2>
-              <p className="text-muted-foreground mb-4">
-                Return to the map to enter the Battle Arena!
+            <Card className="p-6 md:p-8 bg-gradient-to-br from-gem/20 via-gem/10 to-primary/20 border-2 border-gem/60 shadow-[0_0_40px_hsl(45_95%_58%/0.25)]">
+              <div className="relative inline-block mb-4">
+                <Sparkles className="w-14 h-14 text-gem mx-auto" style={{ filter: 'drop-shadow(0 0 12px hsl(45 95% 58% / 0.8))' }} />
+                <div className="absolute inset-0 bg-gem/20 rounded-full blur-2xl" />
+              </div>
+              <h2 className="text-2xl font-orbitron font-bold mb-2 text-glow-gold">All Gems Collected!</h2>
+              <p className="text-muted-foreground mb-6">
+                You've mastered all 8 Laws of Exponents. The Battle Arena awaits!
               </p>
-              <Button onClick={() => navigate('/hub')} className="gap-2">
+              <Button onClick={() => navigate('/quiz-arena')} className="gap-2 glow" size="lg">
                 <Map className="w-4 h-4" />
-                Return to Map
+                Enter Battle Arena
               </Button>
             </Card>
           </motion.div>

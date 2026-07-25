@@ -1,5 +1,7 @@
 // Background music manager for looping game music
 
+import { STORAGE_KEYS } from '@/constants/quizConfig';
+
 class BackgroundMusic {
   private audio: HTMLAudioElement | null = null;
   private enabled: boolean = true;
@@ -7,8 +9,8 @@ class BackgroundMusic {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      const savedEnabled = localStorage.getItem('musicEnabled');
-      const savedVolume = localStorage.getItem('musicVolume');
+      const savedEnabled = localStorage.getItem(STORAGE_KEYS.MUSIC_ENABLED);
+      const savedVolume = localStorage.getItem(STORAGE_KEYS.MUSIC_VOLUME);
       this.enabled = savedEnabled !== null ? savedEnabled === 'true' : true;
       this.volume = savedVolume !== null ? parseFloat(savedVolume) : 0.3;
     }
@@ -37,7 +39,7 @@ class BackgroundMusic {
 
   setEnabled(enabled: boolean) {
     this.enabled = enabled;
-    localStorage.setItem('musicEnabled', String(enabled));
+    localStorage.setItem(STORAGE_KEYS.MUSIC_ENABLED, String(enabled));
     if (enabled) {
       this.play();
     } else {
@@ -47,7 +49,7 @@ class BackgroundMusic {
 
   setVolume(volume: number) {
     this.volume = Math.max(0, Math.min(1, volume));
-    localStorage.setItem('musicVolume', String(this.volume));
+    localStorage.setItem(STORAGE_KEYS.MUSIC_VOLUME, String(this.volume));
     if (this.audio) {
       this.audio.volume = this.volume;
     }

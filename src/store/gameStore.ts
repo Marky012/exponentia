@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { isDevelopmentMode } from '@/utils/inputValidation';
+import { PASSING_SCORE, MAX_ATTEMPTS, QUESTION_HISTORY_LIMIT } from '@/constants/gameConfig';
+import { applyGenderTheme } from '@/utils/theme';
 
 export type Gender = 'male' | 'female';
 
@@ -29,6 +31,12 @@ export interface QuizLevel {
   averageScore: number | null;
 }
 
+export interface QuestionHistory {
+  questionId: string;
+  correct: boolean;
+  timestamp: string;
+}
+
 export interface GameState {
   // Player data
   playerName: string;
@@ -50,13 +58,22 @@ export interface GameState {
   totalIncorrectAnswers: number;
   lawMissedCount: Record<string, number>;
   
+  // Adaptive quiz
+  questionHistory: QuestionHistory[];
+  
   // Report data
   needsAttention: boolean;
   attentionReason: string | null;
   
   // Debug mode
   debugMode: boolean;
-  
+
+  // UX settings
+  hapticsEnabled: boolean;
+
+  // Offline sync queue
+  pendingSyncResults: PendingSyncResult[];
+
   // Actions
   setPlayerName: (name: string) => void;
   setPlayerGender: (gender: Gender) => void;
@@ -69,8 +86,12 @@ export interface GameState {
   completeQuizLevel: (levelId: string, score: number, missedLaws: string[]) => void;
   incrementLawMissed: (lawName: string) => void;
   trackAnswer: (correct: boolean) => void;
+  recordQuestionAnswer: (questionId: string, correct: boolean) => void;
   resetGame: () => void;
   toggleDebugMode: () => void;
+  setHapticsEnabled: (enabled: boolean) => void;
+  addPendingSyncResult: (result: PendingSyncResult) => void;
+  clearPendingSyncResults: () => void;
   getStudentReport: () => StudentReport;
 }
 
@@ -93,6 +114,14 @@ export interface LevelReport {
   averageScore: number;
   passed: boolean;
   missedLaws: string[];
+}
+
+export interface PendingSyncResult {
+  id: string;
+  levelId: string;
+  score: number;
+  missedLaws: string[];
+  completedAt: string;
 }
 
 const initialLaws: Law[] = [
@@ -177,25 +206,24 @@ const calculateAverageScore = (attempts: QuizAttempt[]): number | null => {
 const checkUnlockNextLevel = (attempts: QuizAttempt[]): boolean => {
   if (attempts.length === 0) return false;
   
-  // If first attempt passes with 75% or more, unlock immediately
-  if (attempts.length >= 1 && attempts[0].score >= 75) {
+  if (attempts.length >= 1 && attempts[0].score >= PASSING_SCORE) {
     return true;
   }
   
   // Otherwise, calculate average of all attempts (max 3)
   const relevantAttempts = attempts.slice(0, 3);
   const avgScore = calculateAverageScore(relevantAttempts);
-  return avgScore !== null && avgScore >= 75;
+  return avgScore !== null && avgScore >= PASSING_SCORE;
 };
 
 const checkNeedsAttention = (quizLevels: QuizLevel[]): { needsAttention: boolean; reason: string | null } => {
   for (const level of quizLevels) {
     if (level.attempts.length >= 3) {
       const avgScore = calculateAverageScore(level.attempts.slice(0, 3));
-      if (avgScore !== null && avgScore < 75) {
+      if (avgScore !== null && avgScore < PASSING_SCORE) {
         return {
           needsAttention: true,
-          reason: `Student struggled with ${level.name} level after 3 attempts (Average: ${avgScore}%)`
+          reason: `Student struggled with ${level.name} level after ${MAX_ATTEMPTS} attempts (Average: ${avgScore}%)`
         };
       }
     }
@@ -217,22 +245,19 @@ export const useGameStore = create<GameState>()(
       totalCorrectAnswers: 0,
       totalIncorrectAnswers: 0,
       lawMissedCount: {},
+      questionHistory: [],
       needsAttention: false,
       attentionReason: null,
       debugMode: false,
+      hapticsEnabled: true,
+      pendingSyncResults: [],
 
       // Actions
       setPlayerName: (name) => set({ playerName: name }),
       
       setPlayerGender: (gender) => {
         set({ playerGender: gender });
-        if (typeof document !== 'undefined') {
-          if (gender === 'female') {
-            document.body.classList.add('theme-female');
-          } else {
-            document.body.classList.remove('theme-female');
-          }
-        }
+        applyGenderTheme(gender);
       },
 
       startGame: () => set({ hasStarted: true }),
@@ -268,12 +293,20 @@ export const useGameStore = create<GameState>()(
       
       toggleDebugMode: () =>
         set((state) => {
-          // Only allow debug mode in development
           if (!isDevelopmentMode()) {
             return state;
           }
           return { debugMode: !state.debugMode };
         }),
+
+      setHapticsEnabled: (enabled) => set({ hapticsEnabled: enabled }),
+
+      addPendingSyncResult: (result) =>
+        set((state) => ({
+          pendingSyncResults: [...state.pendingSyncResults, result],
+        })),
+
+      clearPendingSyncResults: () => set({ pendingSyncResults: [] }),
       
       completeQuizLevel: (levelId, score, missedLaws) =>
         set((state) => {
@@ -341,10 +374,16 @@ export const useGameStore = create<GameState>()(
           totalIncorrectAnswers: state.totalIncorrectAnswers + (correct ? 0 : 1),
         })),
 
+      recordQuestionAnswer: (questionId, correct) =>
+        set((state) => ({
+          questionHistory: [
+            ...state.questionHistory.slice(-QUESTION_HISTORY_LIMIT),
+            { questionId, correct, timestamp: new Date().toISOString() },
+          ],
+        })),
+
       resetGame: () => {
-        if (typeof document !== 'undefined') {
-          document.body.classList.remove('theme-female');
-        }
+        applyGenderTheme(null);
         set({
           playerName: '',
           playerGender: null,
@@ -356,8 +395,12 @@ export const useGameStore = create<GameState>()(
           totalCorrectAnswers: 0,
           totalIncorrectAnswers: 0,
           lawMissedCount: {},
+          questionHistory: [],
           needsAttention: false,
           attentionReason: null,
+          debugMode: false,
+          hapticsEnabled: true,
+          pendingSyncResults: [],
         });
       },
 

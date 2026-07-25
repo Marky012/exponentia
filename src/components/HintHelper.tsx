@@ -49,6 +49,7 @@ export const HintHelper = ({ hint, onHintUsed, hintAvailable }: HintHelperProps)
             src={helperImage} 
             alt="Helper Pet" 
             className="w-24 h-24 drop-shadow-2xl"
+            loading="lazy"
           />
           {hintAvailable && (
             <motion.div
@@ -96,7 +97,7 @@ export const HintHelper = ({ hint, onHintUsed, hintAvailable }: HintHelperProps)
               <Card className="max-w-md p-6 bg-card border-2 border-primary/30">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3">
-                    <img src={helperImage} alt="Helper" className="w-12 h-12" />
+                    <img src={helperImage} alt="Helper" className="w-12 h-12" loading="lazy" />
                     <h3 className="text-lg font-orbitron font-bold text-primary">
                       Helper's Hint
                     </h3>

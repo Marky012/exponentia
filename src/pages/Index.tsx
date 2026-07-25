@@ -1,10 +1,16 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '@/store/gameStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Zap, Download, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
+import {
+  Sparkles, Zap, Download, Wifi, WifiOff, AlertTriangle,
+  HardDrive, Film, Image, Music, FileCode, CheckCircle2,
+  Shield, Sword, PackageCheck, Save
+} from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import InstallHelpButton from '@/components/InstallHelpButton';
+import exponentiaDark from '@/assets/exponentia-dark.png';
+import { BeforeInstallPromptEvent } from '@/types/game';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -13,22 +19,39 @@ import {
   AlertDialogDescription,
 } from '@/components/ui/alert-dialog';
 
-type BootPhase = 'boot' | 'downloading' | 'ready';
+type BootPhase = 'boot' | 'connecting' | 'downloading' | 'saving' | 'ready';
 
-const MINIMUM_CACHED_FOR_OFFLINE = 25;
+const PHASE_MESSAGES: Record<BootPhase, string> = {
+  boot: 'Awakening Exponentia...',
+  connecting: 'Opening portal...',
+  downloading: 'Gathering forces...',
+  saving: 'Sealing the realm...',
+  ready: 'Enter the realm!',
+};
+
+const CACHE_TOTAL_ESTIMATE = 84;
 
 const Index = () => {
   const navigate = useNavigate();
   const hasStarted = useGameStore((state) => state.hasStarted);
   const [phase, setPhase] = useState<BootPhase>('boot');
   const [downloadProgress, setDownloadProgress] = useState(0);
-  const [statusText, setStatusText] = useState('Initializing...');
+  const [cachedCount, setCachedCount] = useState(0);
+  const [totalBytesEstimate] = useState(142 * 1024 * 1024);
   const [showOfflineModal, setShowOfflineModal] = useState(false);
   const [offlineCacheProgress, setOfflineCacheProgress] = useState(0);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [installDismissed, setInstallDismissed] = useState(false);
   const [isStandalone] = useState(() =>
     window.matchMedia('(display-mode: standalone)').matches ||
     (navigator as any).standalone === true
   );
+  const [milestone25, setMilestone25] = useState(false);
+  const [milestone50, setMilestone50] = useState(false);
+  const [milestone75, setMilestone75] = useState(false);
+  const [isReturningUser, setIsReturningUser] = useState(false);
+  const phaseRef = useRef(phase);
+  phaseRef.current = phase;
 
   const navigateToGame = useCallback(() => {
     if (hasStarted) {
@@ -53,19 +76,53 @@ const Index = () => {
     }
   }, []);
 
-  // Check if offline with incomplete cache — show modal
+  const isFullyCached = useCallback(async (): Promise<boolean> => {
+    try {
+      const cacheNames = await caches.keys();
+      if (cacheNames.length === 0) return false;
+      let foundCount = 0;
+      for (const name of cacheNames) {
+        const cache = await caches.open(name);
+        const keys = await cache.keys();
+        foundCount += keys.length;
+      }
+      return foundCount >= CACHE_TOTAL_ESTIMATE * 0.8;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  // PWA install prompt
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e as BeforeInstallPromptEvent);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setInstallPrompt(null);
+      setInstallDismissed(true);
+    }
+  };
+
+  // Offline modal
   useEffect(() => {
     const checkOfflineReadiness = async () => {
-      const isOffline = !navigator.onLine;
-      if (isOffline) {
+      if (!navigator.onLine) {
         const cachedCount = await getTotalCachedCount();
-        if (cachedCount < MINIMUM_CACHED_FOR_OFFLINE) {
+        if (cachedCount < 10) {
           setShowOfflineModal(true);
-          // Start polling — when back online, caching will resume
           const pollInterval = setInterval(async () => {
             const count = await getTotalCachedCount();
-            setOfflineCacheProgress(Math.min(Math.round((count / 45) * 100), 100));
-            if (navigator.onLine || count >= MINIMUM_CACHED_FOR_OFFLINE) {
+            setOfflineCacheProgress(Math.min(Math.round((count / CACHE_TOTAL_ESTIMATE) * 100), 100));
+            if (navigator.onLine || count >= 10) {
               clearInterval(pollInterval);
               setShowOfflineModal(false);
             }
@@ -77,121 +134,47 @@ const Index = () => {
     checkOfflineReadiness();
   }, [getTotalCachedCount]);
 
+  // Main boot sequence
   useEffect(() => {
-    const bootTimer = setTimeout(() => {
-      if ('serviceWorker' in navigator) {
-        setPhase('downloading');
+    const bootTimer = setTimeout(async () => {
+      const cached = await isFullyCached();
+      if (cached) {
+        setIsReturningUser(true);
+        setPhase('saving');
+        setDownloadProgress(95);
+        setTimeout(() => {
+          setDownloadProgress(100);
+          setPhase('ready');
+          setTimeout(() => navigateToGame(), 600);
+        }, 400);
+      } else if ('serviceWorker' in navigator) {
+        setPhase('connecting');
       } else {
         navigateToGame();
       }
-    }, 2000);
+    }, 1200);
 
     return () => clearTimeout(bootTimer);
-  }, [navigateToGame]);
+  }, [navigateToGame, isFullyCached]);
 
-  // Resource downloading phase
+  // Connecting phase
   useEffect(() => {
-    if (phase !== 'downloading') return;
+    if (phase !== 'connecting') return;
 
     let cancelled = false;
 
-    const criticalAssets = ['/index.html'];
-
-    const verifyCriticalAssets = async (): Promise<boolean> => {
-      try {
-        const cacheNames = await caches.keys();
-        for (const asset of criticalAssets) {
-          let found = false;
-          for (const name of cacheNames) {
-            const cache = await caches.open(name);
-            const match = await cache.match(asset);
-            if (match) { found = true; break; }
-          }
-          if (!found) return false;
-        }
-        return true;
-      } catch {
-        return false;
-      }
-    };
-
-    const trackCaching = async () => {
-      const timeoutId = setTimeout(() => {
-        if (!cancelled) {
-          console.warn('SW caching timed out, proceeding to game');
-          cancelled = true;
-          setDownloadProgress(100);
-          setStatusText('Ready to play!');
-          setPhase('ready');
-          setTimeout(() => navigateToGame(), 500);
-        }
-      }, 20000);
-
+    const connect = async () => {
       try {
         const registration = await Promise.race([
           navigator.serviceWorker.ready,
-          new Promise<null>((resolve) => setTimeout(() => resolve(null), 8000))
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000))
         ]);
 
-        if (!registration) {
-          clearTimeout(timeoutId);
-          if (!cancelled) {
-            setDownloadProgress(100);
-            setStatusText('Ready to play!');
-            setPhase('ready');
-            await new Promise(r => setTimeout(r, 500));
-            navigateToGame();
-          }
-          return;
-        }
+        if (cancelled) return;
 
-        if (navigator.serviceWorker.controller) {
-          setStatusText('Verifying game files...');
-          setDownloadProgress(10);
-
-          let attempts = 0;
-          const maxAttempts = 15;
-          let lastCount = 0;
-          let stableCount = 0;
-
-          while (attempts < maxAttempts && !cancelled) {
-            const cachedCount = await getTotalCachedCount();
-            const progress = Math.min(10 + (cachedCount / 40) * 85, 95);
-            setDownloadProgress(Math.round(progress));
-
-            if (cachedCount < 10) {
-              setStatusText('Caching game assets...');
-            } else if (cachedCount < 20) {
-              setStatusText('Loading character assets...');
-            } else if (cachedCount < 30) {
-              setStatusText('Loading video lessons...');
-            } else if (cachedCount < 40) {
-              setStatusText('Finalizing resources...');
-            } else {
-              setStatusText('Almost ready...');
-            }
-
-            if (cachedCount === lastCount && cachedCount > 15) {
-              stableCount++;
-              if (stableCount >= 3) break;
-            } else {
-              stableCount = 0;
-            }
-            lastCount = cachedCount;
-
-            attempts++;
-            await new Promise(r => setTimeout(r, 800));
-          }
-
-          const criticalReady = await verifyCriticalAssets();
-          if (!criticalReady && !cancelled) {
-            console.warn('Critical assets not fully cached, but proceeding');
-          }
-        } else {
-          setStatusText('Installing game resources...');
-          setDownloadProgress(5);
-
-          if (registration.installing || registration.waiting) {
+        if (registration) {
+          const isControlled = !!navigator.serviceWorker.controller;
+          if (!isControlled && (registration.installing || registration.waiting)) {
             const sw = registration.installing || registration.waiting;
             if (sw) {
               await Promise.race([
@@ -201,256 +184,482 @@ const Index = () => {
                   });
                   if (sw.state === 'activated') resolve();
                 }),
-                new Promise<void>((resolve) => setTimeout(resolve, 8000))
+                new Promise<void>((resolve) => setTimeout(resolve, 6000))
               ]);
             }
           }
-
-          let attempts = 0;
-          const maxAttempts = 20;
-          let lastCount = 0;
-          let stableCount = 0;
-
-          while (attempts < maxAttempts && !cancelled) {
-            const cachedCount = await getTotalCachedCount();
-            const progress = Math.min(5 + (cachedCount / 45) * 90, 95);
-            setDownloadProgress(Math.round(progress));
-
-            if (cachedCount < 5) {
-              setStatusText('Downloading core files...');
-            } else if (cachedCount < 15) {
-              setStatusText('Downloading character assets...');
-            } else if (cachedCount < 25) {
-              setStatusText('Downloading map images...');
-            } else if (cachedCount < 35) {
-              setStatusText('Downloading video lessons...');
-            } else {
-              setStatusText('Downloading audio & fonts...');
-            }
-
-            if (cachedCount === lastCount && cachedCount > 20) {
-              stableCount++;
-              if (stableCount >= 3) break;
-            } else {
-              stableCount = 0;
-            }
-            lastCount = cachedCount;
-
-            attempts++;
-            await new Promise(r => setTimeout(r, 1000));
-          }
         }
 
-        clearTimeout(timeoutId);
         if (!cancelled) {
-          setDownloadProgress(100);
-          setStatusText('All resources ready!');
-          setPhase('ready');
-          await new Promise(r => setTimeout(r, 800));
-          navigateToGame();
+          setPhase('downloading');
         }
-      } catch (err) {
-        console.warn('SW caching check failed, proceeding anyway:', err);
-        clearTimeout(timeoutId);
+      } catch {
         if (!cancelled) {
-          setDownloadProgress(100);
-          setStatusText('Ready to play!');
-          setPhase('ready');
-          await new Promise(r => setTimeout(r, 500));
-          navigateToGame();
+          setPhase('downloading');
         }
       }
     };
 
-    trackCaching();
+    connect();
+    return () => { cancelled = true; };
+  }, [phase]);
 
+  // Downloading phase - track cache progress
+  useEffect(() => {
+    if (phase !== 'downloading') return;
+
+    let cancelled = false;
+    let pollCount = 0;
+
+    const trackDownload = async () => {
+      const timeoutId = setTimeout(() => {
+        if (!cancelled) {
+          setDownloadProgress(100);
+          setPhase('saving');
+          setTimeout(() => {
+            if (!cancelled) {
+              setDownloadProgress(100);
+              setPhase('ready');
+              setTimeout(() => navigateToGame(), 600);
+            }
+          }, 600);
+        }
+      }, 25000);
+
+      const pollInterval = setInterval(async () => {
+        if (cancelled) return;
+        pollCount++;
+
+        const count = await getTotalCachedCount();
+        setCachedCount(count);
+        const progress = Math.min((count / CACHE_TOTAL_ESTIMATE) * 100, 99);
+        setDownloadProgress(Math.round(progress));
+
+        if (progress >= 25 && !milestone25) setMilestone25(true);
+        if (progress >= 50 && !milestone50) setMilestone50(true);
+        if (progress >= 75 && !milestone75) setMilestone75(true);
+
+        if (count >= CACHE_TOTAL_ESTIMATE * 0.9 || pollCount > 20) {
+          clearInterval(pollInterval);
+          clearTimeout(timeoutId);
+          if (!cancelled) {
+            setDownloadProgress(100);
+            setPhase('saving');
+            setTimeout(() => {
+              if (!cancelled) {
+                setPhase('ready');
+                setTimeout(() => navigateToGame(), 600);
+              }
+            }, 800);
+          }
+        }
+      }, 600);
+
+      return () => {
+        clearInterval(pollInterval);
+        clearTimeout(timeoutId);
+      };
+    };
+
+    const cleanup = trackDownload();
     return () => {
       cancelled = true;
+      cleanup.then(fn => fn());
     };
-  }, [phase, navigateToGame, getTotalCachedCount]);
+  }, [phase, navigateToGame, getTotalCachedCount, milestone25, milestone50, milestone75]);
+
+  const getStatusMessage = () => {
+    if (phase === 'boot') return PHASE_MESSAGES.boot;
+    if (phase === 'connecting') return PHASE_MESSAGES.connecting;
+    if (phase === 'saving') return isReturningUser ? 'Reloading saved realm...' : PHASE_MESSAGES.saving;
+    if (phase === 'ready') return PHASE_MESSAGES.ready;
+
+    const pct = downloadProgress;
+    if (pct < 15) return 'Downloading core realm...';
+    if (pct < 30) return 'Loading character assets...';
+    if (pct < 50) return 'Gathering video lessons...';
+    if (pct < 70) return 'Caching battle arenas...';
+    if (pct < 85) return 'Loading audio & fonts...';
+    return 'Finalizing preparations...';
+  };
+
+  const getCategoryIcon = () => {
+    const pct = downloadProgress;
+    if (pct < 15) return <FileCode className="w-4 h-4" />;
+    if (pct < 30) return <Image className="w-4 h-4" />;
+    if (pct < 50) return <Film className="w-4 h-4" />;
+    if (pct < 70) return <Image className="w-4 h-4" />;
+    if (pct < 85) return <Music className="w-4 h-4" />;
+    return <PackageCheck className="w-4 h-4" />;
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* Offline / incomplete cache modal */}
+    <div
+      className="min-h-screen flex items-center justify-center relative overflow-hidden bg-cover bg-center"
+      style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.75)), url(${exponentiaDark})` }}
+    >
+      {/* Offline modal */}
       <AlertDialog open={showOfflineModal}>
         <AlertDialogContent className="max-w-sm mx-4 border-destructive/50 bg-background">
           <AlertDialogHeader className="items-center text-center">
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
+            <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}>
               <WifiOff className="w-12 h-12 text-destructive mb-2" />
             </motion.div>
-            <AlertDialogTitle className="font-orbitron text-lg">
-              Internet Connection Required
-            </AlertDialogTitle>
+            <AlertDialogTitle className="font-orbitron text-lg">Connection Required</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-muted-foreground space-y-3">
-              <p>
-                Exponentia needs an internet connection for a moment to download all game resources. Once fully downloaded, you can play completely offline!
-              </p>
+              <p>Exponentia needs to download resources before you can play offline.</p>
               <div className="space-y-2 pt-2">
                 <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground/80">
                   <AlertTriangle className="w-3 h-3" />
-                  <span>Please connect to Wi-Fi or mobile data</span>
+                  <span>Connect to Wi-Fi or mobile data</span>
                 </div>
                 <Progress value={offlineCacheProgress} className="h-2 bg-muted/50" />
-                <p className="text-xs text-muted-foreground/60">
-                  {offlineCacheProgress}% of game files cached
-                </p>
+                <p className="text-xs text-muted-foreground/60">{offlineCacheProgress}% cached</p>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Animated background particles */}
-      <div className="absolute inset-0">
-        {Array.from({ length: 20 }).map((_, i) => (
+      {/* Background particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        {Array.from({ length: 15 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-primary rounded-full opacity-30"
+            className="absolute w-1.5 h-1.5 bg-primary rounded-full"
+            style={{ opacity: phase === 'ready' ? 0.6 : 0.2 }}
             initial={{
               x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800),
               y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 600),
             }}
             animate={{
               y: [null, Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 600)],
-              opacity: [0.3, 0.6, 0.3],
+              opacity: phase === 'ready' ? [0.4, 0.8, 0.4] : [0.1, 0.3, 0.1],
             }}
-            transition={{
-              duration: 3 + Math.random() * 3,
-              repeat: Infinity,
-              ease: "linear",
-            }}
+            transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, ease: 'linear' }}
           />
         ))}
       </div>
 
-      {/* Logo and title */}
+      {/* Milestone celebration particles */}
+      <AnimatePresence>
+        {(milestone25 || milestone50 || milestone75) && phase === 'downloading' && (
+          <div className="absolute inset-0 pointer-events-none">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <motion.div
+                key={`celeb-${i}`}
+                className="absolute w-1 h-1 bg-gem rounded-full"
+                initial={{ x: '50%', y: '50%', opacity: 1, scale: 0 }}
+                animate={{
+                  x: `${30 + Math.random() * 40}%`,
+                  y: `${20 + Math.random() * 60}%`,
+                  opacity: [1, 0],
+                  scale: [0, 1.5],
+                }}
+                transition={{ duration: 1, delay: i * 0.1 }}
+              />
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Main content */}
       <motion.div
-        className="text-center z-10 w-full max-w-md px-6"
-        initial={{ opacity: 0, scale: 0.8 }}
+        className="text-center z-10 w-full max-w-lg px-6 mx-auto flex flex-col items-center justify-center"
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
       >
+        {/* Logo */}
         <motion.div
-          className="relative inline-block mb-6"
-          animate={{ rotateY: [0, 360] }}
-          transition={{ duration: 2, ease: "easeInOut", repeat: Infinity, repeatDelay: 1 }}
+          className="relative inline-block mb-5"
+          animate={phase === 'ready' ? { scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] } : { rotateY: [0, 360] }}
+          transition={
+            phase === 'ready'
+              ? { duration: 0.6, ease: 'easeInOut' }
+              : { duration: 2, ease: 'easeInOut', repeat: Infinity, repeatDelay: 1 }
+          }
         >
-          <div className="text-8xl font-orbitron font-black text-primary glow-strong">E</div>
-          <Sparkles className="absolute -top-4 -right-4 w-8 h-8 text-secondary animate-pulse" />
-          <Zap className="absolute -bottom-4 -left-4 w-8 h-8 text-accent animate-pulse" />
+          <div
+            className="text-7xl sm:text-8xl font-orbitron font-black text-primary"
+            style={{ filter: 'drop-shadow(0 0 24px hsl(var(--theme-glow) / 0.9)) drop-shadow(0 0 48px hsl(var(--theme-glow) / 0.4))' }}
+          >
+            E
+          </div>
+          <Sparkles className="absolute -top-4 -right-4 w-7 h-7 text-gem animate-pulse" />
+          <Zap className="absolute -bottom-4 -left-4 w-7 h-7 text-secondary animate-pulse" />
         </motion.div>
 
+        {/* Title */}
         <motion.h1
-          className="text-4xl sm:text-5xl md:text-6xl font-orbitron font-black mb-4 text-glow px-4"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-3xl sm:text-4xl md:text-5xl font-orbitron font-black mb-2 text-glow"
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
         >
           EXPONENTIA
         </motion.h1>
 
         <motion.p
-          className="text-xl text-muted-foreground font-medium"
+          className="text-base sm:text-lg text-muted-foreground font-medium"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
         >
           The Realm of Exponential Power
         </motion.p>
 
         <motion.p
-          className="text-sm text-muted-foreground/70 mt-2 italic"
+          className="text-xs text-muted-foreground/60 mt-1.5 italic"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
         >
           by: Jeemark Naceel Calungsod Alojado
         </motion.p>
 
-        {/* Download / Boot Progress Section */}
-        <AnimatePresence mode="wait">
-          {phase === 'boot' && (
-            <motion.div
-              key="boot"
-              className="mt-8 flex gap-2 justify-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 1, duration: 0.6 }}
-            >
-              {[0, 1, 2].map((i) => (
-                <motion.div
-                  key={i}
-                  className="w-3 h-3 rounded-full bg-primary"
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
-                />
-              ))}
-            </motion.div>
-          )}
-
-          {(phase === 'downloading' || phase === 'ready') && (
-            <motion.div
-              key="downloading"
-              className="mt-8 space-y-4"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+        {/* Loading Section */}
+        <div className="mt-8 w-full max-w-sm">
+          <AnimatePresence mode="wait">
+            {/* Boot phase */}
+            {phase === 'boot' && (
               <motion.div
-                className="flex items-center justify-center gap-2 text-primary"
-                animate={{ opacity: [0.7, 1, 0.7] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                key="boot"
+                className="space-y-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
               >
-                {phase === 'ready' ? (
-                  <Sparkles className="w-5 h-5" />
-                ) : (
-                  <Download className="w-5 h-5 animate-bounce" />
-                )}
-                <span className="text-sm font-medium font-orbitron">{statusText}</span>
+                <div className="flex gap-1.5 justify-center">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      className="w-2.5 h-2.5 rounded-full bg-primary"
+                      animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
+                      transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
+                    />
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground/60 font-orbitron">{getStatusMessage()}</p>
               </motion.div>
+            )}
 
-              <div className="relative">
-                <Progress value={downloadProgress} className="h-3 bg-muted/50" />
+            {/* Connecting phase */}
+            {phase === 'connecting' && (
+              <motion.div
+                key="connecting"
+                className="space-y-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
                 <motion.div
-                  className="absolute inset-0 rounded-full overflow-hidden pointer-events-none"
-                  animate={{ opacity: [0, 0.3, 0] }}
+                  className="flex items-center justify-center gap-2 text-primary"
+                  animate={{ opacity: [0.6, 1, 0.6] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  <div className="h-full w-full bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                  <Shield className="w-4 h-4" />
+                  <span className="text-sm font-medium font-orbitron">{getStatusMessage()}</span>
                 </motion.div>
-              </div>
+                <div className="flex gap-1.5 justify-center">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      className="w-2 h-2 rounded-full bg-primary"
+                      animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.8, 0.3] }}
+                      transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
-              <p className="text-xs text-muted-foreground font-orbitron">
-                {Math.round(downloadProgress)}%
-              </p>
-
-              {isStandalone && (
+            {/* Downloading phase */}
+            {phase === 'downloading' && (
+              <motion.div
+                key="downloading"
+                className="space-y-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Status with category icon */}
                 <motion.div
-                  className="flex items-center justify-center gap-1 text-xs text-muted-foreground/60"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
+                  className="flex items-center justify-center gap-2 text-primary"
+                  animate={{ opacity: [0.7, 1, 0.7] }}
+                  transition={{ duration: 2, repeat: Infinity }}
                 >
-                  {downloadProgress >= 100 ? (
-                    <>
-                      <WifiOff className="w-3 h-3" />
-                      <span>Offline play ready</span>
-                    </>
-                  ) : (
-                    <>
-                      <Wifi className="w-3 h-3" />
-                      <span>Preparing offline play...</span>
-                    </>
-                  )}
+                  <Download className="w-4 h-4 animate-bounce" />
+                  <span className="text-sm font-medium font-orbitron">{getStatusMessage()}</span>
                 </motion.div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+
+                {/* Main progress bar */}
+                <div className="relative">
+                  <Progress value={downloadProgress} className="h-3.5 bg-muted/40 rounded-full overflow-hidden" />
+                  <motion.div
+                    className="absolute inset-0 rounded-full overflow-hidden pointer-events-none"
+                    animate={{ opacity: [0, 0.4, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <div className="h-full w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                  </motion.div>
+                </div>
+
+                {/* Progress info row */}
+                <div className="flex items-center justify-between text-xs text-muted-foreground/70">
+                  <div className="flex items-center gap-1.5">
+                    {getCategoryIcon()}
+                    <span>{cachedCount} / {CACHE_TOTAL_ESTIMATE} files</span>
+                  </div>
+                  <span className="font-orbitron font-medium text-primary">{Math.round(downloadProgress)}%</span>
+                </div>
+
+                {/* Milestone badges */}
+                <div className="flex justify-center gap-2">
+                  {[
+                    { at: 25, reached: milestone25, label: 'I' },
+                    { at: 50, reached: milestone50, label: 'II' },
+                    { at: 75, reached: milestone75, label: 'III' },
+                  ].map(({ at, reached, label }) => (
+                    <motion.div
+                      key={at}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-orbitron font-bold border transition-all duration-500 ${
+                        reached
+                          ? 'bg-gem/20 border-gem/50 text-gem'
+                          : 'bg-muted/20 border-muted/30 text-muted-foreground/40'
+                      }`}
+                      animate={reached ? { scale: [1, 1.2, 1] } : {}}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {reached ? <CheckCircle2 className="w-3 h-3" /> : <span className="w-3 h-3 rounded-full border border-current/30" />}
+                      <span>{label}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Install button during download */}
+                {installPrompt && !installDismissed && !isStandalone && downloadProgress > 30 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <button
+                      onClick={handleInstall}
+                      className="mx-auto flex items-center gap-2 px-4 py-2 rounded-lg bg-gem/20 border border-gem/40 text-gem text-xs font-orbitron font-bold hover:bg-gem/30 transition-colors"
+                    >
+                      <HardDrive className="w-3.5 h-3.5" />
+                      Install for Offline Play
+                    </button>
+                  </motion.div>
+                )}
+
+                {/* Network indicator */}
+                {isStandalone && (
+                  <motion.div
+                    className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground/50"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <Wifi className="w-3 h-3" />
+                    <span>Downloading for offline play</span>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Saving phase */}
+            {phase === 'saving' && (
+              <motion.div
+                key="saving"
+                className="space-y-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.div
+                  className="flex items-center justify-center gap-2 text-gem"
+                  animate={{ opacity: [0.7, 1, 0.7] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <Save className="w-5 h-5" />
+                  <span className="text-sm font-medium font-orbitron">
+                    {isReturningUser ? 'Reloading saved realm...' : 'Sealing the realm...'}
+                  </span>
+                </motion.div>
+
+                <div className="relative">
+                  <Progress value={downloadProgress} className="h-3.5 bg-muted/40" />
+                  <motion.div
+                    className="absolute inset-0 rounded-full overflow-hidden pointer-events-none"
+                    animate={{ opacity: [0, 0.5, 0] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  >
+                    <div className="h-full w-full bg-gradient-to-r from-transparent via-gem/30 to-transparent" />
+                  </motion.div>
+                </div>
+
+                <div className="flex justify-center">
+                  <motion.div
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gem/10 border border-gem/30"
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-gem" />
+                    <span className="text-xs text-gem font-orbitron font-bold">{Math.round(downloadProgress)}%</span>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Ready phase */}
+            {phase === 'ready' && (
+              <motion.div
+                key="ready"
+                className="space-y-4"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+              >
+                <motion.div
+                  className="flex items-center justify-center gap-2 text-gem"
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Sword className="w-5 h-5" />
+                  <span className="text-base font-bold font-orbitron text-glow-gold">{getStatusMessage()}</span>
+                </motion.div>
+
+                <div className="flex justify-center">
+                  <Progress value={100} className="h-3.5 bg-muted/40" />
+                </div>
+
+                {/* Install prompt after download */}
+                {installPrompt && !installDismissed && !isStandalone && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    <button
+                      onClick={handleInstall}
+                      className="mx-auto flex items-center gap-2 px-4 py-2 rounded-lg bg-gem/20 border border-gem/40 text-gem text-xs font-orbitron font-bold hover:bg-gem/30 transition-colors"
+                    >
+                      <HardDrive className="w-3.5 h-3.5" />
+                      Install to Play Offline Anytime
+                    </button>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </motion.div>
 
       <InstallHelpButton />

@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
+import { QUIZ_LENGTH, PASSING_SCORE } from '@/constants/gameConfig';
 
 const Statistics = () => {
   const navigate = useNavigate();
@@ -47,8 +48,9 @@ const Statistics = () => {
   const completedQuizzes = quizLevels.filter(level => level.completed).length;
   const totalQuizzes = quizLevels.length;
   const highestScore = Math.max(...quizLevels.map(level => level.score || 0));
-  const averageScore = quizLevels.length > 0
-    ? Math.round(quizLevels.reduce((sum, level) => sum + (level.score || 0), 0) / quizLevels.length)
+  const attemptedLevels = quizLevels.filter(level => level.score != null && level.score > 0);
+  const averageScore = attemptedLevels.length > 0
+    ? Math.round(attemptedLevels.reduce((sum, level) => sum + (level.score || 0), 0) / attemptedLevels.length)
     : 0;
 
   // Chart data
@@ -406,7 +408,7 @@ const Statistics = () => {
                 {quizLevels.map((level, index) => {
                   const attemptsCount = Array.isArray(level.attempts) ? level.attempts.length : 0;
                   const attemptsArray = Array.isArray(level.attempts) ? level.attempts : [];
-                  const totalQuestions = 50;
+                  const totalQuestions = QUIZ_LENGTH;
                   const correctCount = level.score ? Math.round((level.score / 100) * totalQuestions) : 0;
                   const mistakesCount = totalQuestions - correctCount;
                   

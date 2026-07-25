@@ -1,540 +1,595 @@
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGameStore, StudentReport as StudentReportType } from '@/store/gameStore';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
-import { 
-  ArrowLeft, 
-  Download, 
-  AlertTriangle, 
-  CheckCircle, 
-  XCircle, 
-  BookOpen,
-  Trophy,
-  Target,
-  TrendingUp,
-  Star,
-  HelpCircle
-} from 'lucide-react';
-import ExponentiaBackground from '@/components/ExponentiaBackground';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { ArrowLeft, Download, Trophy, BookOpen, Star, AlertTriangle, TrendingUp } from 'lucide-react';
+import { useGameStore } from '../store/gameStore';
+import { DIFFICULTY_CONFIG } from '../constants/quizConfig';
+import { Button } from '../components/ui/button';
+import type { StudentReport as ReportType } from '../store/gameStore';
 
-const StudentReportPage = () => {
-  const navigate = useNavigate();
-  const reportRef = useRef<HTMLDivElement>(null);
-  const { getStudentReport, playerName, needsAttention } = useGameStore();
-  const [showNameDialog, setShowNameDialog] = useState(false);
-  const [fullName, setFullName] = useState('');
-  
-  const report: StudentReportType = getStudentReport();
+const GRADE_SCALE: Record<string, { grade: string; label: string }> = {
+  excellent: { grade: 'A', label: 'Excellent' },
+  good: { grade: 'B', label: 'Good' },
+  needs_improvement: { grade: 'C', label: 'Needs Improvement' },
+  needs_attention: { grade: 'F', label: 'Needs Attention' },
+  not_assessed: { grade: 'N/A', label: 'Not Assessed' },
+};
 
-  const getPerformanceColor = (performance: string) => {
-    switch (performance) {
-      case 'excellent': return 'text-green-500';
-      case 'good': return 'text-blue-500';
-      case 'needs_improvement': return 'text-yellow-500';
-      case 'needs_attention': return 'text-red-500';
-      case 'not_assessed': return 'text-muted-foreground';
-      default: return 'text-muted-foreground';
-    }
-  };
+const PERFORMANCE_COLORS: Record<string, string> = {
+  excellent: 'text-emerald-400',
+  good: 'text-blue-400',
+  needs_improvement: 'text-yellow-400',
+  needs_attention: 'text-red-400',
+  not_assessed: 'text-gray-400',
+};
 
-  const getPerformanceIcon = (performance: string) => {
-    switch (performance) {
-      case 'excellent': return <Trophy className="w-8 h-8 text-green-500" />;
-      case 'good': return <CheckCircle className="w-8 h-8 text-blue-500" />;
-      case 'needs_improvement': return <Target className="w-8 h-8 text-yellow-500" />;
-      case 'needs_attention': return <AlertTriangle className="w-8 h-8 text-red-500" />;
-      case 'not_assessed': return <HelpCircle className="w-8 h-8 text-muted-foreground" />;
-      default: return null;
-    }
-  };
+const LAW_NAMES: Record<string, string> = {
+  'Product Rule': 'Product Rule',
+  'Quotient Rule': 'Quotient Rule',
+  'Power Rule': 'Power Rule',
+  'Zero Exponent Rule': 'Zero Exponent Rule',
+  'Negative Exponent Rule': 'Negative Exponent Rule',
+  'Power of a Product Rule': 'Power of a Product Rule',
+  'Power of a Quotient Rule': 'Power of a Quotient Rule',
+  'Identity Rule': 'Identity Rule',
+};
 
-  const getPerformanceLabel = (performance: string) => {
-    switch (performance) {
-      case 'excellent': return 'Excellent Performance';
-      case 'good': return 'Good Performance';
-      case 'needs_improvement': return 'Needs Improvement';
-      case 'needs_attention': return 'Needs Immediate Attention';
-      case 'not_assessed': return 'Not Yet Assessed';
-      default: return 'Not Assessed';
-    }
-  };
+type DifficultyKey = 'easy' | 'medium' | 'hard';
 
-  const handleDownloadClick = () => {
-    setShowNameDialog(true);
-  };
+function ScoreBar({ score, passed }: { score: number; passed: boolean }) {
+  return (
+    <div className="w-full">
+      <div className="flex justify-between text-xs mb-1">
+        <span className="text-slate-400">Score</span>
+        <span className={passed ? 'text-emerald-400' : 'text-red-400'}>{score}%</span>
+      </div>
+      <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${Math.min(score, 100)}%` }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className={`h-full rounded-full ${passed ? 'bg-emerald-500' : 'bg-red-500'}`}
+        />
+      </div>
+    </div>
+  );
+}
 
-  const handleDownloadPDF = () => {
-    const nameToUse = fullName.trim() || report.playerName || 'Student';
-    
-    // Create printable content with proper left alignment
-    const printContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Student Report - ${nameToUse}</title>
-          <style>
-            @media print {
-              @page { margin: 20mm; }
-            }
-            * { box-sizing: border-box; }
-            body { 
-              font-family: Arial, sans-serif; 
-              padding: 40px; 
-              max-width: 800px; 
-              margin: 0 auto; 
-              text-align: left;
-            }
-            h1 { color: #333; border-bottom: 2px solid #6366f1; padding-bottom: 10px; text-align: center; }
-            h2 { color: #4f46e5; margin-top: 30px; text-align: left; }
-            h3 { text-align: left; }
-            p { text-align: left; margin: 8px 0; }
-            ul { text-align: left; padding-left: 20px; }
-            li { text-align: left; margin: 5px 0; }
-            .header { text-align: center; margin-bottom: 30px; }
-            .section { margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; text-align: left; }
-            .level-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; text-align: left; }
-            .passed { border-left: 4px solid #22c55e; }
-            .failed { border-left: 4px solid #ef4444; }
-            .alert { background: #fef2f2; border: 1px solid #ef4444; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left; }
-            .recommendation { background: #f0f9ff; padding: 10px; margin: 5px 0; border-radius: 4px; text-align: left; }
-            .stat { display: inline-block; margin: 10px 20px 10px 0; text-align: left; }
-            .stat-value { font-size: 24px; font-weight: bold; color: #4f46e5; }
-            .stat-label { font-size: 12px; color: #666; }
-            table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-            th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-            th { background: #f5f5f5; }
-            .footer { margin-top: 40px; text-align: center; color: #666; font-size: 12px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>EXPONENTIA - Student Performance Report</h1>
-            <p style="text-align: center;">Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
-          </div>
-          
-          <div class="section">
-            <h2>Student Information</h2>
-            <p><strong>Name:</strong> ${nameToUse}</p>
-            <p><strong>Overall Performance:</strong> ${getPerformanceLabel(report.overallPerformance)}</p>
-            <p><strong>Levels Completed:</strong> ${report.completedLevels}/3</p>
-            <p><strong>Average Score:</strong> ${report.averageScore !== null ? report.averageScore + '%' : 'N/A'}</p>
-          </div>
-
-          ${needsAttention ? `
-          <div class="alert">
-            <h3>ATTENTION REQUIRED</h3>
-            <p>This student requires additional support and guidance. The student has struggled to meet the passing threshold after multiple attempts.</p>
-            <p><strong>Observations:</strong></p>
-            <ul>
-              <li>Student may have difficulty understanding fundamental exponential concepts</li>
-              <li>Additional one-on-one instruction is recommended</li>
-              <li>Consider reviewing prerequisite mathematical skills</li>
-            </ul>
-          </div>
-          ` : ''}
-
-          <h2>Quiz Performance by Level</h2>
-          
-          ${report.easyLevel ? `
-          <div class="level-card ${report.easyLevel.passed ? 'passed' : 'failed'}">
-            <h3>Easy Level - ${report.easyLevel.passed ? 'PASSED' : 'NOT PASSED'}</h3>
-            <table>
-              <tr><td><strong>Attempts:</strong></td><td>${report.easyLevel.attempts}</td></tr>
-              <tr><td><strong>Average Score:</strong></td><td>${report.easyLevel.averageScore}%</td></tr>
-              <tr><td><strong>Individual Scores:</strong></td><td>${report.easyLevel.scores.map(s => s + '%').join(', ')}</td></tr>
-              <tr><td><strong>Correct Answers (Best):</strong></td><td>${Math.round((Math.max(...report.easyLevel.scores) / 100) * 50)}/50</td></tr>
-              <tr><td><strong>Mistakes (Best):</strong></td><td>${50 - Math.round((Math.max(...report.easyLevel.scores) / 100) * 50)}/50</td></tr>
-            </table>
-            ${report.easyLevel.missedLaws.length > 0 ? `<p><strong>Laws Missed:</strong> ${report.easyLevel.missedLaws.join(', ')}</p>` : ''}
-          </div>
-          ` : '<p>Easy level not attempted</p>'}
-
-          ${report.mediumLevel ? `
-          <div class="level-card ${report.mediumLevel.passed ? 'passed' : 'failed'}">
-            <h3>Medium Level - ${report.mediumLevel.passed ? 'PASSED' : 'NOT PASSED'}</h3>
-            <table>
-              <tr><td><strong>Attempts:</strong></td><td>${report.mediumLevel.attempts}</td></tr>
-              <tr><td><strong>Average Score:</strong></td><td>${report.mediumLevel.averageScore}%</td></tr>
-              <tr><td><strong>Individual Scores:</strong></td><td>${report.mediumLevel.scores.map(s => s + '%').join(', ')}</td></tr>
-              <tr><td><strong>Correct Answers (Best):</strong></td><td>${Math.round((Math.max(...report.mediumLevel.scores) / 100) * 50)}/50</td></tr>
-              <tr><td><strong>Mistakes (Best):</strong></td><td>${50 - Math.round((Math.max(...report.mediumLevel.scores) / 100) * 50)}/50</td></tr>
-            </table>
-            ${report.mediumLevel.missedLaws.length > 0 ? `<p><strong>Laws Missed:</strong> ${report.mediumLevel.missedLaws.join(', ')}</p>` : ''}
-          </div>
-          ` : '<p>Medium level not attempted</p>'}
-
-          ${report.hardLevel ? `
-          <div class="level-card ${report.hardLevel.passed ? 'passed' : 'failed'}">
-            <h3>Hard Level - ${report.hardLevel.passed ? 'PASSED' : 'NOT PASSED'}</h3>
-            <table>
-              <tr><td><strong>Attempts:</strong></td><td>${report.hardLevel.attempts}</td></tr>
-              <tr><td><strong>Average Score:</strong></td><td>${report.hardLevel.averageScore}%</td></tr>
-              <tr><td><strong>Individual Scores:</strong></td><td>${report.hardLevel.scores.map(s => s + '%').join(', ')}</td></tr>
-              <tr><td><strong>Correct Answers (Best):</strong></td><td>${Math.round((Math.max(...report.hardLevel.scores) / 100) * 50)}/50</td></tr>
-              <tr><td><strong>Mistakes (Best):</strong></td><td>${50 - Math.round((Math.max(...report.hardLevel.scores) / 100) * 50)}/50</td></tr>
-            </table>
-            ${report.hardLevel.missedLaws.length > 0 ? `<p><strong>Laws Missed:</strong> ${report.hardLevel.missedLaws.join(', ')}</p>` : ''}
-          </div>
-          ` : '<p>Hard level not attempted</p>'}
-
-          ${report.lawsToFocus.length > 0 ? `
-          <h2>Areas Requiring Focus</h2>
-          <div class="section">
-            <p>The following exponential laws need additional practice:</p>
-            <ul>
-              ${report.lawsToFocus.map(law => `<li>${law}</li>`).join('')}
-            </ul>
-          </div>
-          ` : ''}
-
-          <h2>Recommendations</h2>
-          <div class="section">
-            ${report.recommendations.length > 0 
-              ? '<ul>' + report.recommendations.map(rec => `<li>${rec}</li>`).join('') + '</ul>'
-              : '<p>Complete quiz levels to receive personalized recommendations.</p>'}
-          </div>
-
-          <div class="footer">
-            <p>This report was generated by EXPONENTIA - The Realm of Exponential Power</p>
-            <p>For offline educational assessment purposes</p>
-          </div>
-        </body>
-      </html>
-    `;
-
-    // Create a Blob and open it with a proper URL to avoid "about:blank"
-    const blob = new Blob([printContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const printWindow = window.open(url, '_blank');
-    
-    if (printWindow) {
-      printWindow.onload = () => {
-        printWindow.print();
-        // Clean up the URL after printing
-        URL.revokeObjectURL(url);
-      };
-    }
-    
-    setShowNameDialog(false);
-    setFullName('');
-  };
-
-  const renderLevelCard = (
-    level: StudentReportType['easyLevel'], 
-    levelName: string, 
-    levelIcon: React.ReactNode
-  ) => {
-    if (!level) {
-      return (
-        <Card className="p-4 bg-muted/20 border-border/50">
-          <div className="flex items-center gap-3 text-muted-foreground">
-            {levelIcon}
-            <div>
-              <p className="font-semibold">{levelName} Level</p>
-              <p className="text-sm">Not attempted yet</p>
-            </div>
-          </div>
-        </Card>
-      );
-    }
-
+function LevelCard({ title, icon, level, passed, accentClass }: {
+  title: string;
+  icon: React.ReactNode;
+  level: ReportType['easyLevel'] | ReportType['mediumLevel'] | ReportType['hardLevel'];
+  passed: boolean;
+  accentClass: string;
+}) {
+  if (!level) {
     return (
-      <Card className={`p-4 border-2 ${level.passed ? 'border-green-500/50 bg-green-500/5' : 'border-red-500/50 bg-red-500/5'}`}>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            {levelIcon}
-            <div>
-              <p className="font-semibold text-foreground">{levelName} Level</p>
-              <p className={`text-sm flex items-center gap-1 ${level.passed ? 'text-green-500' : 'text-red-500'}`}>
-                {level.passed ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                {level.passed ? 'Passed' : 'Not Passed'}
-              </p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-2xl font-bold text-foreground">{level.averageScore}%</p>
-            <p className="text-xs text-muted-foreground">Average</p>
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Attempts: {level.attempts}/3</span>
-            <span className="text-muted-foreground">
-              Scores: {level.scores.join('%, ')}%
-            </span>
-          </div>
-          <Progress value={level.averageScore} className="h-2" />
-          
-          {level.missedLaws.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-border/50">
-              <p className="text-xs text-muted-foreground mb-1">Laws to review:</p>
-              <div className="flex flex-wrap gap-1">
-                {level.missedLaws.map((law, i) => (
-                  <span key={i} className="text-xs bg-destructive/20 text-destructive px-2 py-0.5 rounded">
-                    {law}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </Card>
+      <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-5 text-center">
+        <div className={`${accentClass} mb-2 flex justify-center`}>{icon}</div>
+        <h3 className="font-display text-white mb-1">{title}</h3>
+        <p className="text-slate-500 text-sm">Not attempted</p>
+      </div>
     );
-  };
+  }
 
   return (
-    <div className="min-h-screen p-4 md:p-8 relative">
-      {/* Background */}
-      <ExponentiaBackground overlayOpacity={0.5} />
-      
-      <div className="max-w-4xl mx-auto relative z-10" ref={reportRef}>
-        {/* Header */}
-        <motion.div 
-          className="flex items-center justify-between mb-6 flex-wrap gap-4"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" onClick={() => navigate('/statistics')}>
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-orbitron font-bold text-glow">
-                Student Report
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Performance analysis for {report.playerName || 'Student'}
-              </p>
-            </div>
+    <div className={`bg-slate-800/40 border rounded-xl p-5 ${passed ? 'border-emerald-500/30' : 'border-slate-700/50'}`}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className={accentClass}>{icon}</div>
+          <h3 className="font-display text-white">{title}</h3>
+        </div>
+        {passed && <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />}
+      </div>
+      <div className="space-y-3">
+        <ScoreBar score={Math.round(level.averageScore)} passed={passed} />
+        <div className="flex justify-between text-xs text-slate-400">
+          <span>Attempts: {level.attempts}</span>
+          <span>Best: {Math.max(...level.scores)}%</span>
+        </div>
+      </div>
+      {level.missedLaws.length > 0 && (
+        <div className="mt-3 border-t border-slate-700/50 pt-3">
+          <p className="text-xs text-slate-500 mb-1">Laws to review:</p>
+          <div className="flex flex-wrap gap-1">
+            {level.missedLaws.map(law => (
+              <span key={law} className="text-xs bg-red-500/10 text-red-400 px-2 py-0.5 rounded-full">
+                {law}
+              </span>
+            ))}
           </div>
-          <Button onClick={handleDownloadClick} className="gap-2">
-            <Download className="w-4 h-4" />
-            Download PDF
+        </div>
+      )}
+    </div>
+  );
+}
+
+function printReport(report: ReportType, playerName: string) {
+  const gradeInfo = GRADE_SCALE[report.overallPerformance] || GRADE_SCALE.not_assessed;
+  const totalCorrect = report.easyLevel && report.mediumLevel && report.hardLevel
+    ? report.easyLevel.scores.reduce((a, b) => a + b, 0) +
+      report.mediumLevel.scores.reduce((a, b) => a + b, 0) +
+      report.hardLevel.scores.reduce((a, b) => a + b, 0)
+    : 0;
+
+  const buildLevelSection = (
+    title: string,
+    level: ReportType['easyLevel'] | ReportType['mediumLevel'] | ReportType['hardLevel'],
+    passed: boolean
+  ) => {
+    if (!level) return `<div class="level-card"><h3>${title}</h3><p class="muted">Not attempted</p></div>`;
+    const avg = Math.round(level.averageScore);
+    const best = level.scores.length > 0 ? Math.max(...level.scores) : 0;
+    const barColor = passed ? '#10b981' : '#ef4444';
+    const status = passed
+      ? '<span class="badge badge-pass">PASSED</span>'
+      : '<span class="badge badge-fail">NOT PASSED</span>';
+
+    const missed = level.missedLaws.length > 0
+      ? `<div class="missed-laws">
+          <p>Laws to review:</p>
+          <div class="tags">${level.missedLaws.map(l => `<span class="tag">${l}</span>`).join('')}</div>
+        </div>`
+      : '';
+
+    return `
+      <div class="level-card ${passed ? 'passed' : ''}">
+        <div class="level-header">
+          <h3>${title}</h3>
+          ${status}
+        </div>
+        <div class="score-bar-track">
+          <div class="score-bar-fill" style="width: ${Math.min(avg, 100)}%; background: ${barColor}"></div>
+        </div>
+        <div class="score-row">
+          <span>Average: <strong>${avg}%</strong></span>
+          <span>Best: <strong>${best}%</strong></span>
+          <span>Attempts: <strong>${level.attempts}</strong></span>
+        </div>
+        ${missed}
+      </div>`;
+  };
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Student Report - ${playerName}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+    background: #fff;
+    padding: 40px;
+    line-height: 1.5;
+  }
+  @media print {
+    body { padding: 20px; }
+    .no-print { display: none !important; }
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #6366f1;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 4px;
+  }
+  .header .subtitle {
+    font-size: 13px;
+    color: #64748b;
+  }
+  .overview {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .overview-card {
+    flex: 1;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .overview-card .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+  }
+  .overview-card .value {
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .overview-card .sub {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .levels {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .level-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .level-card.passed {
+    border-color: #10b981;
+    background: #f0fdf4;
+  }
+  .level-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .level-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-pass { background: #dcfce7; color: #16a34a; }
+  .badge-fail { background: #fee2e2; color: #dc2626; }
+  .score-bar-track {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease;
+  }
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #64748b;
+  }
+  .score-row strong { color: #1e293b; }
+  .missed-laws {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+  }
+  .missed-laws p { font-size: 11px; color: #94a3b8; margin-bottom: 6px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag {
+    font-size: 10px;
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .muted { color: #94a3b8; font-size: 13px; text-align: center; padding: 20px 0; }
+  .recommendations {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 30px;
+  }
+  .recommendations ul {
+    list-style: none;
+    padding: 0;
+  }
+  .recommendations li {
+    font-size: 13px;
+    color: #475569;
+    padding: 6px 0;
+    padding-left: 18px;
+    position: relative;
+  }
+  .recommendations li::before {
+    content: "\\2022";
+    color: #6366f1;
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+  }
+  .footer {
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+  .no-print {
+    margin-top: 20px;
+    text-align: center;
+  }
+  .no-print button {
+    padding: 10px 28px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>Law of Exponents - Student Report</h1>
+    <p class="subtitle">${playerName} | Generated ${new Date().toLocaleDateString()}</p>
+  </div>
+
+  <div class="overview">
+    <div class="overview-card">
+      <div class="label">Overall Grade</div>
+      <div class="value" style="color: ${report.overallPerformance === 'excellent' ? '#16a34a' : report.overallPerformance === 'good' ? '#2563eb' : '#dc2626'}">${gradeInfo.grade}</div>
+      <div class="sub">${gradeInfo.label}</div>
+    </div>
+    <div class="overview-card">
+      <div class="label">Average Score</div>
+      <div class="value" style="color: #6366f1">${report.averageScore !== null ? report.averageScore + '%' : 'N/A'}</div>
+      <div class="sub">Across ${report.totalAttempts} attempt${report.totalAttempts !== 1 ? 's' : ''}</div>
+    </div>
+    <div class="overview-card">
+      <div class="label">Levels Completed</div>
+      <div class="value" style="color: ${report.completedLevels === 3 ? '#16a34a' : '#f59e0b'}">${report.completedLevels}/3</div>
+      <div class="sub">${report.completedLevels === 3 ? 'All levels done' : 'In progress'}</div>
+    </div>
+  </div>
+
+  <div class="section-title">Level Breakdown</div>
+  <div class="levels">
+    ${buildLevelSection('Easy', report.easyLevel, report.easyLevel?.passed ?? false)}
+    ${buildLevelSection('Medium', report.mediumLevel, report.mediumLevel?.passed ?? false)}
+    ${buildLevelSection('Hard', report.hardLevel, report.hardLevel?.passed ?? false)}
+  </div>
+
+  ${report.lawsToFocus.length > 0 ? `
+  <div class="section-title">Laws to Focus On</div>
+  <div class="recommendations">
+    <div class="tags" style="gap: 6px">
+      ${report.lawsToFocus.map(l => `<span class="tag" style="font-size: 12px; padding: 4px 12px">${l}</span>`).join('')}
+    </div>
+  </div>` : ''}
+
+  ${report.recommendations.length > 0 ? `
+  <div class="section-title">Recommendations</div>
+  <div class="recommendations">
+    <ul>
+      ${report.recommendations.map(r => `<li>${r}</li>`).join('')}
+    </ul>
+  </div>` : ''}
+
+  <div class="footer">
+    <p>Generated by Exponentia - Law of Exponents Learning Platform</p>
+  </div>
+
+  <div class="no-print">
+    <button onclick="window.print()">Print Report</button>
+  </div>
+</body>
+</html>`;
+
+  const printWindow = window.open('', '_blank', 'width=900,height=700');
+  if (printWindow) {
+    printWindow.document.write(html);
+    printWindow.document.close();
+  }
+}
+
+export default function StudentReport() {
+  const navigate = useNavigate();
+  const report = useGameStore(state => state.getStudentReport());
+  const { playerName } = report;
+  const [downloading, setDownloading] = useState(false);
+  const [showDownloadSuccess, setShowDownloadSuccess] = useState(false);
+
+  useEffect(() => {
+    document.title = `Student Report - ${playerName || 'Student'}`;
+  }, [playerName]);
+
+  const gradeInfo = GRADE_SCALE[report.overallPerformance] || GRADE_SCALE.not_assessed;
+  const perfColor = PERFORMANCE_COLORS[report.overallPerformance] || 'text-gray-400';
+
+  const handlePrint = async () => {
+    setDownloading(true);
+    setShowDownloadSuccess(false);
+    try {
+      printReport(report, playerName);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setShowDownloadSuccess(true);
+      setTimeout(() => setShowDownloadSuccess(false), 2000);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const levels: Array<{ key: DifficultyKey; title: string; level: ReportType['easyLevel'] | ReportType['mediumLevel'] | ReportType['hardLevel']; accent: string }> = [
+    { key: 'easy', title: DIFFICULTY_CONFIG.easy.label, level: report.easyLevel, accent: 'text-emerald-400' },
+    { key: 'medium', title: DIFFICULTY_CONFIG.medium.label, level: report.mediumLevel, accent: 'text-amber-400' },
+    { key: 'hard', title: DIFFICULTY_CONFIG.hard.label, level: report.hardLevel, accent: 'text-rose-400' },
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-white">
+      {/* Header */}
+      <div className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/50">
+        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="text-slate-400 hover:text-white gap-1"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back
           </Button>
+          <h1 className="font-display text-lg">Student Report</h1>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handlePrint}
+            disabled={downloading}
+            className="text-indigo-400 hover:text-indigo-300 gap-1"
+          >
+            {downloading ? (
+              <motion.div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Download className="w-4 h-4" />
+            )}
+            {downloading ? 'Printing...' : 'Print'}
+          </Button>
+        </div>
+      </div>
+
+      {/* Download success toast */}
+      <motion.div
+        initial={false}
+        animate={showDownloadSuccess ? { y: 0, opacity: 1 } : { y: -40, opacity: 0 }}
+        className="fixed top-16 left-1/2 -translate-x-1/2 z-[100]"
+      >
+        {showDownloadSuccess && (
+          <div className="bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-sm font-medium">
+            <Download className="w-4 h-4" /> Print dialog opened
+          </div>
+        )}
+      </motion.div>
+
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        {/* Student & Grade */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-6 text-center"
+        >
+          <p className="text-sm text-slate-500 uppercase tracking-widest mb-1">Student</p>
+          <h2 className="font-display text-3xl text-white mb-4">{playerName || 'Unknown'}</h2>
+          <div className="inline-flex items-center gap-3 bg-slate-900/50 rounded-full px-6 py-3 border border-slate-700/30">
+            <Trophy className={`w-6 h-6 ${perfColor}`} />
+            <span className={`text-2xl font-bold ${perfColor}`}>{gradeInfo.grade}</span>
+            <span className="text-slate-400">|</span>
+            <span className={`font-semibold ${perfColor}`}>{gradeInfo.label}</span>
+          </div>
         </motion.div>
 
-        {/* Full Name Dialog */}
-        <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Enter Full Name for Report</DialogTitle>
-              <DialogDescription>
-                Please enter the student's complete name for the official report document.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input
-                  id="fullName"
-                  placeholder="e.g., Juan Dela Cruz"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && fullName.trim()) {
-                      handleDownloadPDF();
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowNameDialog(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleDownloadPDF} disabled={!fullName.trim()}>
-                <Download className="w-4 h-4 mr-2" />
-                Generate Report
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Overall Performance Card */}
+        {/* Summary Cards */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
+          className="grid grid-cols-3 gap-4"
         >
-          <Card className={`p-6 mb-6 border-2 ${
-            report.overallPerformance === 'needs_attention' 
-              ? 'border-red-500 bg-red-500/5' 
-              : 'border-primary/20'
-          }`}>
-            <div className="flex items-center gap-4 mb-4">
-              {getPerformanceIcon(report.overallPerformance)}
-              <div>
-                <h2 className={`text-xl font-bold ${getPerformanceColor(report.overallPerformance)}`}>
-                  {getPerformanceLabel(report.overallPerformance)}
-                </h2>
-                <p className="text-muted-foreground">Overall assessment based on quiz performance</p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-              <div className="text-center p-3 bg-background/50 rounded-lg">
-                <p className="text-2xl font-bold text-foreground">{report.totalAttempts}</p>
-                <p className="text-xs text-muted-foreground">Total Attempts</p>
-              </div>
-              <div className="text-center p-3 bg-background/50 rounded-lg">
-                <p className="text-2xl font-bold text-foreground">
-                  {report.averageScore !== null ? `${report.averageScore}%` : 'N/A'}
-                </p>
-                <p className="text-xs text-muted-foreground">Average Score</p>
-              </div>
-              <div className="text-center p-3 bg-background/50 rounded-lg">
-                <p className="text-2xl font-bold text-foreground">{report.completedLevels}/3</p>
-                <p className="text-xs text-muted-foreground">Levels Passed</p>
-              </div>
-              <div className="text-center p-3 bg-background/50 rounded-lg">
-                <p className="text-2xl font-bold text-foreground">{report.lawsToFocus.length}</p>
-                <p className="text-xs text-muted-foreground">Laws to Review</p>
-              </div>
-            </div>
-          </Card>
+          <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 text-center">
+            <TrendingUp className="w-5 h-5 text-indigo-400 mx-auto mb-1" />
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Average</p>
+            <p className="font-display text-2xl text-white">
+              {report.averageScore !== null ? `${report.averageScore}%` : 'N/A'}
+            </p>
+          </div>
+          <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 text-center">
+            <BookOpen className="w-5 h-5 text-amber-400 mx-auto mb-1" />
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Attempts</p>
+            <p className="font-display text-2xl text-white">{report.totalAttempts}</p>
+          </div>
+          <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 text-center">
+            <Star className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Completed</p>
+            <p className="font-display text-2xl text-white">{report.completedLevels}/3</p>
+          </div>
         </motion.div>
 
-        {/* Attention Alert */}
-        {report.overallPerformance === 'needs_attention' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Card className="p-6 mb-6 bg-red-500/10 border-2 border-red-500">
-              <div className="flex items-start gap-4">
-                <AlertTriangle className="w-8 h-8 text-red-500 flex-shrink-0" />
-                <div>
-                  <h3 className="text-lg font-bold text-red-500 mb-2">
-                    Student Needs Immediate Attention
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    This student has struggled to achieve the passing score after multiple attempts. 
-                    The following observations may help guide intervention:
-                  </p>
-                  <ul className="text-sm space-y-2 text-foreground">
-                    <li className="flex items-start gap-2">
-                      <XCircle className="w-4 h-4 text-red-500 mt-0.5" />
-                      Student may have difficulty understanding fundamental exponential concepts
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <XCircle className="w-4 h-4 text-red-500 mt-0.5" />
-                      Additional one-on-one instruction is strongly recommended
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <XCircle className="w-4 h-4 text-red-500 mt-0.5" />
-                      Consider reviewing prerequisite mathematical skills (multiplication, division)
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <XCircle className="w-4 h-4 text-red-500 mt-0.5" />
-                      Student may benefit from alternative learning approaches (visual aids, hands-on activities)
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-        )}
-
-        {/* Level Performance */}
+        {/* Level Reports */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mb-6"
+          transition={{ delay: 0.2 }}
         >
-          <h2 className="text-xl font-orbitron font-bold mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-primary" />
-            Quiz Performance by Level
-          </h2>
-          <div className="space-y-4">
-            {renderLevelCard(report.easyLevel, 'Easy', <Star className="w-6 h-6 text-green-500" />)}
-            {renderLevelCard(report.mediumLevel, 'Medium', <Star className="w-6 h-6 text-yellow-500" />)}
-            {renderLevelCard(report.hardLevel, 'Hard', <Star className="w-6 h-6 text-red-500" />)}
+          <h3 className="font-display text-white mb-3 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-indigo-400" /> Level Breakdown
+          </h3>
+          <div className="grid gap-4">
+            {levels.map(({ key, title, level, accent }) => {
+              const icons: Record<DifficultyKey, React.ReactNode> = {
+                easy: <Star className="w-5 h-5" />,
+                medium: <TrendingUp className="w-5 h-5" />,
+                hard: <AlertTriangle className="w-5 h-5" />,
+              };
+              return (
+                <LevelCard
+                  key={key}
+                  title={title}
+                  icon={icons[key]}
+                  level={level}
+                  passed={level?.passed ?? false}
+                  accentClass={accent}
+                />
+              );
+            })}
           </div>
         </motion.div>
 
         {/* Laws to Focus */}
         {report.lawsToFocus.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mb-6"
+            transition={{ delay: 0.3 }}
           >
-            <h2 className="text-xl font-orbitron font-bold mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-primary" />
-              Areas Requiring Focus
-            </h2>
-            <Card className="p-4 bg-card/80">
-              <p className="text-sm text-muted-foreground mb-3">
-                The student frequently missed questions related to these exponential laws:
-              </p>
-              <div className="space-y-2">
-                {report.lawsToFocus.map((law, index) => (
-                  <div key={index} className="flex items-center gap-3 p-2 bg-destructive/10 rounded-lg">
-                    <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center text-xs font-bold text-destructive">
-                      {index + 1}
-                    </div>
-                    <span className="text-foreground">{law}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
+            <h3 className="font-display text-white mb-3">Laws to Focus On</h3>
+            <div className="flex flex-wrap gap-2">
+              {report.lawsToFocus.map(law => (
+                <span key={law} className="text-sm bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1 rounded-full">
+                  {LAW_NAMES[law] || law}
+                </span>
+              ))}
+            </div>
           </motion.div>
         )}
 
         {/* Recommendations */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <h2 className="text-xl font-orbitron font-bold mb-4 flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-primary" />
-            Recommendations
-          </h2>
-          <Card className="p-4 bg-card/80">
-            <ul className="space-y-3 list-none">
-              {report.recommendations.map((rec, index) => (
-                <li key={index} className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg">
-                  <span className="w-5 h-5 flex-shrink-0 mt-0.5 flex items-center justify-center rounded-full bg-primary/20 text-primary text-xs font-bold">
-                    {index + 1}
-                  </span>
-                  <p className="text-sm text-foreground">{rec}</p>
-                </li>
+        {report.recommendations.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <h3 className="font-display text-white mb-3">Recommendations</h3>
+            <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 space-y-2">
+              {report.recommendations.map((rec, i) => (
+                <div key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                  <span className="text-indigo-400 mt-0.5">{'>'}</span>
+                  {rec}
+                </div>
               ))}
-            </ul>
-          </Card>
-        </motion.div>
-
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="text-center mt-8 text-sm text-muted-foreground"
-        >
-          <p>Report generated on {new Date().toLocaleDateString()}</p>
-          <p>EXPONENTIA - The Realm of Exponential Power</p>
-        </motion.div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );
-};
-
-export default StudentReportPage;
+}

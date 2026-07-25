@@ -1,15 +1,16 @@
 // Sound effects utility using Web Audio API for game feedback
 
+import { STORAGE_KEYS } from '@/constants/quizConfig';
+
 class SoundEffects {
   private audioContext: AudioContext | null = null;
   private enabled: boolean = true;
   private volume: number = 0.5;
 
   constructor() {
-    // Load settings from localStorage
     if (typeof window !== 'undefined') {
-      const savedEnabled = localStorage.getItem('soundEnabled');
-      const savedVolume = localStorage.getItem('soundVolume');
+      const savedEnabled = localStorage.getItem(STORAGE_KEYS.SOUND_ENABLED);
+      const savedVolume = localStorage.getItem(STORAGE_KEYS.SOUND_VOLUME);
       this.enabled = savedEnabled !== null ? savedEnabled === 'true' : true;
       this.volume = savedVolume !== null ? parseFloat(savedVolume) : 0.5;
     }
@@ -17,10 +18,16 @@ class SoundEffects {
 
   setEnabled(enabled: boolean) {
     this.enabled = enabled;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEYS.SOUND_ENABLED, String(enabled));
+    }
   }
 
   setVolume(volume: number) {
     this.volume = Math.max(0, Math.min(1, volume));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEYS.SOUND_VOLUME, String(this.volume));
+    }
   }
 
   private getAudioContext(): AudioContext {
