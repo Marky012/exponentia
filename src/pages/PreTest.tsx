@@ -225,7 +225,7 @@ const PreTest = () => {
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
             <div className="min-w-0">
-              <h1 className="text-lg sm:text-2xl font-orbitron font-bold text-glow truncate">Pre-Test: {law.name}</h1>
+              <h1 className="text-lg sm:text-2xl font-orbitron font-bold text-primary truncate">Pre-Test: {law.name}</h1>
               <p className="text-xs sm:text-sm text-muted-foreground">Get {PRETEST_PASSING_SCORE}/{PRETEST_PASSING_SCORE} correct to earn the gem</p>
             </div>
           </div>

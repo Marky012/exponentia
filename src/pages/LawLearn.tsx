@@ -112,7 +112,7 @@ const LawLearn = () => {
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-orbitron font-bold text-glow truncate">{law.name}</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-orbitron font-bold text-primary truncate">{law.name}</h1>
               <p className="text-xs sm:text-sm text-muted-foreground truncate">{law.scene}</p>
             </div>
           </div>
