@@ -88,7 +88,7 @@ const Laws = () => {
                     ? "bg-gradient-to-br from-gem/10 to-gem-dark/5 border-gem/60 card-completed shadow-[0_0_24px_hsl(45_95%_58%/0.2)]"
                     : law.completed
                     ? "bg-primary/15 border-primary/60 card-learning"
-                    : "bg-secondary/15 border-primary/25 card-locked"
+                    : "bg-card/15 border-primary/30 card-locked"
                 )}
                 onClick={() => handleLawClick(law.id, law.completed, law.gemEarned)}
               >
