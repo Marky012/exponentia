@@ -166,7 +166,7 @@ const PreTest = () => {
     return (
       <div className="min-h-screen p-4 md:p-8 flex items-center justify-center">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
-          <Card className="max-w-2xl w-full p-8 bg-card/90 backdrop-blur-sm border-2 border-primary/20 text-center">
+          <Card className="max-w-2xl w-full p-8 bg-primary/15 backdrop-blur-sm border-2 border-primary/60 card-learning text-center">
             <motion.div 
               className={cn("w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center", passed ? "bg-gem/20 border-4 border-gem" : "bg-destructive/20 border-4 border-destructive")}
               initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
@@ -259,7 +259,7 @@ const PreTest = () => {
         <AnimatePresence mode="wait">
           <motion.div key={currentQuestionIndex} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.3 }}>
             <Card className={cn(
-              "p-4 sm:p-6 md:p-8 bg-card/80 backdrop-blur-sm border-2 transition-all duration-300",
+              "p-4 sm:p-6 md:p-8 bg-primary/15 backdrop-blur-sm border-2 transition-all duration-300 card-learning",
               lastAnswerCorrect === true && "border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.3)]",
               lastAnswerCorrect === false && "border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-shake",
               lastAnswerCorrect === null && "border-primary/20"

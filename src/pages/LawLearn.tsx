@@ -121,7 +121,7 @@ const LawLearn = () => {
           </div>
         </div>
 
-        <Card className="p-3 sm:p-4 md:p-6 lg:p-8 bg-card/80 backdrop-blur-sm border-2 border-primary/20">
+        <Card className="p-3 sm:p-4 md:p-6 lg:p-8 bg-primary/15 backdrop-blur-sm border-2 border-primary/60 card-learning">
           {/* Law Formula */}
           <div className="relative overflow-hidden bg-gradient-to-r from-primary/15 via-primary/8 to-secondary/15 border border-primary/40 rounded-lg p-3 sm:p-4 md:p-6 mb-4 sm:mb-6 md:mb-8 text-center">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
