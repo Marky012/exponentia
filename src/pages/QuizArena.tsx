@@ -165,9 +165,9 @@ const QuizArena = () => {
                   relative overflow-hidden transition-all duration-300 border
                   ${level.unlocked 
                     ? level.completed
-                      ? 'hover:shadow-lg hover:scale-[1.02] border-gem/40 card-glow-gem'
-                      : 'hover:shadow-lg hover:scale-[1.02] border-border hover:border-primary/40 card-hover-lift'
-                    : 'opacity-60 border-border'
+                      ? 'hover:shadow-lg hover:scale-[1.02] bg-primary/15 border-gem/60 card-glow-gem card-learning'
+                      : 'hover:shadow-lg hover:scale-[1.02] bg-primary/15 border-primary/60 card-hover-lift card-learning'
+                    : 'opacity-60 bg-card/15 border-primary/30 card-locked'
                   }
                 `}>
                   {/* Gradient background */}
