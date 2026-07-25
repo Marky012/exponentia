@@ -93,7 +93,7 @@ const Laws = () => {
                   <div className="text-3xl sm:text-4xl">
                     {law.gemEarned ? (
                       <div className="relative">
-                        <Sparkles className="w-7 h-7 sm:w-10 sm:h-10 text-primary animate-pulse-glow" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.8))' }} />
+                        <Sparkles className="w-7 h-7 sm:w-10 sm:h-10 text-primary animate-pulse-glow" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.4)) drop-shadow(0 0 14px hsl(var(--primary) / 0.2))' }} />
                         <div className="absolute inset-0 bg-primary/15 rounded-full blur-xl" />
                       </div>
                     ) : law.completed ? (
@@ -153,7 +153,7 @@ const Laws = () => {
           >
             <Card className="p-6 md:p-8 bg-gradient-to-br from-gem/20 via-gem/10 to-primary/20 border-2 border-gem/60 shadow-[0_0_40px_hsl(45_95%_58%/0.25)]">
               <div className="relative inline-block mb-4">
-                <Sparkles className="w-14 h-14 text-gem mx-auto" style={{ filter: 'drop-shadow(0 0 12px hsl(45 95% 58% / 0.8))' }} />
+                <Sparkles className="w-14 h-14 text-gem mx-auto" style={{ filter: 'drop-shadow(0 0 8px hsl(45 95% 58% / 0.4)) drop-shadow(0 0 20px hsl(45 95% 58% / 0.2))' }} />
                 <div className="absolute inset-0 bg-gem/20 rounded-full blur-2xl" />
               </div>
               <h2 className="text-2xl font-orbitron font-bold mb-2 text-glow-gold">All Gems Collected!</h2>

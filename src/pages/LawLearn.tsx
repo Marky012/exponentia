@@ -129,7 +129,7 @@ const LawLearn = () => {
 
           {/* Elexia's Hint — full width */}
           <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 bg-primary/10 border border-primary/30 rounded-lg p-3 sm:p-4 shadow-[inset_0_1px_0_hsl(var(--primary)/0.2)]">
-            <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-gem flex-shrink-0 mt-0.5 animate-orb-pulse" style={{ filter: 'drop-shadow(0 0 6px hsl(45 95% 58% / 0.7))' }} />
+            <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-gem flex-shrink-0 mt-0.5 animate-orb-pulse" style={{ filter: 'drop-shadow(0 0 6px hsl(45 95% 58% / 0.4)) drop-shadow(0 0 14px hsl(45 95% 58% / 0.2))' }} />
             <div className="min-w-0">
               <p className="font-semibold text-primary mb-1 text-sm sm:text-base font-orbitron">✨ Elexia's Hint:</p>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">

@@ -449,7 +449,7 @@ const Index = () => {
         >
           <div
             className="text-7xl sm:text-8xl font-orbitron font-black text-primary"
-            style={{ filter: 'drop-shadow(0 0 24px hsl(var(--theme-glow) / 0.9)) drop-shadow(0 0 48px hsl(var(--theme-glow) / 0.4))' }}
+            style={{ filter: 'drop-shadow(0 0 12px hsl(var(--theme-glow) / 0.5)) drop-shadow(0 0 32px hsl(var(--theme-glow) / 0.2))' }}
           >
             E
           </div>

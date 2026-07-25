@@ -205,11 +205,11 @@
 @layer utilities {
   /* ── Glow utilities ── */
   .glow {
-    filter: drop-shadow(0 0 8px hsl(var(--theme-glow) / 0.6));
+    filter: drop-shadow(0 0 6px hsl(var(--theme-glow) / 0.3)) drop-shadow(0 0 16px hsl(var(--theme-glow) / 0.15));
   }
 
   .glow-strong {
-    filter: drop-shadow(0 0 16px hsl(var(--theme-glow) / 0.8));
+    filter: drop-shadow(0 0 8px hsl(var(--theme-glow) / 0.4)) drop-shadow(0 0 24px hsl(var(--theme-glow) / 0.25)) drop-shadow(0 0 48px hsl(var(--theme-glow) / 0.1));
   }
 
   .text-glow {
@@ -308,10 +308,10 @@
 
   @keyframes pulseGlow {
     0%, 100% { 
-      filter: drop-shadow(0 0 8px hsl(var(--theme-glow) / 0.4));
+      filter: drop-shadow(0 0 6px hsl(var(--theme-glow) / 0.2)) drop-shadow(0 0 14px hsl(var(--theme-glow) / 0.1));
     }
     50% { 
-      filter: drop-shadow(0 0 20px hsl(var(--theme-glow) / 0.8));
+      filter: drop-shadow(0 0 10px hsl(var(--theme-glow) / 0.4)) drop-shadow(0 0 24px hsl(var(--theme-glow) / 0.2));
     }
   }
 

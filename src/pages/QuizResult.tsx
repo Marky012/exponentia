@@ -65,7 +65,7 @@ export default function QuizResult() {
             <>
               <div className="flex justify-center mb-4">
                 <div className="relative">
-                  <Trophy className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 text-gem animate-float" style={{ filter: 'drop-shadow(0 0 16px hsl(45 95% 58% / 0.9))' }} />
+                  <Trophy className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 text-gem animate-float" style={{ filter: 'drop-shadow(0 0 8px hsl(45 95% 58% / 0.4)) drop-shadow(0 0 20px hsl(45 95% 58% / 0.2))' }} />
                   <div className="absolute inset-0 bg-gem/20 rounded-full blur-xl animate-pulse" />
                 </div>
               </div>
@@ -79,7 +79,7 @@ export default function QuizResult() {
           ) : (
             <>
               <div className="flex justify-center mb-4">
-                <XCircle className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 text-destructive" style={{ filter: 'drop-shadow(0 0 12px hsl(var(--destructive) / 0.6))' }} />
+                <XCircle className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 text-destructive" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--destructive) / 0.3)) drop-shadow(0 0 16px hsl(var(--destructive) / 0.15))' }} />
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-destructive mb-2">
                 Not Quite...
