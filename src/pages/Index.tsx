@@ -19,15 +19,15 @@ import {
   AlertDialogDescription,
 } from '@/components/ui/alert-dialog';
 
-type BootPhase = 'boot' | 'connecting' | 'downloading' | 'saving' | 'ready';
+  type BootPhase = 'boot' | 'connecting' | 'downloading' | 'saving' | 'ready';
 
-const PHASE_MESSAGES: Record<BootPhase, string> = {
-  boot: 'Awakening Exponentia...',
-  connecting: 'Opening portal...',
-  downloading: 'Gathering forces...',
-  saving: 'Sealing the realm...',
-  ready: 'Enter the realm!',
-};
+  const PHASE_MESSAGES: Record<BootPhase, string> = {
+    boot: 'Awakening Exponentia...',
+    connecting: 'Opening portal...',
+    downloading: 'Gathering forces...',
+    saving: 'Sealing the realm...',
+    ready: 'Enter the realm!',
+  };
 
 const CACHE_TOTAL_ESTIMATE = 84;
 
@@ -145,17 +145,16 @@ const Index = () => {
         setTimeout(() => {
           setDownloadProgress(100);
           setPhase('ready');
-          setTimeout(() => navigateToGame(), 600);
         }, 400);
       } else if ('serviceWorker' in navigator) {
         setPhase('connecting');
       } else {
-        navigateToGame();
+        setPhase('ready');
       }
     }, 1200);
 
     return () => clearTimeout(bootTimer);
-  }, [navigateToGame, isFullyCached]);
+  }, [isFullyCached]);
 
   // Connecting phase
   useEffect(() => {
@@ -220,7 +219,6 @@ const Index = () => {
             if (!cancelled) {
               setDownloadProgress(100);
               setPhase('ready');
-              setTimeout(() => navigateToGame(), 600);
             }
           }, 600);
         }
@@ -248,7 +246,6 @@ const Index = () => {
             setTimeout(() => {
               if (!cancelled) {
                 setPhase('ready');
-                setTimeout(() => navigateToGame(), 600);
               }
             }, 800);
           }
@@ -266,7 +263,7 @@ const Index = () => {
       cancelled = true;
       cleanup.then(fn => fn());
     };
-  }, [phase, navigateToGame, getTotalCachedCount, milestone25, milestone50, milestone75]);
+  }, [phase, getTotalCachedCount, milestone25, milestone50, milestone75]);
 
   const getStatusMessage = () => {
     if (phase === 'boot') return PHASE_MESSAGES.boot;
@@ -640,12 +637,24 @@ const Index = () => {
                   <Progress value={100} className="h-3.5 bg-muted/40" />
                 </div>
 
-                {/* Install prompt after download */}
+                {/* Confirmation message */}
+                <motion.p
+                  className="text-xs text-muted-foreground/70 text-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {isReturningUser
+                    ? 'Your progress has been saved. Ready to continue your adventure!'
+                    : 'All resources loaded! Install to play offline anytime.'}
+                </motion.p>
+
+                {/* Install button */}
                 {installPrompt && !installDismissed && !isStandalone && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
+                    transition={{ delay: 0.5 }}
                   >
                     <button
                       onClick={handleInstall}
@@ -656,6 +665,21 @@ const Index = () => {
                     </button>
                   </motion.div>
                 )}
+
+                {/* Enter button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                >
+                  <button
+                    onClick={navigateToGame}
+                    className="mx-auto flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-orbitron font-bold hover:bg-primary/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/25"
+                  >
+                    <Sword className="w-4 h-4" />
+                    Enter the Realm
+                  </button>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
