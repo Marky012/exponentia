@@ -77,7 +77,7 @@ export const InstallButton = ({ className }: { className?: string }) => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           className={cn(
-            "flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary/20 border border-primary/40 text-primary text-sm font-orbitron font-bold",
+            "flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gem/20 border border-gem/40 text-gem text-sm font-orbitron font-bold",
             className
           )}
         >
@@ -100,7 +100,7 @@ export const InstallButton = ({ className }: { className?: string }) => {
             onClick={handleInstall}
             variant="default"
             size="lg"
-            className={cn("glow animate-pulseGlow gap-2", className)}
+            className={cn("glow animate-pulseGlow gap-2 bg-gem/90 hover:bg-gem text-background border-gem/50 font-orbitron font-bold", className)}
           >
             <Download className="w-5 h-5" />
             Download for Offline Play
