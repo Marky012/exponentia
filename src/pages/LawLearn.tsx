@@ -98,38 +98,37 @@ const LawLearn = () => {
   return (
     <div className="min-h-screen p-3 sm:p-4 md:p-8 relative">
       <ExponentiaBackground overlayOpacity={0.4} />
-      
-      {/* Settings button */}
-      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-        <SettingsMenu />
-      </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
-        <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-          <Button
-            variant="outline"
-            size="icon"
-            className="w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0"
-            onClick={() => navigate('/laws')}
-          >
-            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-          </Button>
-          <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-orbitron font-bold text-glow truncate">{law.name}</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground truncate">{law.scene}</p>
+        <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0"
+              onClick={() => navigate('/laws')}
+            >
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </Button>
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-orbitron font-bold text-glow truncate">{law.name}</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">{law.scene}</p>
+            </div>
           </div>
+          <SettingsMenu />
         </div>
 
+        {/* Main content card */}
         <Card className="p-3 sm:p-4 md:p-6 lg:p-8 bg-primary/15 backdrop-blur-sm border-2 border-primary/60 card-learning">
-          {/* Law Formula */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-primary/15 via-primary/8 to-secondary/15 border border-primary/40 rounded-lg p-3 sm:p-4 md:p-6 mb-4 sm:mb-6 md:mb-8 text-center">
+          {/* Law Formula — full width */}
+          <div className="relative overflow-hidden bg-gradient-to-r from-primary/15 via-primary/8 to-secondary/15 border border-primary/40 rounded-lg p-3 sm:p-4 md:p-6 mb-4 sm:mb-6 text-center">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
             <MathDisplay className="text-xl sm:text-2xl md:text-3xl relative z-10">{law.formula}</MathDisplay>
           </div>
 
-          {/* Elexia's Guidance */}
-          <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 md:mb-8 bg-primary/10 border border-primary/30 rounded-lg p-3 sm:p-4 shadow-[inset_0_1px_0_hsl(var(--primary)/0.2)]">
+          {/* Elexia's Hint — full width */}
+          <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 bg-primary/10 border border-primary/30 rounded-lg p-3 sm:p-4 shadow-[inset_0_1px_0_hsl(var(--primary)/0.2)]">
             <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-gem flex-shrink-0 mt-0.5 animate-orb-pulse" style={{ filter: 'drop-shadow(0 0 6px hsl(45 95% 58% / 0.7))' }} />
             <div className="min-w-0">
               <p className="font-semibold text-primary mb-1 text-sm sm:text-base font-orbitron">✨ Elexia's Hint:</p>
@@ -139,39 +138,44 @@ const LawLearn = () => {
             </div>
           </div>
 
-          {/* Educational Video Guide with Lazy Loading */}
-          {lawVideos[law.id] && (
-            <div className="mb-4 sm:mb-6 md:mb-8 rounded-lg overflow-hidden border border-primary/30">
-              <LazyVideo 
-                src={lawVideos[law.id]}
-                className="w-full"
-              />
-            </div>
-          )}
-
-          {/* Interactive Lessons */}
-          <div className="lesson-container">
-            <Suspense fallback={
-              <div className="space-y-4 py-8">
-                <div className="h-6 w-48 bg-muted/40 rounded animate-pulse mx-auto" />
-                <div className="h-4 w-full bg-muted/30 rounded animate-pulse" />
-                <div className="h-4 w-3/4 bg-muted/30 rounded animate-pulse mx-auto" />
-                <div className="flex justify-center gap-2 pt-4">
-                  {[0, 1, 2].map(i => (
-                    <div key={i} className="w-2 h-2 rounded-full bg-primary/30 animate-pulse" />
-                  ))}
+          {/* Two-column layout on desktop: Video (left) + Lesson (right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            {/* Left column: Video (sticky on desktop) */}
+            {lawVideos[law.id] && (
+              <div className="lg:sticky lg:top-4 lg:self-start">
+                <div className="rounded-lg overflow-hidden border border-primary/30">
+                  <LazyVideo 
+                    src={lawVideos[law.id]}
+                    className="w-full"
+                  />
                 </div>
               </div>
-            }>
-              {law.id === 'product' && <ProductOfPowersLesson onComplete={handleComplete} />}
-              {law.id === 'quotient' && <QuotientOfPowersLesson onComplete={handleComplete} />}
-              {law.id === 'power' && <PowerOfPowerLesson onComplete={handleComplete} />}
-              {law.id === 'zero' && <ZeroExponentLesson onComplete={handleComplete} />}
-              {law.id === 'negative' && <NegativeExponentLesson onComplete={handleComplete} />}
-              {law.id === 'product-power' && <PowerOfProductLesson onComplete={handleComplete} />}
-              {law.id === 'quotient-power' && <PowerOfQuotientLesson onComplete={handleComplete} />}
-              {law.id === 'identity' && <IdentityExponentLesson onComplete={handleComplete} />}
-            </Suspense>
+            )}
+
+            {/* Right column: Interactive Lesson */}
+            <div className="lesson-container">
+              <Suspense fallback={
+                <div className="space-y-4 py-8">
+                  <div className="h-6 w-48 bg-muted/40 rounded animate-pulse mx-auto" />
+                  <div className="h-4 w-full bg-muted/30 rounded animate-pulse" />
+                  <div className="h-4 w-3/4 bg-muted/30 rounded animate-pulse mx-auto" />
+                  <div className="flex justify-center gap-2 pt-4">
+                    {[0, 1, 2].map(i => (
+                      <div key={i} className="w-2 h-2 rounded-full bg-primary/30 animate-pulse" />
+                    ))}
+                  </div>
+                </div>
+              }>
+                {law.id === 'product' && <ProductOfPowersLesson onComplete={handleComplete} />}
+                {law.id === 'quotient' && <QuotientOfPowersLesson onComplete={handleComplete} />}
+                {law.id === 'power' && <PowerOfPowerLesson onComplete={handleComplete} />}
+                {law.id === 'zero' && <ZeroExponentLesson onComplete={handleComplete} />}
+                {law.id === 'negative' && <NegativeExponentLesson onComplete={handleComplete} />}
+                {law.id === 'product-power' && <PowerOfProductLesson onComplete={handleComplete} />}
+                {law.id === 'quotient-power' && <PowerOfQuotientLesson onComplete={handleComplete} />}
+                {law.id === 'identity' && <IdentityExponentLesson onComplete={handleComplete} />}
+              </Suspense>
+            </div>
           </div>
         </Card>
       </div>
