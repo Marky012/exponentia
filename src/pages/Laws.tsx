@@ -84,11 +84,9 @@ const Laws = () => {
               <Card
                 className={cn(
                   "p-3 sm:p-4 md:p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border-2 h-full relative overflow-hidden",
-                  law.gemEarned
+                    law.gemEarned
                     ? "bg-gradient-to-br from-gem/10 to-gem-dark/5 border-gem/60 card-completed shadow-[0_0_24px_hsl(45_95%_58%/0.2)]"
-                    : law.completed
-                    ? "bg-primary/10 border-primary/50 card-learning"
-                    : "bg-card border-border hover:border-primary/50 card-locked"
+                    : "bg-primary/10 border-primary/50 card-learning"
                 )}
                 onClick={() => handleLawClick(law.id, law.completed, law.gemEarned)}
               >
