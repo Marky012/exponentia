@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { HelpCircle, X, Smartphone } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-
+import { HelpCircle, Smartphone } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface InstallHelpButtonProps {
   showFloatingButton?: boolean;
@@ -25,7 +25,6 @@ const InstallHelpButton = ({ showFloatingButton = true, externalOpen, onExternal
 
   return (
     <>
-      {/* Help button - only shown when showFloatingButton is true */}
       {showFloatingButton && (
         <motion.button
           onClick={() => setIsOpen(true)}
@@ -38,48 +37,22 @@ const InstallHelpButton = ({ showFloatingButton = true, externalOpen, onExternal
         </motion.button>
       )}
 
-      {/* Modal overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            {/* Backdrop */}
-            <motion.div
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-              onClick={() => setIsOpen(false)}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-md bg-primary/15 backdrop-blur-sm border-2 border-primary/60 card-learning">
+          <DialogHeader>
+            <DialogTitle className="font-orbitron flex items-center gap-2">
+              <Smartphone className="w-5 h-5 text-primary" />
+              Install Exponentia
+            </DialogTitle>
+            <DialogDescription>
+              Follow the steps below to install the game on your device.
+            </DialogDescription>
+          </DialogHeader>
 
-            {/* Content */}
-            <motion.div
-              className="relative w-full max-w-md bg-card border-2 border-primary/20 rounded-2xl p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            >
-              {/* Close button */}
-              <button
-                onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="flex items-center gap-3 mb-5">
-                <Smartphone className="w-6 h-6 text-primary" />
-                <h2 className="text-xl font-orbitron font-bold text-primary">
-                  Install Exponentia
-                </h2>
-              </div>
-
+          <div className="max-h-[50vh] overflow-y-auto">
+            <div className="space-y-6 pr-4">
               {/* Android Instructions */}
-              <div className="mb-6">
+              <div>
                 <h3 className="text-sm font-orbitron font-bold text-accent mb-3 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
                     <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current text-accent" aria-hidden="true">
@@ -109,7 +82,7 @@ const InstallHelpButton = ({ showFloatingButton = true, externalOpen, onExternal
               </div>
 
               {/* iOS Instructions */}
-              <div className="mb-4">
+              <div>
                 <h3 className="text-sm font-orbitron font-bold text-accent mb-3 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
                     <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current text-accent" aria-hidden="true">
@@ -137,14 +110,14 @@ const InstallHelpButton = ({ showFloatingButton = true, externalOpen, onExternal
                   </li>
                 </ol>
               </div>
+            </div>
+          </div>
 
-              <div className="pt-4 border-t border-border/50 text-xs text-muted-foreground/70 text-center">
-                Once installed, the game will work offline with all resources cached!
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <div className="pt-4 border-t border-primary/20 text-xs text-muted-foreground/70 text-center">
+            Once installed, the game will work offline with all resources cached!
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

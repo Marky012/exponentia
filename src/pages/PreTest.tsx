@@ -16,6 +16,7 @@ import { haptics } from '@/utils/haptics';
 import { isDevelopmentMode } from '@/utils/inputValidation';
 import { generateExplanation } from '@/utils/questionExplanations';
 import { SettingsMenu } from '@/components/SettingsMenu';
+import ExponentiaBackground from '@/components/ExponentiaBackground';
 import { PRETEST_QUESTION_COUNT, PRETEST_PASSING_SCORE, ANSWER_FEEDBACK_DELAY } from '@/constants/gameConfig';
 import { LAW_ID_TO_PRETEST_KEY } from '@/constants/quizConfig';
 import { shuffleArray, shuffleQuestionOptions } from '@/utils/shuffle';
@@ -164,8 +165,9 @@ const PreTest = () => {
   if (showResult) {
     const passed = correctAnswers === PRETEST_PASSING_SCORE;
     return (
-      <div className="min-h-screen p-4 md:p-8 flex items-center justify-center">
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
+      <div className="min-h-screen p-4 md:p-8 flex items-center justify-center relative">
+        <ExponentiaBackground overlayOpacity={0.5} />
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="relative z-10">
           <Card className="max-w-2xl w-full p-8 bg-primary/15 backdrop-blur-sm border-2 border-primary/60 card-learning text-center">
             <motion.div 
               className={cn("w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center", passed ? "bg-gem/20 border-4 border-gem" : "bg-destructive/20 border-4 border-destructive")}
