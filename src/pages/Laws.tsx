@@ -115,9 +115,9 @@ const Laws = () => {
                 {/* Action */}
                 {law.gemEarned ? (
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
-                    className="w-full text-xs sm:text-sm h-8 sm:h-9 gap-1.5 border-primary/40 text-primary hover:bg-primary/10"
+                    className="w-full text-xs sm:text-sm h-8 sm:h-9 gap-1.5 bg-primary/15 border border-primary/60 hover:bg-primary/25 text-primary"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     Review

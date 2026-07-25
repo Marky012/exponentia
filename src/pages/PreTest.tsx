@@ -204,7 +204,7 @@ const PreTest = () => {
               </motion.div>
             )}
             <motion.div className="flex gap-4 justify-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-              {!passed && <Button onClick={handleRetry} variant="outline">Try Again</Button>}
+              {!passed && <Button onClick={handleRetry} variant="ghost" className="bg-primary/15 border border-primary/60 hover:bg-primary/25 text-primary">Try Again</Button>}
               <Button onClick={handleComplete}>{passed ? 'Continue' : 'Back to Laws'}</Button>
             </motion.div>
           </Card>
@@ -221,7 +221,7 @@ const PreTest = () => {
       <div className="max-w-4xl mx-auto">
         <motion.div className="flex items-center justify-between mb-4 sm:mb-6 gap-2" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-            <Button variant="outline" size="icon" className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11" onClick={() => navigate('/laws')} aria-label="Back to Laws">
+            <Button variant="ghost" size="icon" className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 bg-primary/15 border border-primary/60 hover:bg-primary/25 text-primary" onClick={() => navigate('/laws')} aria-label="Back to Laws">
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
             <div className="min-w-0">

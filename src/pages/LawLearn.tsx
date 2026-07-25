@@ -104,9 +104,9 @@ const LawLearn = () => {
         <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
-              className="w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0"
+              className="w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 bg-primary/15 border border-primary/60 hover:bg-primary/25 text-primary"
               onClick={() => navigate('/laws')}
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />

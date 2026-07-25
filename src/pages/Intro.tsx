@@ -197,9 +197,9 @@ const Intro = () => {
                   <Button
                     onClick={handleBack}
                     size="default"
-                    variant="outline"
+                    variant="ghost"
                     disabled={!isComplete}
-                    className="text-sm sm:text-lg font-orbitron h-10 sm:h-11 px-3 sm:px-4"
+                    className="text-sm sm:text-lg font-orbitron h-10 sm:h-11 px-3 sm:px-4 bg-primary/15 border border-primary/60 hover:bg-primary/25 text-primary"
                   >
                     <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
                     Back

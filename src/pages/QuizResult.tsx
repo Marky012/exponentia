@@ -175,8 +175,8 @@ export default function QuizResult() {
 
           <Button
             onClick={() => navigate('/quiz-arena')}
-            variant="outline"
-            className="w-full"
+            variant="ghost"
+            className="w-full bg-primary/15 border border-primary/60 hover:bg-primary/25 text-primary"
             size="lg"
           >
             Return to Battle Arena

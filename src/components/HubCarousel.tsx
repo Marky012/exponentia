@@ -583,7 +583,7 @@ const HubCarousel = () => {
         transition={{ delay: 0.8, duration: 0.5 }}
       >
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
           onClick={() => navigateTo('prev')}
           disabled={isAnimating}
@@ -593,7 +593,7 @@ const HubCarousel = () => {
         </Button>
         
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
           onClick={() => navigateTo('next')}
           disabled={isAnimating}
