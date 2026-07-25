@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Sparkles, Zap } from 'lucide-react';
+import { MATH_SYMBOLS } from '@/constants/mathSymbols';
 
 const shimmer = "animate-pulse bg-muted/40 rounded";
 
@@ -9,7 +10,7 @@ export const PageSkeleton = () => (
       {Array.from({ length: 12 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1.5 h-1.5 bg-primary/20 rounded-full"
+          className="absolute text-xs font-orbitron font-bold text-primary/20 select-none pointer-events-none"
           initial={{
             x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800),
             y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 600),
@@ -19,7 +20,9 @@ export const PageSkeleton = () => (
             opacity: [0.1, 0.3, 0.1],
           }}
           transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, ease: 'linear' }}
-        />
+        >
+          {MATH_SYMBOLS[i % MATH_SYMBOLS.length]}
+        </motion.div>
       ))}
     </div>
 

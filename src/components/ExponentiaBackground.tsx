@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import exponentiaLight from '@/assets/exponentia-light.png';
+import { MATH_SYMBOLS } from '@/constants/mathSymbols';
 
 interface ExponentiaBackgroundProps {
   overlayOpacity?: number;
@@ -63,14 +64,15 @@ const ExponentiaBackground = ({ overlayOpacity = 0.6 }: ExponentiaBackgroundProp
         }}
       />
       
-      {/* Floating particles */}
+      {/* Floating math symbols */}
       {Array.from({ length: 10 }, (_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1.5 h-1.5 rounded-full bg-primary/20 transition-colors duration-500"
+          className="absolute text-xs font-orbitron font-bold text-primary/20 select-none pointer-events-none transition-colors duration-500"
           style={{
             left: `${10 + Math.random() * 80}%`,
             top: `${10 + Math.random() * 80}%`,
+            textShadow: '0 0 6px hsl(var(--primary))',
           }}
           animate={{
             y: [0, -20, 0],
@@ -83,7 +85,9 @@ const ExponentiaBackground = ({ overlayOpacity = 0.6 }: ExponentiaBackgroundProp
             delay: Math.random() * 2,
             ease: 'easeInOut',
           }}
-        />
+        >
+          {MATH_SYMBOLS[i % MATH_SYMBOLS.length]}
+        </motion.div>
       ))}
     </motion.div>
   );

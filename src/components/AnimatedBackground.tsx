@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { MATH_SYMBOLS } from '@/constants/mathSymbols';
 
 interface AnimatedBackgroundProps {
   theme: 'male' | 'female' | null;
@@ -56,16 +57,17 @@ const AnimatedBackground = ({ theme }: AnimatedBackgroundProps) => {
         }}
       />
       
-      {/* Floating particles */}
+      {/* Floating math symbols */}
       {Array.from({ length: 20 }, (_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 rounded-full"
+          className="absolute text-xs font-orbitron font-bold select-none pointer-events-none"
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            backgroundColor: i % 2 === 0 ? primaryColor : secondaryColor,
+            color: i % 2 === 0 ? primaryColor : secondaryColor,
             opacity: 0.3,
+            textShadow: `0 0 6px ${i % 2 === 0 ? primaryColor : secondaryColor}`,
           }}
           animate={{
             y: [0, -30, 0],
@@ -77,7 +79,9 @@ const AnimatedBackground = ({ theme }: AnimatedBackgroundProps) => {
             delay: Math.random() * 2,
             ease: 'easeInOut',
           }}
-        />
+        >
+          {MATH_SYMBOLS[i % MATH_SYMBOLS.length]}
+        </motion.div>
       ))}
       
       {/* Radial glow from center */}

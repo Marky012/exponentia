@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { backgroundMusic } from '@/utils/backgroundMusic';
+import { MATH_SYMBOLS } from '@/constants/mathSymbols';
 import InstallHelpButton from '@/components/InstallHelpButton';
 import exponentiaDark from '@/assets/exponentia-dark.png';
 import exponentiaLight from '@/assets/exponentia-light.png';
@@ -382,13 +383,13 @@ const Index = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Background particles */}
+      {/* Background floating math symbols */}
       <div className="absolute inset-0 pointer-events-none">
         {Array.from({ length: 15 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1.5 h-1.5 bg-primary rounded-full"
-            style={{ opacity: phase === 'ready' ? 0.6 : 0.2 }}
+            className="absolute text-xs font-orbitron font-bold text-primary select-none pointer-events-none"
+            style={{ opacity: phase === 'ready' ? 0.6 : 0.2, textShadow: '0 0 6px hsl(var(--primary))' }}
             initial={{
               x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800),
               y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 600),
@@ -398,18 +399,21 @@ const Index = () => {
               opacity: phase === 'ready' ? [0.4, 0.8, 0.4] : [0.1, 0.3, 0.1],
             }}
             transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, ease: 'linear' }}
-          />
+          >
+            {MATH_SYMBOLS[i % MATH_SYMBOLS.length]}
+          </motion.div>
         ))}
       </div>
 
-      {/* Milestone celebration particles */}
+      {/* Milestone celebration math symbols */}
       <AnimatePresence>
         {(milestone25 || milestone50 || milestone75) && phase === 'downloading' && (
           <div className="absolute inset-0 pointer-events-none">
             {Array.from({ length: 6 }).map((_, i) => (
               <motion.div
                 key={`celeb-${i}`}
-                className="absolute w-1 h-1 bg-gem rounded-full"
+                className="absolute text-sm font-orbitron font-bold text-gem select-none pointer-events-none"
+                style={{ textShadow: '0 0 8px hsl(var(--gem))' }}
                 initial={{ x: '50%', y: '50%', opacity: 1, scale: 0 }}
                 animate={{
                   x: `${30 + Math.random() * 40}%`,
@@ -418,7 +422,9 @@ const Index = () => {
                   scale: [0, 1.5],
                 }}
                 transition={{ duration: 1, delay: i * 0.1 }}
-              />
+              >
+                {MATH_SYMBOLS[i % MATH_SYMBOLS.length]}
+              </motion.div>
             ))}
           </div>
         )}

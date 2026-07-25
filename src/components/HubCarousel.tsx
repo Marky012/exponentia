@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { soundEffects } from '@/utils/soundEffects';
 import { SettingsMenu } from '@/components/SettingsMenu';
 import ExponentiaBackground from '@/components/ExponentiaBackground';
+import { MATH_SYMBOLS } from '@/constants/mathSymbols';
 
 // Import new hub floating island images
 import hubBeginning from '@/assets/hub-beginning.png';
@@ -442,15 +443,15 @@ const HubCarousel = () => {
                           </motion.div>
                         ))}
                         
-                        {/* Sparkle particles */}
+                        {/* Sparkle math symbols */}
                         {[...Array(8)].map((_, i) => (
                           <motion.div
                             key={`sparkle-${i}`}
-                            className="absolute w-1 h-1 rounded-full bg-white"
+                            className="absolute text-[10px] font-orbitron font-bold text-white select-none pointer-events-none"
                             style={{
                               left: `${10 + Math.random() * 80}%`,
                               top: `${10 + Math.random() * 60}%`,
-                              boxShadow: '0 0 6px 2px rgba(255,255,255,0.6)',
+                              textShadow: '0 0 6px 2px rgba(255,255,255,0.6)',
                             }}
                             animate={{
                               opacity: [0, 1, 0],
@@ -461,7 +462,9 @@ const HubCarousel = () => {
                               repeat: Infinity,
                               delay: Math.random() * 3,
                             }}
-                          />
+                          >
+                            {MATH_SYMBOLS[i % MATH_SYMBOLS.length]}
+                          </motion.div>
                         ))}
                         
                         {/* Orbiting math symbols */}

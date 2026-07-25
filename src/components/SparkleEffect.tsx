@@ -58,16 +58,16 @@ const SparkleEffect = ({ isActive, color }: SparkleEffectProps) => {
         </motion.div>
       ))}
       
-      {/* Orbiting sparkles */}
-      {[0, 1, 2].map((i) => (
+      {/* Orbiting math symbols */}
+      {['⁺', '²', '√'].map((symbol, i) => (
         <motion.div
           key={`orbit-${i}`}
-          className="absolute left-1/2 top-1/2 w-1.5 h-1.5 rounded-full"
+          className="absolute left-1/2 top-1/2 text-xs font-orbitron font-bold select-none pointer-events-none"
           style={{
-            backgroundColor: sparkleColor,
-            boxShadow: `0 0 8px ${sparkleColor}`,
-            marginLeft: '-3px',
-            marginTop: '-3px',
+            color: sparkleColor,
+            textShadow: `0 0 8px ${sparkleColor}`,
+            marginLeft: '-6px',
+            marginTop: '-6px',
           }}
           animate={{
             x: [
@@ -88,7 +88,9 @@ const SparkleEffect = ({ isActive, color }: SparkleEffectProps) => {
             ease: "linear",
             delay: i * 0.3,
           }}
-        />
+        >
+          {symbol}
+        </motion.div>
       ))}
     </div>
   );
