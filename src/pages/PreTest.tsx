@@ -218,9 +218,6 @@ const PreTest = () => {
       <a href="#pretest-options" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded">
         Skip to answer options
       </a>
-      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-        <SettingsMenu />
-      </div>
       <div className="max-w-4xl mx-auto">
         <motion.div className="flex items-center justify-between mb-4 sm:mb-6 gap-2" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
@@ -236,6 +233,7 @@ const PreTest = () => {
             <p className="text-xs sm:text-sm text-muted-foreground">Score</p>
             <p className="text-xl sm:text-2xl font-orbitron font-bold text-gem">{correctAnswers}/{PRETEST_PASSING_SCORE}</p>
           </div>
+          <SettingsMenu />
         </motion.div>
 
         <motion.div className="mb-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
