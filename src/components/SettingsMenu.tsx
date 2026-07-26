@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Settings, Volume2, VolumeX, Music, MusicIcon, Smartphone, Sun, Moon, Monitor, Vibrate, Trash2, Download, Shield } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { soundEffects } from '@/utils/soundEffects';
 import { backgroundMusic } from '@/utils/backgroundMusic';
@@ -31,6 +31,8 @@ const THEME_OPTIONS: { value: ThemeMode; icon: React.ReactNode; label: string }[
 
 export const SettingsMenu = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isBootPage = location.pathname === '/';
   const [open, setOpen] = useState(false);
   const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [showCache, setShowCache] = useState(false);
@@ -306,16 +308,18 @@ export const SettingsMenu = () => {
               </Button>
             </div>
 
-            {/* Teacher Portal Link */}
-            <div className="pt-4 border-t border-border/50 text-center">
-              <button
-                onClick={() => { setOpen(false); navigate('/admin/login'); }}
-                className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors inline-flex items-center gap-1"
-              >
-                <Shield className="w-3 h-3" />
-                Teacher Portal
-              </button>
-            </div>
+            {/* Teacher Portal Link - only visible on boot page */}
+            {isBootPage && (
+              <div className="pt-4 border-t border-border/50 text-center">
+                <button
+                  onClick={() => { setOpen(false); navigate('/admin/login'); }}
+                  className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors inline-flex items-center gap-1"
+                >
+                  <Shield className="w-3 h-3" />
+                  Teacher Portal
+                </button>
+              </div>
+            )}
           </div>
         </SheetContent>
       </Sheet>
