@@ -5,12 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Zap, Download, Wifi, WifiOff, AlertTriangle,
   HardDrive, Film, Image, Music, FileCode, CheckCircle2,
-  Shield, Sword, PackageCheck, Save, Settings
+  Shield, Sword, PackageCheck, Save
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { backgroundMusic } from '@/utils/backgroundMusic';
 import { MATH_SYMBOLS } from '@/constants/mathSymbols';
 import InstallHelpButton from '@/components/InstallHelpButton';
+import { SettingsMenu } from '@/components/SettingsMenu';
 import exponentiaDark from '@/assets/exponentia-dark.png';
 import exponentiaLight from '@/assets/exponentia-light.png';
 import hubBeginning from '@/assets/hub-beginning.png';
@@ -758,16 +759,14 @@ const Index = () => {
         </div>
       </motion.div>
 
-      <motion.button
-        className="fixed top-4 right-4 z-30 p-2.5 rounded-full bg-background/60 backdrop-blur-md border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
-        onClick={() => navigate('/admin/login')}
+      <motion.div
+        className="fixed top-4 right-4 z-30"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        title="Admin Settings"
       >
-        <Settings className="w-4 h-4" />
-      </motion.button>
+        <SettingsMenu />
+      </motion.div>
 
       <InstallHelpButton />
     </div>
