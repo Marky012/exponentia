@@ -48,7 +48,7 @@ export function AdminSidebar({ onNavClick }: AdminSidebarProps) {
       </div>
       <div className="p-3 border-t border-border">
         <p className="text-xs text-muted-foreground px-1 mb-2">Logged in as</p>
-        <p className="text-sm font-medium px-1 mb-3">Jeemark Alojado</p>
+        <p className="text-sm font-medium px-1 mb-3">Jeemark Naceel Calungsod Alojado</p>
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 w-full transition-colors"
