@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useAdminStore } from '@/store/adminStore';
 import { useStudentStore } from '@/store/studentStore';
 import { resetToDefaultQuestions, hasCustomQuestions } from '@/utils/questions';
@@ -19,6 +20,8 @@ export default function AdminSettings() {
   const [pwError, setPwError] = useState('');
   const [pwSuccess, setPwSuccess] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -98,19 +101,20 @@ export default function AdminSettings() {
   };
 
   const handleClearStudents = () => {
-    if (!confirm(`Clear all ${students.length} students? This cannot be undone.`)) return;
     clearStudents();
+    setClearDialogOpen(false);
     toast.success('All student data cleared');
   };
 
   const handleResetQuestions = () => {
     if (!hasCustomQuestions()) { toast.info('No custom questions to reset'); return; }
-    if (!confirm('Reset question bank to default? This will remove all custom questions.')) return;
     resetToDefaultQuestions();
+    setResetDialogOpen(false);
     toast.success('Question bank reset to default');
   };
 
   return (
+    <>
     <div className="space-y-6 max-w-2xl">
       <Card className="bg-primary/10 border-border/50">
         <CardHeader>
@@ -195,7 +199,7 @@ export default function AdminSettings() {
           <CardDescription>Reset to the default question bank, removing all custom edits.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button variant="outline" size="sm" onClick={handleResetQuestions}>
+          <Button variant="outline" size="sm" onClick={() => setResetDialogOpen(true)}>
             <RotateCcw className="w-4 h-4 mr-1" /> Reset to Default
           </Button>
         </CardContent>
@@ -210,11 +214,42 @@ export default function AdminSettings() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Button variant="destructive" size="sm" onClick={handleClearStudents} disabled={students.length === 0}>
+          <Button variant="destructive" size="sm" onClick={() => setClearDialogOpen(true)} disabled={students.length === 0}>
             <Trash2 className="w-4 h-4 mr-1" /> Clear All Student Data
           </Button>
         </CardContent>
       </Card>
     </div>
+
+    <AlertDialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Reset Question Bank?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will remove all custom questions and restore the default question bank. This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleResetQuestions}>Reset</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+
+    <AlertDialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Clear All Student Data?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will permanently delete all {students.length} imported student records. This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={handleClearStudents}>Clear All</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

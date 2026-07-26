@@ -5,6 +5,7 @@ import { Menu, X, Shield } from 'lucide-react';
 import { useAdminStore } from '../store/adminStore';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
 import { Button } from '../components/ui/button';
+import ExponentiaBackground from '../components/ExponentiaBackground';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -22,7 +23,8 @@ export default function AdminDashboard() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex relative">
+      <ExponentiaBackground overlayOpacity={0.5} />
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -30,7 +32,7 @@ export default function AdminDashboard() {
         />
       )}
       <aside className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-64 bg-card border-r border-border
+        fixed lg:sticky lg:top-0 inset-y-0 left-0 z-50 w-64 h-screen bg-card border-r border-border
         transform transition-transform duration-200 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
