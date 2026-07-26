@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, BookOpen, Settings, LogOut } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useAdminStore } from '@/store/adminStore';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -19,8 +21,11 @@ export function AdminSidebar({ onNavClick }: AdminSidebarProps) {
   const navigate = useNavigate();
   const logout = useAdminStore(s => s.logout);
 
+  const [logoutOpen, setLogoutOpen] = useState(false);
+
   const handleLogout = () => {
     logout();
+    setLogoutOpen(false);
     toast.success('Logged out');
     navigate('/admin/login');
   };
@@ -50,13 +55,28 @@ export function AdminSidebar({ onNavClick }: AdminSidebarProps) {
         <p className="text-xs text-muted-foreground px-1 mb-2">Logged in as</p>
         <p className="text-sm font-medium px-1 mb-3">Jeemark Naceel Calungsod Alojado</p>
         <button
-          onClick={handleLogout}
+          onClick={() => setLogoutOpen(true)}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 w-full transition-colors"
         >
           <LogOut className="w-4 h-4" />
           Logout
         </button>
       </div>
+
+      <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Logout?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to log out of the admin dashboard?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout}>Logout</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </nav>
   );
 }
