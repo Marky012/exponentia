@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Zap, Download, Wifi, WifiOff, AlertTriangle,
   HardDrive, Film, Image, Music, FileCode, CheckCircle2,
-  Shield, Sword, PackageCheck, Save
+  Shield, Sword, PackageCheck, Save, Settings
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { backgroundMusic } from '@/utils/backgroundMusic';
@@ -757,6 +757,17 @@ const Index = () => {
           </AnimatePresence>
         </div>
       </motion.div>
+
+      <motion.button
+        className="fixed bottom-4 right-4 z-30 p-2.5 rounded-full bg-background/60 backdrop-blur-md border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
+        onClick={() => navigate('/admin/login')}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        title="Admin Settings"
+      >
+        <Settings className="w-4 h-4" />
+      </motion.button>
 
       <InstallHelpButton />
     </div>
