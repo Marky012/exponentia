@@ -11,23 +11,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Settings, Volume2, VolumeX, Music, MusicIcon, Smartphone, Sun, Moon, Monitor, Vibrate, Trash2, Download, Shield } from 'lucide-react';
+import { Settings, Volume2, VolumeX, Music, MusicIcon, Smartphone, Vibrate, Trash2, Download, Shield } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { soundEffects } from '@/utils/soundEffects';
 import { backgroundMusic } from '@/utils/backgroundMusic';
 import { STORAGE_KEYS } from '@/constants/quizConfig';
-import { getThemeMode, setThemeMode, type ThemeMode } from '@/utils/theme';
 import { haptics } from '@/utils/haptics';
 import { useGameStore } from '@/store/gameStore';
 import InstallHelpButton from '@/components/InstallHelpButton';
 import { CacheManager } from '@/components/CacheManager';
-
-const THEME_OPTIONS: { value: ThemeMode; icon: React.ReactNode; label: string }[] = [
-  { value: 'dark', icon: <Moon className="w-4 h-4" />, label: 'Dark' },
-  { value: 'light', icon: <Sun className="w-4 h-4" />, label: 'Light' },
-  { value: 'system', icon: <Monitor className="w-4 h-4" />, label: 'System' },
-];
 
 export const SettingsMenu = () => {
   const navigate = useNavigate();
@@ -53,7 +46,6 @@ export const SettingsMenu = () => {
 
   const [musicEnabled, setMusicEnabled] = useState(() => backgroundMusic.isEnabled());
   const [musicVolume, setMusicVolume] = useState(() => backgroundMusic.getVolume());
-  const [themeMode, setThemeModeState] = useState<ThemeMode>(getThemeMode);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.SOUND_ENABLED, String(soundEnabled));
@@ -72,11 +64,6 @@ export const SettingsMenu = () => {
   useEffect(() => {
     backgroundMusic.setVolume(musicVolume);
   }, [musicVolume]);
-
-  const handleThemeChange = (mode: ThemeMode) => {
-    setThemeModeState(mode);
-    setThemeMode(mode);
-  };
 
   const handleHapticsToggle = (enabled: boolean) => {
     setHapticsEnabled(enabled);
@@ -131,25 +118,6 @@ export const SettingsMenu = () => {
           </SheetHeader>
 
           <div className="space-y-6 mt-6">
-            {/* Theme Toggle */}
-            <div>
-              <Label className="font-medium text-sm mb-3 block">Appearance</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {THEME_OPTIONS.map(opt => (
-                  <Button
-                    key={opt.value}
-                    variant={themeMode === opt.value ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => handleThemeChange(opt.value)}
-                    className="gap-1.5"
-                  >
-                    {opt.icon}
-                    {opt.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
             {/* Haptics Toggle */}
             {haptics.isSupported() && (
               <div className="flex items-center justify-between">
