@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ChevronDown, ArrowUpDown, Eye, Trash2 } from 'lucide-react';
+import { Search, ArrowUpDown, Eye, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useStudentStore } from '@/store/studentStore';
 import { toast } from 'sonner';
 import type { ImportedStudent } from '@/store/studentStore';
@@ -56,6 +56,7 @@ export default function StudentList() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortAsc, setSortAsc] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     let list = [...students];
@@ -102,10 +103,9 @@ export default function StudentList() {
   };
 
   const handleRemove = (name: string) => {
-    if (confirm(`Remove "${name}" from the list?`)) {
-      removeStudent(name);
-      toast.success(`${name} removed`);
-    }
+    removeStudent(name);
+    setDeleteTarget(null);
+    toast.success(`${name} removed`);
   };
 
   const SortIcon = ({ field }: { field: SortField }) => (
@@ -200,7 +200,7 @@ export default function StudentList() {
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(`/admin/students/${encodeURIComponent(s.playerName)}`)}>
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleRemove(s.playerName)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => setDeleteTarget(s.playerName)}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -218,6 +218,21 @@ export default function StudentList() {
           Showing {filtered.length} of {students.length} students
         </p>
       )}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Student?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Remove "{deleteTarget}" from the list? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => deleteTarget && handleRemove(deleteTarget)}>Remove</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
