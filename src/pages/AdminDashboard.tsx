@@ -38,7 +38,7 @@ export default function AdminDashboard() {
         />
       )}
       <aside className={`
-        fixed lg:relative inset-y-0 left-0 z-50 shrink-0 w-64 h-full bg-background/80 backdrop-blur-md border-r border-border/50
+        fixed lg:relative inset-y-0 left-0 z-50 shrink-0 w-64 h-full flex flex-col bg-background/80 backdrop-blur-md border-r border-border/50
         transform transition-transform duration-200 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
@@ -53,20 +53,18 @@ export default function AdminDashboard() {
       </aside>
 
       <main className="flex-1 min-w-0 overflow-y-auto">
-        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-3 flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
-          <h1 className="font-orbitron font-bold text-lg truncate">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden fixed top-3 left-3 z-30 bg-background/80 backdrop-blur-sm border border-border/50"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </Button>
+        <div className="p-4 md:p-6">
+          <h1 className="font-orbitron font-bold text-lg mb-4">
             {getPageTitle(location.pathname)}
           </h1>
-        </header>
-        <div className="p-4 md:p-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
