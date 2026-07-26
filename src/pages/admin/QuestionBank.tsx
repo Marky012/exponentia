@@ -290,14 +290,14 @@ export default function QuestionBank() {
         </div>
       </div>
 
-      <div className="flex gap-1 p-1 bg-muted rounded-lg">
+      <div className="flex gap-1 p-1 rounded-lg bg-background/40 backdrop-blur-md border border-border/50">
         {TAB_LIST.map(t => (
           <button
             key={t.value}
             onClick={() => { setTab(t.value); setEditing(null); setAdding(false); }}
             className={cn(
-              "flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-              tab === t.value ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              "flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all",
+              tab === t.value ? "bg-background/60 backdrop-blur-sm text-foreground shadow-sm border border-border/30" : "text-muted-foreground hover:text-foreground hover:bg-background/20"
             )}
           >
             {t.label} ({getTabCount(t.value)})
