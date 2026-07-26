@@ -55,9 +55,9 @@ const Statistics = () => {
 
   // Chart data
   const lawProgressData = [
-    { name: 'Completed with Gem', value: gemsEarned, color: 'hsl(var(--gem))' },
-    { name: 'Completed', value: completedLaws - gemsEarned, color: 'hsl(var(--primary))' },
-    { name: 'Incomplete', value: totalLaws - completedLaws, color: 'hsl(var(--muted))' }
+    { name: 'Completed with Gem', value: gemsEarned, color: 'hsl(45, 95%, 58%)' },
+    { name: 'Completed', value: completedLaws - gemsEarned, color: 'hsl(202, 60%, 55%)' },
+    { name: 'Incomplete', value: totalLaws - completedLaws, color: 'hsl(210, 20%, 35%)' }
   ];
 
   const quizScoresData = quizLevels.map(level => {
