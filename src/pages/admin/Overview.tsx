@@ -82,7 +82,7 @@ export default function Overview() {
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {cards.map((card, i) => (
-          <Card key={card.title} className="!bg-background/60 backdrop-blur-md border-border/50">
+          <Card key={card.title} className="!bg-background/40 backdrop-blur-md border-border/50">
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
                 <div>
@@ -99,7 +99,7 @@ export default function Overview() {
       </div>
 
       {stats.mostMissedLaw && (
-        <Card className="!bg-background/60 backdrop-blur-md border-border/50">
+        <Card className="!bg-background/40 backdrop-blur-md border-border/50">
           <CardHeader>
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-destructive" />
@@ -116,7 +116,7 @@ export default function Overview() {
       )}
 
       {students.length === 0 && (
-        <Card className="!bg-background/60 backdrop-blur-md border-border/50 border-dashed">
+        <Card className="!bg-background/40 backdrop-blur-md border-border/50 border-dashed">
           <CardContent className="py-12 text-center">
             <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
             <p className="text-muted-foreground font-medium">No students imported yet</p>

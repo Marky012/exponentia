@@ -19,6 +19,8 @@ export default function AdminDashboard() {
     backgroundMusic.pause();
     return () => backgroundMusic.play();
   }, []);
+
+  useEffect(() => {
     if (!isAuthenticated || !checkSession()) {
       navigate('/admin/login');
     }
@@ -27,8 +29,8 @@ export default function AdminDashboard() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen flex relative">
-      <ExponentiaBackground overlayOpacity={0.5} />
+    <div className="h-screen flex overflow-hidden relative">
+      <ExponentiaBackground overlayOpacity={0.4} />
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -36,7 +38,7 @@ export default function AdminDashboard() {
         />
       )}
       <aside className={`
-        fixed lg:sticky lg:top-0 inset-y-0 left-0 z-50 w-64 h-screen bg-background/80 backdrop-blur-md border-r border-border/50
+        fixed lg:relative inset-y-0 left-0 z-50 shrink-0 w-64 h-full bg-background/80 backdrop-blur-md border-r border-border/50
         transform transition-transform duration-200 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
@@ -50,7 +52,7 @@ export default function AdminDashboard() {
         <AdminSidebar onNavClick={() => setSidebarOpen(false)} />
       </aside>
 
-      <main className="flex-1 min-w-0">
+      <main className="flex-1 min-w-0 overflow-y-auto">
         <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"

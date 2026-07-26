@@ -83,28 +83,28 @@ export default function StudentDetail() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="!bg-background/60 backdrop-blur-md border-border/50">
+        <Card className="!bg-background/40 backdrop-blur-md border-border/50">
           <CardContent className="p-4 text-center">
             <Trophy className="w-5 h-5 text-gem mx-auto mb-1" />
             <p className="text-xs text-muted-foreground">Gems</p>
             <p className="text-2xl font-orbitron font-bold text-gem">{gems}/8</p>
           </CardContent>
         </Card>
-        <Card className="!bg-background/60 backdrop-blur-md border-border/50">
+        <Card className="!bg-background/40 backdrop-blur-md border-border/50">
           <CardContent className="p-4 text-center">
             <TrendingUp className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-xs text-muted-foreground">Average</p>
             <p className="text-2xl font-orbitron font-bold text-primary">{avgScore !== null ? `${avgScore}%` : 'N/A'}</p>
           </CardContent>
         </Card>
-        <Card className="!bg-background/60 backdrop-blur-md border-border/50">
+        <Card className="!bg-background/40 backdrop-blur-md border-border/50">
           <CardContent className="p-4 text-center">
             <BookOpen className="w-5 h-5 text-blue-500 mx-auto mb-1" />
             <p className="text-xs text-muted-foreground">Levels</p>
             <p className="text-2xl font-orbitron font-bold">{completedLevels}/3</p>
           </CardContent>
         </Card>
-        <Card className={`!bg-background/60 backdrop-blur-md border-border/50`}>
+        <Card className={`!bg-background/40 backdrop-blur-md border-border/50`}>
           <CardContent className="p-4 text-center">
             <Star className={`w-5 h-5 mx-auto mb-1 ${gradeInfo.color}`} />
             <p className="text-xs text-muted-foreground">Grade</p>
@@ -165,7 +165,7 @@ export default function StudentDetail() {
       </div>
 
       {lawsMissed.length > 0 && (
-        <Card className="!bg-background/60 backdrop-blur-md border-border/50">
+        <Card className="!bg-background/40 backdrop-blur-md border-border/50">
           <CardHeader>
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-destructive" />

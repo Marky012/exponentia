@@ -139,7 +139,7 @@ export default function StudentList() {
       </div>
 
       {students.length === 0 ? (
-        <Card className="!bg-background/60 backdrop-blur-md border-border/50 border-dashed">
+        <Card className="!bg-background/40 backdrop-blur-md border-border/50 border-dashed">
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">No students imported yet.</p>
             <p className="text-sm text-muted-foreground/70 mt-1">Go to Settings to import student data.</p>

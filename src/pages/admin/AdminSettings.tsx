@@ -116,7 +116,7 @@ export default function AdminSettings() {
   return (
     <>
     <div className="space-y-6 max-w-2xl">
-      <Card className="!bg-background/60 backdrop-blur-md border-border/50">
+      <Card className="!bg-background/40 backdrop-blur-md border-border/50">
         <CardHeader>
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Lock className="w-4 h-4" /> Change Password
@@ -145,7 +145,7 @@ export default function AdminSettings() {
 
       <Separator />
 
-      <Card className="!bg-background/60 backdrop-blur-md border-border/50">
+      <Card className="!bg-background/40 backdrop-blur-md border-border/50">
         <CardHeader>
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Upload className="w-4 h-4" /> Import Student Data
@@ -175,7 +175,7 @@ export default function AdminSettings() {
 
       <Separator />
 
-      <Card className="!bg-background/60 backdrop-blur-md border-border/50">
+      <Card className="!bg-background/40 backdrop-blur-md border-border/50">
         <CardHeader>
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Download className="w-4 h-4" /> Export Student Data
@@ -191,7 +191,7 @@ export default function AdminSettings() {
 
       <Separator />
 
-      <Card className="!bg-background/60 backdrop-blur-md border-border/50">
+      <Card className="!bg-background/40 backdrop-blur-md border-border/50">
         <CardHeader>
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <RotateCcw className="w-4 h-4" /> Reset Question Bank
