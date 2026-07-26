@@ -759,7 +759,7 @@ const Index = () => {
       </motion.div>
 
       <motion.button
-        className="fixed bottom-4 right-4 z-30 p-2.5 rounded-full bg-background/60 backdrop-blur-md border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
+        className="fixed top-4 right-4 z-30 p-2.5 rounded-full bg-background/60 backdrop-blur-md border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
         onClick={() => navigate('/admin/login')}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
