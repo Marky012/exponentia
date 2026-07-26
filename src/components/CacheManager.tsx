@@ -73,14 +73,9 @@ export function CacheManager() {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <HardDrive className="w-4 h-4" />
-          <span>Cached: {stats ? `${stats.entryCount} files (${stats.estimatedSize})` : 'Loading...'}</span>
-        </div>
-        <Button variant="outline" size="sm" onClick={refresh} className="h-7 text-xs">
-          Refresh
-        </Button>
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <HardDrive className="w-4 h-4" />
+        <span>Cached: {stats ? `${stats.entryCount} files (${stats.estimatedSize})` : 'Loading...'}</span>
       </div>
       <Button
         variant="destructive"
