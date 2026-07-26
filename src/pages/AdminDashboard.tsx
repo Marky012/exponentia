@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Shield } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useAdminStore } from '../store/adminStore';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
 import { Button } from '../components/ui/button';
@@ -32,14 +32,12 @@ export default function AdminDashboard() {
         />
       )}
       <aside className={`
-        fixed lg:sticky lg:top-0 inset-y-0 left-0 z-50 w-64 h-screen bg-card border-r border-border
+        fixed lg:sticky lg:top-0 inset-y-0 left-0 z-50 w-64 h-screen bg-background border-r border-border/50
         transform transition-transform duration-200 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex items-center gap-2 px-4 py-4 border-b border-border">
-          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-            <Shield className="w-4 h-4 text-primary" />
-          </div>
+          <img src="/icon-192.png" alt="Exponentia" className="w-8 h-8 rounded-lg" />
           <div>
             <h2 className="font-orbitron font-bold text-sm">Exponentia</h2>
             <p className="text-xs text-muted-foreground">Admin Dashboard</p>
