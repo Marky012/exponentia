@@ -1,0 +1,88 @@
+import { useState, useEffect } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, Shield } from 'lucide-react';
+import { useAdminStore } from '../store/adminStore';
+import { AdminSidebar } from '../components/admin/AdminSidebar';
+import { Button } from '../components/ui/button';
+
+export default function AdminDashboard() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, checkSession } = useAdminStore();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Admin Dashboard - Exponentia';
+    if (!isAuthenticated || !checkSession()) {
+      navigate('/admin/login');
+    }
+  }, [isAuthenticated, checkSession, navigate]);
+
+  if (!isAuthenticated) return null;
+
+  return (
+    <div className="min-h-screen bg-background flex">
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <aside className={`
+        fixed lg:static inset-y-0 left-0 z-50 w-64 bg-card border-r border-border
+        transform transition-transform duration-200 ease-in-out
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        <div className="flex items-center gap-2 px-4 py-4 border-b border-border">
+          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+            <Shield className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h2 className="font-orbitron font-bold text-sm">Exponentia</h2>
+            <p className="text-xs text-muted-foreground">Admin Dashboard</p>
+          </div>
+        </div>
+        <AdminSidebar onNavClick={() => setSidebarOpen(false)} />
+      </aside>
+
+      <main className="flex-1 min-w-0">
+        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border px-4 py-3 flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </Button>
+          <h1 className="font-orbitron font-bold text-lg truncate">
+            {getPageTitle(location.pathname)}
+          </h1>
+        </header>
+        <div className="p-4 md:p-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.15 }}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function getPageTitle(pathname: string): string {
+  if (pathname === '/admin') return 'Overview';
+  if (pathname === '/admin/students') return 'Students';
+  if (pathname.startsWith('/admin/students/')) return 'Student Detail';
+  if (pathname === '/admin/questions') return 'Question Bank';
+  if (pathname === '/admin/settings') return 'Settings';
+  return 'Dashboard';
+}

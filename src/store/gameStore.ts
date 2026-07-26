@@ -93,6 +93,7 @@ export interface GameState {
   addPendingSyncResult: (result: PendingSyncResult) => void;
   clearPendingSyncResults: () => void;
   getStudentReport: () => StudentReport;
+  exportStudentData: () => Record<string, unknown>;
 }
 
 export interface StudentReport {
@@ -499,6 +500,23 @@ export const useGameStore = create<GameState>()(
           totalAttempts,
           averageScore,
           completedLevels,
+        };
+      },
+
+      exportStudentData: () => {
+        const state = get();
+        return {
+          exportVersion: 1,
+          exportDate: new Date().toISOString(),
+          playerName: state.playerName,
+          playerGender: state.playerGender,
+          laws: state.laws,
+          quizLevels: state.quizLevels,
+          totalCorrectAnswers: state.totalCorrectAnswers,
+          totalIncorrectAnswers: state.totalIncorrectAnswers,
+          lawMissedCount: state.lawMissedCount,
+          needsAttention: state.needsAttention,
+          attentionReason: state.attentionReason,
         };
       },
     }),

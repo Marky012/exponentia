@@ -107,6 +107,8 @@ const Index = () => {
   const [milestone50, setMilestone50] = useState(false);
   const [milestone75, setMilestone75] = useState(false);
   const [isReturningUser, setIsReturningUser] = useState(false);
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
 
@@ -118,6 +120,17 @@ const Index = () => {
       navigate('/welcome');
     }
   }, [hasStarted, navigate]);
+
+  const handleLogoTap = useCallback(() => {
+    tapCountRef.current += 1;
+    if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    if (tapCountRef.current >= 3) {
+      tapCountRef.current = 0;
+      navigate('/admin/login');
+      return;
+    }
+    tapTimerRef.current = setTimeout(() => { tapCountRef.current = 0; }, 2000);
+  }, [navigate]);
 
   const getTotalCachedCount = useCallback(async (): Promise<number> => {
     try {
@@ -439,13 +452,14 @@ const Index = () => {
       >
         {/* Logo */}
         <motion.div
-          className="relative inline-block mb-5"
+          className="relative inline-block mb-5 cursor-pointer select-none"
           animate={phase === 'ready' ? { scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] } : { rotateY: [0, 360] }}
           transition={
             phase === 'ready'
               ? { duration: 0.6, ease: 'easeInOut' }
               : { duration: 2, ease: 'easeInOut', repeat: Infinity, repeatDelay: 1 }
           }
+          onClick={handleLogoTap}
         >
           <div
             className="text-7xl sm:text-8xl font-orbitron font-black text-primary"

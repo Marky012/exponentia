@@ -24,6 +24,13 @@ const QuizResult = lazy(() => import("./pages/QuizResult"));
 const Statistics = lazy(() => import("./pages/Statistics"));
 const StudentReport = lazy(() => import("./pages/StudentReport"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const Overview = lazy(() => import("./pages/admin/Overview"));
+const StudentList = lazy(() => import("./pages/admin/StudentList"));
+const StudentDetail = lazy(() => import("./pages/admin/StudentDetail"));
+const QuestionBank = lazy(() => import("./pages/admin/QuestionBank"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 
 const ThemeInitializer = ({ children }: { children: React.ReactNode }) => {
   const playerGender = useGameStore((state) => state.playerGender);
@@ -63,10 +70,11 @@ const getTransitionVariant = (pathname: string): 'default' | 'battle' | 'portal'
 const AnimatedRoutes = () => {
   const location = useLocation();
   const variant = getTransitionVariant(location.pathname);
+  const isAdmin = location.pathname.startsWith('/admin');
 
   return (
     <AnimatePresence mode="wait">
-      <PageTransition key={location.pathname} variant={variant}>
+      <PageTransition key={location.pathname} variant={isAdmin ? 'default' : variant}>
         <Routes location={location}>
           <Route path="/" element={<Index />} />
           <Route path="/welcome" element={<Welcome />} />
@@ -80,6 +88,14 @@ const AnimatedRoutes = () => {
           <Route path="/quiz-result/:levelId" element={<QuizResult />} />
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/report" element={<StudentReport />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminDashboard />}>
+            <Route index element={<Overview />} />
+            <Route path="students" element={<StudentList />} />
+            <Route path="students/:studentName" element={<StudentDetail />} />
+            <Route path="questions" element={<QuestionBank />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </PageTransition>

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { MathText } from '@/utils/mathRenderer';
-import questionsData from '@/data/questions.json';
+import { getQuestions } from '@/utils/questions';
 import { Shield, Swords, Skull, CheckCircle2, X, ArrowLeft, ChevronDown, Maximize2, Sword, Lightbulb } from 'lucide-react';
 import { HintHelper } from '@/components/HintHelper';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -64,7 +64,7 @@ export default function Quiz() {
       return;
     }
 
-    const allQuestions = questionsData[levelId] as Question[];
+    const allQuestions = (getQuestions()[levelId] || []) as Question[];
     const selected = weightedShuffle(allQuestions, questionHistory, QUIZ_LENGTH).map(shuffleQuestionOptions);
     setQuestions(selected);
   }, [levelId, currentLevel, navigate, debugMode, isDevMode, questionHistory]);

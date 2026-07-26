@@ -11,7 +11,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Settings, Volume2, VolumeX, Music, MusicIcon, Smartphone, Sun, Moon, Monitor, Vibrate, Trash2 } from 'lucide-react';
+import { Settings, Volume2, VolumeX, Music, MusicIcon, Smartphone, Sun, Moon, Monitor, Vibrate, Trash2, Download, Shield } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { soundEffects } from '@/utils/soundEffects';
 import { backgroundMusic } from '@/utils/backgroundMusic';
 import { STORAGE_KEYS } from '@/constants/quizConfig';
@@ -28,6 +30,7 @@ const THEME_OPTIONS: { value: ThemeMode; icon: React.ReactNode; label: string }[
 ];
 
 export const SettingsMenu = () => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [showCache, setShowCache] = useState(false);
@@ -81,6 +84,32 @@ export const SettingsMenu = () => {
 
   const testSound = () => {
     soundEffects.playClick();
+  };
+
+  const handleExportData = () => {
+    const state = useGameStore.getState();
+    const exportData = {
+      exportVersion: 1,
+      exportDate: new Date().toISOString(),
+      playerName: state.playerName,
+      playerGender: state.playerGender,
+      laws: state.laws,
+      quizLevels: state.quizLevels,
+      totalCorrectAnswers: state.totalCorrectAnswers,
+      totalIncorrectAnswers: state.totalIncorrectAnswers,
+      lawMissedCount: state.lawMissedCount,
+      needsAttention: state.needsAttention,
+      attentionReason: state.attentionReason,
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const safeName = (state.playerName || 'student').replace(/[^a-zA-Z0-9]/g, '_');
+    a.download = `exponentia-data-${safeName}-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Data exported successfully');
   };
 
   return (
@@ -263,6 +292,29 @@ export const SettingsMenu = () => {
                 <Smartphone className="w-4 h-4" />
                 How to Install on Phone
               </Button>
+            </div>
+
+            {/* Export My Data */}
+            <div className="pt-4 border-t border-border/50">
+              <Button
+                variant="outline"
+                className="w-full gap-2"
+                onClick={handleExportData}
+              >
+                <Download className="w-4 h-4" />
+                Export My Data
+              </Button>
+            </div>
+
+            {/* Teacher Portal Link */}
+            <div className="pt-4 border-t border-border/50 text-center">
+              <button
+                onClick={() => { setOpen(false); navigate('/admin/login'); }}
+                className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors inline-flex items-center gap-1"
+              >
+                <Shield className="w-3 h-3" />
+                Teacher Portal
+              </button>
             </div>
           </div>
         </SheetContent>

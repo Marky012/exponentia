@@ -9,7 +9,7 @@ import { ArrowLeft, Trophy, XCircle, Sparkles, CheckCircle2, X, SkipForward, Bug
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import questionsData from '@/data/questions.json';
+import { getQuestions } from '@/utils/questions';
 import trainingArena from '@/assets/training-arena.png';
 import { soundEffects } from '@/utils/soundEffects';
 import { haptics } from '@/utils/haptics';
@@ -44,7 +44,8 @@ const PreTest = () => {
   useEffect(() => {
     if (!law || !lawId) { navigate('/laws'); return; }
     const preTestKey = LAW_ID_TO_PRETEST_KEY[lawId];
-    const preTestQuestions = preTestKey ? (questionsData.preTest as Record<string, Question[]>)[preTestKey] : null;
+    const allQuestions = getQuestions();
+    const preTestQuestions = preTestKey ? (allQuestions.preTest as Record<string, Question[]>)[preTestKey] : null;
     if (preTestQuestions && preTestQuestions.length >= PRETEST_QUESTION_COUNT) {
       const shuffledQuestions = shuffleArray(preTestQuestions).slice(0, PRETEST_QUESTION_COUNT);
       setQuestions(shuffledQuestions.map(shuffleQuestionOptions));
@@ -141,7 +142,8 @@ const PreTest = () => {
 
   const handleRetry = () => {
     const preTestKey = LAW_ID_TO_PRETEST_KEY[lawId || ''];
-    const preTestQuestions = preTestKey ? (questionsData.preTest as Record<string, Question[]>)[preTestKey] : null;
+    const allQuestions = getQuestions();
+    const preTestQuestions = preTestKey ? (allQuestions.preTest as Record<string, Question[]>)[preTestKey] : null;
     if (preTestQuestions && preTestQuestions.length >= PRETEST_QUESTION_COUNT) {
       setQuestions(shuffleArray(preTestQuestions).slice(0, PRETEST_QUESTION_COUNT).map(shuffleQuestionOptions));
     }
