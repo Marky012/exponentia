@@ -27,7 +27,7 @@ export default function AdminDashboard() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-background flex relative">
+    <div className="min-h-screen flex relative">
       <ExponentiaBackground overlayOpacity={0.5} />
       {sidebarOpen && (
         <div
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
         />
       )}
       <aside className={`
-        fixed lg:sticky lg:top-0 inset-y-0 left-0 z-50 w-64 h-screen bg-background border-r border-border/50
+        fixed lg:sticky lg:top-0 inset-y-0 left-0 z-50 w-64 h-screen bg-background/80 backdrop-blur-md border-r border-border/50
         transform transition-transform duration-200 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
