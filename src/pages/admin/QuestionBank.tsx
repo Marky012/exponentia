@@ -305,7 +305,7 @@ export default function QuestionBank() {
         ))}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Search questions..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
@@ -318,11 +318,8 @@ export default function QuestionBank() {
           <option value="all">All Laws</option>
           {LAW_NAMES.map(law => <option key={law} value={law}>{law}</option>)}
         </select>
-      </div>
-
-      <div className="flex justify-end">
         <Button size="sm" onClick={() => setAdding(true)}>
-          <Plus className="w-4 h-4 mr-1" /> Add Question
+          <Plus className="w-4 h-4 mr-1" /> Add
         </Button>
       </div>
 
