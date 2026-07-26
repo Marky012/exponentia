@@ -62,7 +62,7 @@ export default function AdminDashboard() {
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </Button>
         <div className="p-4 md:p-6">
-          <h1 className="font-orbitron font-bold text-lg mb-4">
+          <h1 className="font-orbitron font-bold text-lg mb-4 pl-10 lg:pl-0">
             {getPageTitle(location.pathname)}
           </h1>
           <AnimatePresence mode="wait">
