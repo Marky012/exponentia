@@ -6,6 +6,7 @@ import { useAdminStore } from '../store/adminStore';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
 import { Button } from '../components/ui/button';
 import ExponentiaBackground from '../components/ExponentiaBackground';
+import { backgroundMusic } from '../utils/backgroundMusic';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -15,6 +16,9 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     document.title = 'Admin Dashboard - Exponentia';
+    backgroundMusic.pause();
+    return () => backgroundMusic.play();
+  }, []);
     if (!isAuthenticated || !checkSession()) {
       navigate('/admin/login');
     }
